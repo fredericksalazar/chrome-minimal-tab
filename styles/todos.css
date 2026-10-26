@@ -1,0 +1,191 @@
+/* Lista de tareas: esquina superior derecha, sin caja ni fondo para no estorbar */
+.todo {
+  --todo-done: #1e8e3e;
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  max-height: calc(100vh - 120px);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-tone="light"]) .todo {
+    --todo-done: #81c995;
+  }
+}
+
+html[data-tone="dark"] .todo {
+  --todo-done: #81c995;
+}
+
+.todo-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0 6px;
+  border-bottom: 1px solid transparent;
+  color: var(--muted);
+  transition: border-color 0.2s ease;
+}
+
+.todo-add:focus-within {
+  border-bottom-color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.todo-add svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.todo-add input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+
+.todo-add input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.todo-list {
+  margin: 4px 0 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  padding: 0 4px 0 6px;
+  border-radius: 6px;
+}
+
+.todo-item:hover {
+  background: var(--hover);
+}
+
+.todo-item.sub {
+  margin-left: 22px;
+}
+
+.todo-item.todo-new {
+  padding: 0;
+}
+
+.todo-item.todo-new:hover {
+  background: none;
+}
+
+.todo-item.todo-new .todo-add {
+  flex: 1;
+  padding: 0;
+}
+
+.todo-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 5px 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.todo-item.sub .todo-toggle {
+  font-size: 13px;
+}
+
+.todo-toggle:focus-visible,
+.todo-act:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.todo-label {
+  overflow-wrap: anywhere;
+}
+
+.todo-item.done .todo-label {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+}
+
+/* La ✓ aparece a la derecha del nombre solo al terminar */
+.todo-check {
+  display: none;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: var(--todo-done);
+}
+
+.todo-item.done .todo-check {
+  display: block;
+}
+
+.todo-actions {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.todo-item:hover .todo-actions,
+.todo-item:focus-within .todo-actions {
+  opacity: 1;
+}
+
+.todo-act {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.todo-act:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.todo-act svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+@media (max-width: 900px) {
+  .todo {
+    width: 200px;
+  }
+}

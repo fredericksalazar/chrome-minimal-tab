@@ -1,11 +1,12 @@
 // Claves de chrome.storage en un solo sitio para evitar colisiones y erratas.
-// sync: preferencias que viajan con la cuenta. local: cachés de este equipo.
+// sync: preferencias que viajan con la cuenta. local: cachés y datos de este equipo.
 export const KEYS = {
   engine: "searchEngine",
   background: "background",
   folder: "folderId",
   location: "location",
   weather: "weather",
+  todos: "todos",
 };
 
 export function onSyncChange(key, callback) {

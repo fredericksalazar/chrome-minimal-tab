@@ -4,6 +4,7 @@ Extensión de Chrome que sustituye la nueva pestaña por una con el diseño de G
 
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
 - Hora, ciudad y clima.
+- Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
 - Panel «Personalizar»: motor de búsqueda (con su logo oficial) y fondo (colores sólidos o degradados).
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
 
@@ -27,17 +28,19 @@ src/lib/               Lógica sin interfaz, compartida y testeable
   engines.js             Catálogo de motores de búsqueda
   backgrounds.js         Catálogo de fondos
   speedtest.js           Motor de la prueba de velocidad
+  todos.js               Tareas, subtareas y limpieza diaria
 src/newtab/            Un módulo por cada parte de la página
   theme-boot.js          Aplica el fondo guardado antes de pintar (script clásico)
   theme.js               Tema efectivo (fondo o sistema) y suscripción a cambios
   shortcuts.js           Cuadrícula, diálogo, deshacer y reordenar
   search.js              Motor elegido, logo y envío del buscador
   clock-weather.js       Hora y clima
+  todos.js               Lista de tareas de la esquina superior derecha
   drawer.js              Abrir y cerrar el panel «Personalizar»
   backgrounds.js         Sección «Fondo» del panel
   speed-panel.js         Panel, barra animada y gráfica de la prueba de velocidad
   icons.js               Iconos SVG estáticos
-styles/                Un CSS por funcionalidad (base, componentes, widget, accesos, panel, velocidad)
+styles/                Un CSS por funcionalidad (base, componentes, widget, tareas, accesos, panel, velocidad)
 assets/                Logos de los motores e iconos de la extensión
 tests/                 Tests unitarios de src/lib (node:test)
 ```
