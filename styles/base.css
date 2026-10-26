@@ -1,0 +1,164 @@
+/* Base: tokens de color, modo oscuro, paleta según el fondo, logo y buscador */
+
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --text: #202124;
+  --muted: #5f6368;
+  --primary: #1a73e8;
+  --on-primary: #ffffff;
+  --danger: #d93025;
+  --tile-icon-bg: #f1f3f4;
+  --hover: rgba(32, 33, 36, 0.06);
+  --search-bg: #ffffff;
+  --search-border: #dfe1e5;
+  --search-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  --dialog-bg: #ffffff;
+  --input-bg: #f1f3f4;
+  --toast-bg: #323232;
+  --toast-text: #ffffff;
+  --toast-action: #8ab4f8;
+  --selected-bg: #e8f0fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #202124;
+    --text: #e8eaed;
+    --muted: #9aa0a6;
+    --primary: #8ab4f8;
+    --on-primary: #202124;
+    --danger: #f28b82;
+    --tile-icon-bg: #3c4043;
+    --hover: rgba(232, 234, 237, 0.08);
+    --search-bg: #303134;
+    --search-border: transparent;
+    --search-shadow: 0 1px 6px rgba(23, 23, 23, 0.6);
+    --dialog-bg: #292a2d;
+    --input-bg: #3c4043;
+    --toast-bg: #e8eaed;
+    --toast-text: #202124;
+    --toast-action: #1a73e8;
+    --selected-bg: rgba(138, 180, 248, 0.16);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--page-bg, var(--bg)) fixed;
+  color: var(--text);
+  font: 14px/1.4 "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+/* Sobre un fondo claro u oscuro la página usa su propia paleta, sin tocar los paneles */
+.page {
+  color: var(--text);
+}
+
+html[data-tone="dark"] .page {
+  color-scheme: dark;
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.74);
+  --primary: #8ab4f8;
+  --tile-icon-bg: rgba(255, 255, 255, 0.16);
+  --hover: rgba(255, 255, 255, 0.14);
+  --search-bg: rgba(255, 255, 255, 0.16);
+  --search-border: transparent;
+  --search-shadow: 0 2px 14px rgba(0, 0, 0, 0.28);
+}
+
+html[data-tone="light"] .page {
+  color-scheme: light;
+  --text: #202124;
+  --muted: #4a4f55;
+  --primary: #1a73e8;
+  --tile-icon-bg: rgba(255, 255, 255, 0.72);
+  --hover: rgba(32, 33, 36, 0.08);
+  --search-bg: rgba(255, 255, 255, 0.86);
+  --search-border: transparent;
+  --search-shadow: 0 2px 12px rgba(32, 33, 36, 0.16);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 96px;
+}
+
+/* Logo del motor de búsqueda: oculto hasta saber cuál es para evitar un parpadeo */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  margin: max(78px, calc(9vh + 46px)) 0 0;
+  visibility: hidden;
+}
+
+.brand.ready {
+  visibility: visible;
+}
+
+.logo {
+  display: block;
+  width: auto;
+  max-width: min(320px, 100%);
+  object-fit: contain;
+}
+
+/* Buscador */
+.search {
+  width: 100%;
+  max-width: 720px;
+  margin-top: 36px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 52px;
+  padding: 0 20px;
+  background: var(--search-bg);
+  border: 1px solid var(--search-border);
+  border-radius: 26px;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  cursor: text;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.search-box:hover,
+.search-box:focus-within {
+  border-color: transparent;
+  box-shadow: var(--search-shadow);
+}
+
+.search-box svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: var(--muted);
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+}
+
+.search-box input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}

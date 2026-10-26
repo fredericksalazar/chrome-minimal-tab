@@ -1,0 +1,286 @@
+/* Prueba de velocidad */
+
+.speed-btn {
+  right: auto;
+  left: 16px;
+}
+
+.speed-badge {
+  position: fixed;
+  left: 62px;
+  bottom: 26px;
+  color: var(--text);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-badge[hidden] {
+  display: none;
+}
+
+.speed-panel {
+  position: fixed;
+  left: 16px;
+  bottom: 64px;
+  z-index: 5;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(100vh - 80px);
+  padding: 16px;
+  overflow-y: auto;
+  border-radius: 16px;
+  background: var(--dialog-bg);
+  color: var(--text);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.22);
+  --speed-latency: #ba7517;
+  --speed-download: #378add;
+  --speed-upload: #1d9e75;
+  --speed-ok: #1d9e75;
+  --speed-color: var(--speed-download);
+}
+
+.speed-panel[hidden] {
+  display: none;
+}
+
+.speed-panel[data-phase="latency"] {
+  --speed-color: var(--speed-latency);
+}
+
+.speed-panel[data-phase="upload"] {
+  --speed-color: var(--speed-upload);
+}
+
+.speed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.speed-header h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.speed-status {
+  min-height: 20px;
+  margin: 2px 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.speed-panel[data-phase="error"] .speed-status {
+  color: var(--danger);
+}
+
+.speed-flow {
+  display: flex;
+  align-items: center;
+}
+
+.speed-node {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--search-border);
+  border-radius: 50%;
+  color: var(--muted);
+}
+
+.speed-node svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.speed-node.ok {
+  animation: speed-ok 0.45s ease-out;
+}
+
+@keyframes speed-ok {
+  0% {
+    border-color: var(--speed-color);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--speed-color) 40%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+.speed-lane {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+}
+
+.speed-flow-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.speed-flow-labels span {
+  width: 44px;
+  text-align: center;
+  overflow: visible;
+}
+
+.speed-flow-labels span:first-child {
+  margin-left: -8px;
+  margin-right: 8px;
+}
+
+.speed-flow-labels span:last-child {
+  margin-right: -8px;
+  margin-left: 8px;
+}
+
+.speed-verified {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-verified svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--speed-ok);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.speed-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 14px 0 4px;
+}
+
+.speed-big {
+  font-size: 40px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.speed-unit,
+.speed-phase {
+  color: var(--muted);
+}
+
+.speed-unit {
+  font-size: 14px;
+}
+
+.speed-phase {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.speed-chart {
+  display: block;
+  width: 100%;
+  height: 64px;
+}
+
+.speed-grid {
+  stroke: var(--hover);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.speed-grid.dashed {
+  stroke-dasharray: 3 4;
+}
+
+.speed-line {
+  fill: none;
+  stroke: var(--speed-color);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.speed-area {
+  fill: var(--speed-color);
+  fill-opacity: 0.14;
+  stroke: none;
+}
+
+.speed-metrics {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.speed-m {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.speed-m small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.speed-m b {
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-m i {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.speed-m.active {
+  border-color: var(--speed-color);
+  background: var(--dialog-bg);
+}
+
+.speed-panel[data-phase="result"] .speed-m {
+  cursor: pointer;
+}
+
+.speed-panel[data-phase="result"] .speed-m:hover {
+  background: var(--hover);
+}
+
+.speed-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 11px;
+}

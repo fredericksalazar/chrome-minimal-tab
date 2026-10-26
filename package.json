@@ -1,0 +1,8 @@
+{
+  "name": "minimal-new-tab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

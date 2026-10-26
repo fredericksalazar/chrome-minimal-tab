@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nueva pestaña</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/widget.css">
+  <link rel="stylesheet" href="styles/shortcuts.css">
+  <link rel="stylesheet" href="styles/drawer.css">
+  <link rel="stylesheet" href="styles/speed.css">
+  <script src="src/newtab/theme-boot.js"></script>
+  <script type="module" src="src/newtab/shortcuts.js"></script>
+  <script type="module" src="src/newtab/search.js"></script>
+  <script type="module" src="src/newtab/clock-weather.js"></script>
+  <script type="module" src="src/newtab/drawer.js"></script>
+  <script type="module" src="src/newtab/backgrounds.js"></script>
+  <script type="module" src="src/newtab/speed-panel.js"></script>
+</head>
+<body>
+  <div class="page">
+  <aside class="widget" aria-label="Hora y tiempo">
+    <time id="clock" class="clock"></time>
+    <div id="weather" class="weather" hidden>
+      <span id="city"></span>
+      <span class="weather-now">
+        <svg id="weather-icon" viewBox="0 0 24 24" aria-hidden="true"></svg>
+        <span id="temperature"></span>
+      </span>
+    </div>
+  </aside>
+
+  <main>
+    <h1 id="brand" class="brand">
+      <img id="logo" class="logo" alt="">
+    </h1>
+
+    <form id="search-form" class="search" action="https://www.google.com/search" method="get" role="search">
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input id="search-input" type="search" name="q" placeholder="Buscar con Google o escribir una URL" aria-label="Buscar" autocomplete="off" autofocus>
+      </label>
+    </form>
+
+    <section id="grid" class="grid" aria-label="Accesos directos"></section>
+
+    <p id="empty-hint" class="hint" hidden>
+      Pulsa <kbd>⌥⇧D</kbd> en cualquier web para añadirla aquí,
+      o guárdala con <kbd>⌘D</kbd> en la carpeta «Accesos directos».
+    </p>
+  </main>
+
+  <button id="customize" class="customize" type="button" title="Personalizar" aria-label="Personalizar">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  </button>
+
+  <button id="speed-btn" class="speed-btn" type="button" title="Prueba de velocidad" aria-label="Prueba de velocidad" aria-expanded="false" aria-controls="speed-panel">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+      <path d="M13.45 11.55l2.05 -2.05"/>
+      <path d="M6.4 20a9 9 0 1 1 11.2 0z"/>
+    </svg>
+  </button>
+  <span id="speed-badge" class="speed-badge" hidden></span>
+  </div>
+
+  <section id="speed-panel" class="speed-panel" hidden aria-label="Prueba de velocidad">
+    <header class="speed-header">
+      <h2>Prueba de velocidad</h2>
+      <button id="speed-close" class="icon-button" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </header>
+    <p id="speed-status" class="speed-status" aria-live="polite"></p>
+
+    <div class="speed-flow">
+      <span id="speed-node-local" class="speed-node">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M3 19h18"/></svg>
+      </span>
+      <canvas id="speed-lane" class="speed-lane"></canvas>
+      <span id="speed-node-remote" class="speed-node">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/></svg>
+      </span>
+    </div>
+    <div class="speed-flow-labels">
+      <span>Tu equipo</span>
+      <span>Servidor</span>
+    </div>
+    <p class="speed-verified">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span id="speed-verified">Sin datos aún</span>
+    </p>
+
+    <div class="speed-readout">
+      <span id="speed-big" class="speed-big">0</span>
+      <span id="speed-unit" class="speed-unit">Mbps</span>
+      <span id="speed-phase" class="speed-phase"></span>
+    </div>
+    <svg id="speed-chart" class="speed-chart" viewBox="0 0 328 64" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="63.5" x2="328" y2="63.5" class="speed-grid"/>
+      <line x1="0" y1="32" x2="328" y2="32" class="speed-grid dashed"/>
+      <path id="speed-area" d="" class="speed-area"/>
+      <path id="speed-line" d="" class="speed-line"/>
+    </svg>
+
+    <div class="speed-metrics">
+      <button class="speed-m" data-metric="download" data-view="download" type="button"><small>Descarga</small><b id="speed-dl">—</b><i>Mbps</i></button>
+      <button class="speed-m" data-metric="upload" data-view="upload" type="button"><small>Subida</small><b id="speed-ul">—</b><i>Mbps</i></button>
+      <button class="speed-m" data-metric="latency" data-view="latency" type="button"><small>Latencia</small><b id="speed-lat">—</b><i>ms</i></button>
+      <button class="speed-m" data-metric="jitter" data-view="latency" type="button"><small>Jitter</small><b id="speed-jit">—</b><i>ms</i></button>
+    </div>
+
+    <footer class="speed-footer">
+      <span>Servidor de prueba · Cloudflare</span>
+      <button id="speed-act" class="btn" type="button"></button>
+    </footer>
+  </section>
+
+  <dialog id="settings" class="drawer" aria-labelledby="settings-title">
+    <div class="drawer-body">
+      <header class="drawer-header">
+        <h2 id="settings-title">Personalizar</h2>
+        <button id="settings-close" class="icon-button" type="button" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </header>
+
+      <div id="view-main">
+      <section class="drawer-section">
+        <h3>Motor de búsqueda</h3>
+        <div id="engine-list" class="engine-list" role="radiogroup" aria-label="Motor de búsqueda"></div>
+      </section>
+
+      <section class="drawer-section">
+        <h3>Fondo</h3>
+        <div id="bg-options" class="bg-options"></div>
+      </section>
+
+      <section class="drawer-section">
+        <h3>Accesos directos</h3>
+        <p class="drawer-text">En uso: <span id="counter"></span></p>
+        <button id="manage" class="btn" type="button">Gestionar en marcadores</button>
+      </section>
+      </div>
+
+      <div id="view-bg" hidden>
+        <div class="subview-header">
+          <button id="bg-back" class="icon-button" type="button" aria-label="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+          <h3 id="bg-title"></h3>
+        </div>
+        <div id="bg-grid" class="swatch-grid" role="radiogroup"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="shortcut-dialog">
+    <form id="shortcut-form" novalidate>
+      <h2 id="dialog-title"></h2>
+      <label class="field">
+        <span>Nombre</span>
+        <input id="name-input" type="text" autocomplete="off">
+      </label>
+      <label class="field">
+        <span>URL</span>
+        <input id="url-input" type="text" autocomplete="off" spellcheck="false">
+      </label>
+      <p id="dialog-error" class="dialog-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button id="remove-button" class="btn remove" type="button">Quitar</button>
+        <button id="cancel-button" class="btn" type="button">Cancelar</button>
+        <button class="btn btn-primary" type="submit">Hecho</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden>
+    <span id="toast-text"></span>
+    <button id="toast-undo" type="button">Deshacer</button>
+  </div>
+</body>
+</html>

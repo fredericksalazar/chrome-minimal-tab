@@ -1,0 +1,257 @@
+/* Panel "Personalizar": motor de búsqueda y fondos */
+
+/* Panel lateral de ajustes, como el de "Personalizar Chrome" */
+dialog.drawer {
+  width: min(360px, 100vw);
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+  margin: 0 0 0 auto;
+  padding: 0;
+  border-radius: 16px 0 0 16px;
+}
+
+/* Sin oscurecer la página para ver el fondo cambiar en directo */
+dialog.drawer {
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.22);
+}
+
+dialog.drawer::backdrop {
+  background: transparent;
+}
+
+dialog.drawer[open] {
+  animation: drawer-in 0.2s ease-out;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+.drawer-body {
+  height: 100%;
+  padding: 16px 20px 24px;
+  overflow-y: auto;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.drawer-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.drawer-section {
+  padding: 16px 0;
+  border-top: 1px solid var(--hover);
+}
+
+.drawer-section:first-of-type {
+  border-top: 0;
+}
+
+.drawer-section h3 {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.drawer-text {
+  margin: 0 0 12px;
+}
+
+.engine-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.engine {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.engine:hover {
+  background: var(--hover);
+}
+
+.engine:has(input:checked) {
+  background: var(--selected-bg);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.engine:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.engine input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.engine img {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.engine-name {
+  flex: 1;
+}
+
+.engine-check {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  visibility: hidden;
+}
+
+.engine:has(input:checked) .engine-check {
+  visibility: visible;
+}
+
+/* Selector de fondo */
+.bg-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.bg-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.bg-preview,
+.swatch-fill {
+  position: relative;
+  display: block;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.28);
+}
+
+.bg-preview {
+  aspect-ratio: 4 / 3;
+}
+
+.bg-default {
+  background: var(--input-bg);
+}
+
+.bg-tile.selected .bg-preview,
+.swatch input:checked + .swatch-fill {
+  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--primary);
+}
+
+.bg-tile:focus-visible .bg-preview {
+  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--primary);
+}
+
+.subview-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.subview-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.swatch-grid {
+  display: grid;
+  gap: 14px 12px;
+  padding: 4px;
+}
+
+.swatch-grid.gradient {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.swatch-grid.solid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.swatch {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.swatch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swatch-fill {
+  aspect-ratio: 16 / 9;
+}
+
+.solid .swatch-fill {
+  aspect-ratio: 4 / 3;
+}
+
+.swatch input:focus-visible + .swatch-fill {
+  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--primary);
+}
+
+/* Marca de selección: círculo blanco con la ✓ centrada */
+.swatch-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  fill: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.swatch input:checked ~ .swatch-check {
+  visibility: visible;
+}
+
+.bg-tile .swatch-check {
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+}
+
+.bg-tile.selected .swatch-check {
+  visibility: visible;
+}

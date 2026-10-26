@@ -1,0 +1,46 @@
+/* Hora, ciudad y clima */
+
+.widget {
+  position: fixed;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.clock {
+  font-size: 28px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.weather[hidden] {
+  display: none;
+}
+
+.weather-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.weather-now svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
