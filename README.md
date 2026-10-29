@@ -7,6 +7,7 @@ Extensión de Chrome que sustituye la nueva pestaña por una con el diseño de G
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
 - Panel «Personalizar»: motor de búsqueda (con su logo oficial) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
+- Botones discretos abajo en el centro para apoyar el proyecto (Buy Me a Coffee o PayPal) y visitar la web del autor; se abren en otra pestaña.
 
 ## Instalación
 
@@ -28,6 +29,7 @@ src/lib/               Lógica sin interfaz, compartida y testeable
   engines.js             Catálogo de motores de búsqueda
   backgrounds.js         Catálogo de fondos e imagen propia (tamaño, tono, desenfoque)
   speedtest.js           Motor de la prueba de velocidad
+  support.js             Enlaces de apoyo al autor
   todos.js               Tareas, subtareas y limpieza diaria
 src/newtab/            Un módulo por cada parte de la página
   theme-boot.js          Aplica el fondo guardado antes de pintar (script clásico)
@@ -39,8 +41,9 @@ src/newtab/            Un módulo por cada parte de la página
   drawer.js              Abrir y cerrar el panel «Personalizar»
   backgrounds.js         Sección «Fondo» del panel
   speed-panel.js         Panel, barra animada y gráfica de la prueba de velocidad
+  support.js             Botones de apoyo de la zona inferior central
   icons.js               Iconos SVG estáticos
-styles/                Un CSS por funcionalidad (base, componentes, widget, tareas, accesos, panel, velocidad)
+styles/                Un CSS por funcionalidad (base, componentes, widget, tareas, accesos, panel, velocidad, apoyo)
 assets/                Logos de los motores e iconos de la extensión
 tests/                 Tests unitarios de src/lib (node:test)
 ```

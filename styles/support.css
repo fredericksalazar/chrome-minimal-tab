@@ -1,0 +1,58 @@
+/* Botones de apoyo: píldoras discretas abajo en el centro, entre los botones de las esquinas */
+
+.support {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  display: flex;
+  gap: 4px;
+  transform: translateX(-50%);
+}
+
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.support-link:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.support-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.support-link svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* En ventanas estrechas solo el icono, para no chocar con los botones de las esquinas */
+@media (max-width: 759px) {
+  .support-link {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .support-link span {
+    display: none;
+  }
+}
