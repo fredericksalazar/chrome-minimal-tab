@@ -1,0 +1,8 @@
+/agents
+# Enlaces locales a agents/skills para cada herramienta
+/.claude/skills
+/.agents
+/.gemini/skills
+/.opencode/skills
+dist/
+.env.release

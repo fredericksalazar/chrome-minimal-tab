@@ -57,6 +57,12 @@ Reglas de la arquitectura:
 npm test
 ```
 
+## Desarrollo con agentes de IA
+
+Abre cualquier agente (Claude Code, Codex, Gemini CLI, Antigravity, OpenCode…) en esta carpeta y
+cuéntale lo que quieres. El agente sigue el ciclo idea → requisito → producto → código → QA →
+publicación definido en [`agents/`](agents/README.md) (local, no se sube al repositorio).
+
 ## Servicios externos
 
 | Uso | Servicio |
