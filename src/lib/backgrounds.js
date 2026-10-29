@@ -49,3 +49,58 @@ export function findBackground(selection) {
 export function isSameBackground(a, b) {
   return a.type === b.type && a.id === b.id;
 }
+
+// Imagen propia: se guarda reducida en este equipo y nunca sale del navegador.
+export const IMAGE_MAX_BYTES = 20 * 1024 * 1024;
+export const IMAGE_MAX_SIDE = 2560;
+export const BLUR = { min: 2, max: 40, initial: 16 };
+
+// null si el archivo vale; si no, el motivo ("type" o "size")
+export function checkImageFile(file) {
+  if (!file?.type?.startsWith("image/")) return "type";
+  if (file.size > IMAGE_MAX_BYTES) return "size";
+  return null;
+}
+
+// Medidas reducidas para que el lado mayor no pase de max, sin deformar ni ampliar
+export function fitSize(width, height, max) {
+  const scale = Math.min(1, max / Math.max(width, height));
+  return { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) };
+}
+
+// Tono a partir de píxeles RGBA (los de una miniatura bastan): por encima de
+// 0,6 de luminancia media el texto oscuro se lee mejor que el blanco
+export function toneFromPixels(data) {
+  let sum = 0;
+  let count = 0;
+  for (let i = 0; i + 3 < data.length; i += 4) {
+    if (data[i + 3] === 0) continue;
+    sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+    count++;
+  }
+  return count && sum / count / 255 > 0.6 ? "light" : "dark";
+}
+
+export function clampBlur(value) {
+  const number = Math.round(Number(value));
+  if (!Number.isFinite(number)) return BLUR.initial;
+  return Math.min(BLUR.max, Math.max(BLUR.min, number));
+}
+
+// Valor de fondo CSS: cubre la página sin deformar la imagen
+export function imageCss(dataUrl) {
+  return `url("${dataUrl}") center / cover no-repeat`;
+}
+
+// Imagen guardada saneada, o null si no es utilizable. Solo se aceptan data URL
+// de imagen, que además no pueden cerrar las comillas de url("…").
+export function normalizeImage(saved) {
+  if (typeof saved?.dataUrl !== "string" || !/^data:image\/[\w+.-]+;base64,[\w+/=]+$/.test(saved.dataUrl)) return null;
+  return {
+    dataUrl: saved.dataUrl,
+    tone: saved.tone === "light" ? "light" : "dark",
+    blur: saved.blur === true,
+    blurAmount: clampBlur(saved.blurAmount ?? BLUR.initial),
+    active: saved.active === true,
+  };
+}
