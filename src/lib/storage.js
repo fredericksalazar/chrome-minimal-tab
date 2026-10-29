@@ -3,14 +3,18 @@
 export const KEYS = {
   engine: "searchEngine",
   background: "background",
+  image: "backgroundImage",
   folder: "folderId",
   location: "location",
   weather: "weather",
   todos: "todos",
 };
 
-export function onSyncChange(key, callback) {
+function onAreaChange(areaName, key, callback) {
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && key in changes) callback(changes[key].newValue);
+    if (area === areaName && key in changes) callback(changes[key].newValue);
   });
 }
+
+export const onSyncChange = (key, callback) => onAreaChange("sync", key, callback);
+export const onLocalChange = (key, callback) => onAreaChange("local", key, callback);

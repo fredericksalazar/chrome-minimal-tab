@@ -6,6 +6,10 @@ try {
   if (saved?.css) {
     document.documentElement.style.setProperty("--page-bg", saved.css);
     document.documentElement.dataset.tone = saved.tone;
+    if (saved.blur) {
+      document.documentElement.style.setProperty("--page-blur", `${saved.blur}px`);
+      document.documentElement.dataset.blur = "";
+    }
   }
 } catch {
   // Sin acceso a localStorage: se aplica al cargar los ajustes

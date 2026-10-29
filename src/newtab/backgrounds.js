@@ -1,12 +1,33 @@
-// Sección "Fondo" del panel: predeterminado, colores sólidos o degradados.
-import { BACKGROUNDS, DEFAULT_BACKGROUND, findBackground, isSameBackground } from "../lib/backgrounds.js";
-import { KEYS, onSyncChange } from "../lib/storage.js";
-import { checkIcon } from "./icons.js";
+// Sección "Fondo" del panel: predeterminado, colores sólidos, degradados o una
+// imagen propia. La imagen vive solo en este equipo (storage.local) y, mientras
+// está activa, manda sobre el fondo sincronizado.
+import {
+  BACKGROUNDS,
+  DEFAULT_BACKGROUND,
+  IMAGE_MAX_SIDE,
+  checkImageFile,
+  clampBlur,
+  findBackground,
+  fitSize,
+  imageCss,
+  isSameBackground,
+  normalizeImage,
+  toneFromPixels,
+} from "../lib/backgrounds.js";
+import { KEYS, onLocalChange, onSyncChange } from "../lib/storage.js";
+import { ICONS, checkIcon } from "./icons.js";
 import { setBackground } from "./theme.js";
 
 // Misma clave que lee theme-boot.js antes del primer pintado
 const CACHE_KEY = "background";
 const PREVIEW = { solid: BACKGROUNDS.solid.items[0], gradient: BACKGROUNDS.gradient.items[5] };
+// Por encima de esto se reintenta más pequeña para no agotar la caché de localStorage
+const MAX_DATA_URL = 3.5 * 1024 * 1024;
+const ERRORS = {
+  type: "Ese archivo no es una imagen válida.",
+  size: "La imagen supera los 20 MB.",
+  save: "No se pudo guardar la imagen.",
+};
 
 const drawer = document.getElementById("settings");
 const viewMain = document.getElementById("view-main");
@@ -15,44 +36,100 @@ const options = document.getElementById("bg-options");
 const grid = document.getElementById("bg-grid");
 const title = document.getElementById("bg-title");
 const back = document.getElementById("bg-back");
+const imageControls = document.getElementById("bg-image-controls");
+const blurSwitch = document.getElementById("blur-switch");
+const blurRow = document.getElementById("blur-amount-row");
+const blurAmount = document.getElementById("blur-amount");
+const blurValue = document.getElementById("blur-value");
+const fileInput = document.getElementById("bg-file");
+const error = document.getElementById("bg-error");
 
 let current = DEFAULT_BACKGROUND;
+let image = null;
 let openType = null;
 
-function cache(item) {
+const imageActive = () => Boolean(image?.active);
+
+function cache(value) {
   try {
-    if (item) localStorage.setItem(CACHE_KEY, JSON.stringify({ css: item.css, tone: item.tone }));
+    if (value) localStorage.setItem(CACHE_KEY, JSON.stringify(value));
     else localStorage.removeItem(CACHE_KEY);
   } catch {
     // Solo se pierde la caché que evita el parpadeo
   }
 }
 
-function apply(selection) {
-  const item = findBackground(selection);
-  current = item ? selection : DEFAULT_BACKGROUND;
-  cache(item);
+// Pinta el fondo efectivo; blur permite previsualizar el control deslizante sin guardar
+function paint(blur = image?.blur ? image.blurAmount : 0) {
+  if (imageActive()) {
+    const css = imageCss(image.dataUrl);
+    cache({ css, tone: image.tone, blur: blur || undefined });
+    setBackground(css, image.tone, blur);
+    return;
+  }
+  const item = findBackground(current);
+  cache(item && { css: item.css, tone: item.tone });
   setBackground(item?.css ?? null, item?.tone);
+}
+
+function render() {
+  if (!findBackground(current)) current = DEFAULT_BACKGROUND;
+  paint();
   renderOptions();
+  renderImageControls();
   if (openType) renderGrid();
 }
 
+// Aplica y guarda la imagen (null la borra y deja ver el fondo sincronizado).
+// Si no se puede guardar, vuelve a la anterior y avisa; devuelve si se guardó.
+async function saveImage(next) {
+  const previous = image;
+  image = next;
+  render();
+  try {
+    if (next) await chrome.storage.local.set({ [KEYS.image]: next });
+    else await chrome.storage.local.remove(KEYS.image);
+    showError(null);
+    return true;
+  } catch (err) {
+    console.warn("No se pudo guardar la imagen de fondo", err);
+    image = previous;
+    render();
+    showError("save");
+    return false;
+  }
+}
+
 async function choose(selection) {
-  apply(selection);
+  current = selection;
+  if (imageActive()) await saveImage({ ...image, active: false });
+  else render();
   await chrome.storage.sync.set({ [KEYS.background]: selection });
 }
 
-// Tarjetas principales: Predeterminado, Colores sólidos, Degradados
+function showError(reason) {
+  error.textContent = reason ? ERRORS[reason] : "";
+}
+
+// Tarjetas principales: Predeterminado, Colores sólidos, Degradados, Imagen
 function renderOptions() {
-  const preview = (type) => (current.type === type ? findBackground(current) : PREVIEW[type]);
+  const selected = (type) => !imageActive() && current.type === type;
+  const preview = (type) => (selected(type) ? findBackground(current) : PREVIEW[type]);
   const tiles = [
-    { label: "Predeterminado", css: null, active: current.type === "default", onClick: () => choose(DEFAULT_BACKGROUND) },
-    { label: BACKGROUNDS.solid.title, css: preview("solid").css, active: current.type === "solid", onClick: () => openGrid("solid") },
-    { label: BACKGROUNDS.gradient.title, css: preview("gradient").css, active: current.type === "gradient", onClick: () => openGrid("gradient") },
+    { label: "Predeterminado", css: null, active: selected("default"), onClick: () => choose(DEFAULT_BACKGROUND) },
+    { label: BACKGROUNDS.solid.title, css: preview("solid").css, active: selected("solid"), onClick: () => openGrid("solid") },
+    { label: BACKGROUNDS.gradient.title, css: preview("gradient").css, active: selected("gradient"), onClick: () => openGrid("gradient") },
+    {
+      label: "Imagen",
+      css: image && imageCss(image.dataUrl),
+      icon: !image,
+      active: imageActive(),
+      onClick: () => (image ? saveImage({ ...image, active: true }) : fileInput.click()),
+    },
   ];
 
   options.replaceChildren(
-    ...tiles.map(({ label, css, active, onClick }) => {
+    ...tiles.map(({ label, css, icon, active, onClick }) => {
       const tile = document.createElement("button");
       tile.type = "button";
       tile.className = "bg-tile";
@@ -62,7 +139,8 @@ function renderOptions() {
       const swatch = document.createElement("span");
       swatch.className = css ? "bg-preview" : "bg-preview bg-default";
       if (css) swatch.style.background = css;
-      swatch.innerHTML = checkIcon("swatch-check");
+      if (icon) swatch.classList.add("bg-image-empty");
+      swatch.innerHTML = (icon ? ICONS.image : "") + checkIcon("swatch-check");
 
       const text = document.createElement("span");
       text.textContent = label;
@@ -72,6 +150,21 @@ function renderOptions() {
       return tile;
     })
   );
+}
+
+// Interruptor, control deslizante y botones: solo con la imagen como fondo
+function renderImageControls() {
+  imageControls.hidden = !imageActive();
+  if (!imageActive()) return;
+  blurSwitch.setAttribute("aria-checked", String(image.blur));
+  blurRow.hidden = !image.blur;
+  blurAmount.value = image.blurAmount;
+  showBlurValue(image.blurAmount);
+}
+
+function showBlurValue(amount) {
+  blurValue.textContent = `${amount} px`;
+  blurAmount.setAttribute("aria-valuetext", `${amount} píxeles`);
 }
 
 // Cuadrícula de una categoría (colores o degradados)
@@ -88,7 +181,7 @@ function renderGrid() {
       radio.type = "radio";
       radio.name = "bg-swatch";
       radio.value = item.id;
-      radio.checked = isSameBackground(current, selection);
+      radio.checked = !imageActive() && isSameBackground(current, selection);
       radio.setAttribute("aria-label", item.name);
       radio.addEventListener("change", () => choose(selection));
 
@@ -101,6 +194,46 @@ function renderGrid() {
       return swatch;
     })
   );
+}
+
+// Reduce la imagen a JPEG (con blanco bajo las transparencias) y mide su tono
+function encode(bitmap, maxSide, quality) {
+  const { width, height } = fitSize(bitmap.width, bitmap.height, maxSide);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, width, height);
+  context.drawImage(bitmap, 0, 0, width, height);
+  return canvas.toDataURL("image/jpeg", quality);
+}
+
+function measureTone(bitmap) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 32;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  context.drawImage(bitmap, 0, 0, 32, 32);
+  return toneFromPixels(context.getImageData(0, 0, 32, 32).data);
+}
+
+async function loadFile(file) {
+  showError(null);
+  const invalid = checkImageFile(file);
+  if (invalid) return showError(invalid);
+
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    return showError("type");
+  }
+  let dataUrl = encode(bitmap, IMAGE_MAX_SIDE, 0.85);
+  if (dataUrl.length > MAX_DATA_URL) dataUrl = encode(bitmap, 1920, 0.75);
+  const tone = measureTone(bitmap);
+  bitmap.close();
+
+  await saveImage(normalizeImage({ ...image, dataUrl, tone, active: true }));
 }
 
 function openGrid(type) {
@@ -118,9 +251,42 @@ function showMain() {
   viewMain.hidden = false;
 }
 
-back.addEventListener("click", showMain);
-drawer.addEventListener("close", showMain);
-onSyncChange(KEYS.background, (value) => apply(value ?? DEFAULT_BACKGROUND));
+fileInput.addEventListener("change", () => {
+  const [file] = fileInput.files;
+  // Vaciar permite volver a elegir el mismo archivo
+  fileInput.value = "";
+  if (file) loadFile(file);
+});
+document.getElementById("bg-image-change").addEventListener("click", () => fileInput.click());
+document.getElementById("bg-image-remove").addEventListener("click", () => saveImage(null));
+blurSwitch.addEventListener("click", () => saveImage({ ...image, blur: !image.blur }));
+// Mientras se arrastra solo se previsualiza; se guarda al soltar
+blurAmount.addEventListener("input", () => {
+  const amount = clampBlur(blurAmount.value);
+  showBlurValue(amount);
+  paint(amount);
+});
+blurAmount.addEventListener("change", () => saveImage({ ...image, blurAmount: clampBlur(blurAmount.value) }));
 
-const { [KEYS.background]: saved } = await chrome.storage.sync.get(KEYS.background);
-apply(saved ?? DEFAULT_BACKGROUND);
+back.addEventListener("click", showMain);
+drawer.addEventListener("close", () => {
+  showMain();
+  showError(null);
+});
+onSyncChange(KEYS.background, (value) => {
+  current = value ?? DEFAULT_BACKGROUND;
+  render();
+});
+// Otra pestaña de este equipo cambió la imagen
+onLocalChange(KEYS.image, (value) => {
+  image = normalizeImage(value);
+  render();
+});
+
+const [{ [KEYS.background]: saved }, { [KEYS.image]: savedImage }] = await Promise.all([
+  chrome.storage.sync.get(KEYS.background),
+  chrome.storage.local.get(KEYS.image),
+]);
+current = saved ?? DEFAULT_BACKGROUND;
+image = normalizeImage(savedImage);
+render();

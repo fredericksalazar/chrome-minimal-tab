@@ -131,7 +131,7 @@ dialog.drawer[open] {
 /* Selector de fondo */
 .bg-options {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
@@ -254,4 +254,110 @@ dialog.drawer[open] {
 
 .bg-tile.selected .swatch-check {
   visibility: visible;
+}
+
+/* Tarjeta "Imagen" sin imagen guardada: icono centrado */
+.bg-image-empty {
+  display: grid;
+  place-items: center;
+}
+
+.bg-image-empty > svg:not(.swatch-check) {
+  width: 28px;
+  height: 28px;
+  fill: var(--muted);
+}
+
+/* Controles de la imagen: desenfoque, intensidad, cambiar y quitar */
+.bg-image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.bg-image-controls[hidden],
+.bg-row[hidden] {
+  display: none;
+}
+
+.bg-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+
+.bg-row > span {
+  flex: 1;
+}
+
+.bg-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Interruptor estilo Chrome */
+.switch {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: var(--muted);
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--dialog-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+
+.switch[aria-checked="true"] {
+  background: var(--primary);
+  opacity: 1;
+}
+
+.switch[aria-checked="true"]::after {
+  background: var(--primary);
+  transform: translateX(18px);
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
+}
+
+.blur-amount {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--primary);
+}
+
+.blur-value {
+  min-width: 40px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.bg-error {
+  margin: 12px 0 0;
+  color: var(--danger);
+}
+
+.bg-error:empty {
+  display: none;
 }

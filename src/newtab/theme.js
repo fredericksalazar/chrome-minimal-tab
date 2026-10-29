@@ -12,14 +12,22 @@ export function isDark() {
   return tone ? tone === "dark" : prefersDark.matches;
 }
 
-// css: valor de fondo (color o degradado); null vuelve al predeterminado
-export function setBackground(css, tone) {
+// css: valor de fondo (color, degradado o imagen); null vuelve al predeterminado.
+// blur: píxeles de desenfoque de la imagen, o 0 para verla nítida.
+export function setBackground(css, tone, blur = 0) {
   if (css) {
     root.style.setProperty("--page-bg", css);
     root.dataset.tone = tone;
   } else {
     root.style.removeProperty("--page-bg");
     delete root.dataset.tone;
+  }
+  if (css && blur) {
+    root.style.setProperty("--page-blur", `${blur}px`);
+    root.dataset.blur = "";
+  } else {
+    root.style.removeProperty("--page-blur");
+    delete root.dataset.blur;
   }
   notify();
 }

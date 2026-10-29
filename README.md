@@ -5,7 +5,7 @@ Extensión de Chrome que sustituye la nueva pestaña por una con el diseño de G
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
 - Hora, ciudad y clima.
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
-- Panel «Personalizar»: motor de búsqueda (con su logo oficial) y fondo (colores sólidos o degradados).
+- Panel «Personalizar»: motor de búsqueda (con su logo oficial) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
 
 ## Instalación
@@ -26,7 +26,7 @@ src/lib/               Lógica sin interfaz, compartida y testeable
   url.js                 Normalizar URLs, favicons
   storage.js             Claves de chrome.storage
   engines.js             Catálogo de motores de búsqueda
-  backgrounds.js         Catálogo de fondos
+  backgrounds.js         Catálogo de fondos e imagen propia (tamaño, tono, desenfoque)
   speedtest.js           Motor de la prueba de velocidad
   todos.js               Tareas, subtareas y limpieza diaria
 src/newtab/            Un módulo por cada parte de la página
@@ -49,7 +49,7 @@ Reglas de la arquitectura:
 
 - `src/lib` no toca el DOM; así se puede usar desde el service worker y probar con Node.
 - Cada módulo de `src/newtab` es dueño de su parte del HTML y se comunica con los demás solo a través de `chrome.storage` o de `theme.js`.
-- Las preferencias van en `chrome.storage.sync` (viajan con la cuenta) y las cachés en `chrome.storage.local`.
+- Las preferencias van en `chrome.storage.sync` (viajan con la cuenta) y las cachés y la imagen de fondo en `chrome.storage.local`.
 
 ## Tests
 

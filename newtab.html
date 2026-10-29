@@ -148,6 +148,23 @@
       <section class="drawer-section">
         <h3>Fondo</h3>
         <div id="bg-options" class="bg-options"></div>
+        <div id="bg-image-controls" class="bg-image-controls" hidden>
+          <div class="bg-row">
+            <span id="blur-label">Desenfocar imagen</span>
+            <button id="blur-switch" class="switch" type="button" role="switch" aria-checked="false" aria-labelledby="blur-label"></button>
+          </div>
+          <label id="blur-amount-row" class="bg-row" hidden>
+            <span>Intensidad</span>
+            <input id="blur-amount" class="blur-amount" type="range" min="2" max="40" step="1" aria-label="Intensidad del desenfoque">
+            <output id="blur-value" class="blur-value" for="blur-amount"></output>
+          </label>
+          <div class="bg-actions">
+            <button id="bg-image-change" class="btn" type="button">Cambiar imagen</button>
+            <button id="bg-image-remove" class="btn" type="button">Quitar imagen</button>
+          </div>
+        </div>
+        <p id="bg-error" class="bg-error" role="alert"></p>
+        <input id="bg-file" type="file" accept="image/*" hidden>
       </section>
 
       <section class="drawer-section">
