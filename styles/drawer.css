@@ -70,6 +70,61 @@ dialog.drawer[open] {
   margin: 0 0 12px;
 }
 
+/* Tema: tres opciones en una sola fila, como un control segmentado */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--input-bg);
+}
+
+.theme-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.theme-option:hover {
+  color: var(--text);
+}
+
+.theme-option:has(input:checked) {
+  background: var(--dialog-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.theme-option:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.theme-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-option svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .engine-list {
   display: flex;
   flex-direction: column;

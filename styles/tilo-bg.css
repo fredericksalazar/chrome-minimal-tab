@@ -1,7 +1,7 @@
 /* Fondo de Tilo («campo cuántico» + «entrelazamiento»): nubes de la paleta que
    derivan, ondas de interferencia y el aura respirando detrás del logo y el
    buscador. Solo se animan transform y opacity para que lo mueva la GPU.
-   Se oculta con cualquier fondo con tono propio (data-tone) o con Liso (data-plain). */
+   Sigue a data-theme (Claro, Oscuro o Dispositivo). Se oculta con cualquier fondo con tono propio (data-tone) o con Liso (data-plain). */
 
 .tilo-bg {
   --tilo-base: radial-gradient(120% 90% at 50% 0%, #1a1640 0%, #0c0b1d 55%, #07060f 100%);
@@ -17,13 +17,11 @@
   pointer-events: none;
 }
 
-@media (prefers-color-scheme: light) {
-  .tilo-bg {
-    --tilo-base: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f7f5fc 55%, #f1eef8 100%);
-    --tilo-cloud-opacity: 0.38;
-    --tilo-wave: rgba(31, 35, 40, 0.04);
-    --tilo-aura-opacity: 0.55;
-  }
+html[data-theme="light"] .tilo-bg {
+  --tilo-base: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f7f5fc 55%, #f1eef8 100%);
+  --tilo-cloud-opacity: 0.38;
+  --tilo-wave: rgba(31, 35, 40, 0.04);
+  --tilo-aura-opacity: 0.55;
 }
 
 html:is([data-tone], [data-plain]) .tilo-bg {
@@ -55,10 +53,8 @@ html:is([data-tone], [data-plain]) .tilo-bg {
   animation: tilo-drift-b 46s ease-in-out infinite alternate;
 }
 
-@media (prefers-color-scheme: light) {
-  .tilo-cloud-b {
-    mix-blend-mode: multiply;
-  }
+html[data-theme="light"] .tilo-cloud-b {
+  mix-blend-mode: multiply;
 }
 
 /* Ondas finas de interferencia alrededor del aura */

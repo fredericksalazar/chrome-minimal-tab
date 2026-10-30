@@ -2,6 +2,7 @@
 // sync: preferencias que viajan con la cuenta. local: cachés y datos de este equipo.
 export const KEYS = {
   engine: "searchEngine",
+  theme: "theme",
   background: "background",
   image: "backgroundImage",
   folder: "folderId",

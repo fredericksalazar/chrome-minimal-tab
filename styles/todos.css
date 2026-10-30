@@ -10,10 +10,8 @@
   max-height: calc(100vh - 120px);
 }
 
-@media (prefers-color-scheme: dark) {
-  html:not([data-tone="light"]) .todo {
-    --todo-done: #81c995;
-  }
+html[data-theme="dark"]:not([data-tone="light"]) .todo {
+  --todo-done: #81c995;
 }
 
 html[data-tone="dark"] .todo {

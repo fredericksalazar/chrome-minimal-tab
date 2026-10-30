@@ -1,7 +1,8 @@
-/* Base: tokens de color, modo oscuro, paleta según el fondo, logo y buscador */
+/* Base: tokens de color, modo oscuro, paleta según el fondo, logo y buscador.
+   data-theme ("light" | "dark") lo pone theme-boot.js según Claro, Oscuro o Dispositivo. */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: #ffffff;
   --text: #202124;
   --muted: #5f6368;
@@ -21,26 +22,25 @@
   --selected-bg: #e8f0fe;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #202124;
-    --text: #e8eaed;
-    --muted: #9aa0a6;
-    --primary: #8ab4f8;
-    --on-primary: #202124;
-    --danger: #f28b82;
-    --tile-icon-bg: #3c4043;
-    --hover: rgba(232, 234, 237, 0.08);
-    --search-bg: #303134;
-    --search-border: transparent;
-    --search-shadow: 0 1px 6px rgba(23, 23, 23, 0.6);
-    --dialog-bg: #292a2d;
-    --input-bg: #3c4043;
-    --toast-bg: #e8eaed;
-    --toast-text: #202124;
-    --toast-action: #1a73e8;
-    --selected-bg: rgba(138, 180, 248, 0.16);
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #202124;
+  --text: #e8eaed;
+  --muted: #9aa0a6;
+  --primary: #8ab4f8;
+  --on-primary: #202124;
+  --danger: #f28b82;
+  --tile-icon-bg: #3c4043;
+  --hover: rgba(232, 234, 237, 0.08);
+  --search-bg: #303134;
+  --search-border: transparent;
+  --search-shadow: 0 1px 6px rgba(23, 23, 23, 0.6);
+  --dialog-bg: #292a2d;
+  --input-bg: #3c4043;
+  --toast-bg: #e8eaed;
+  --toast-text: #202124;
+  --toast-action: #1a73e8;
+  --selected-bg: rgba(138, 180, 248, 0.16);
 }
 
 * {
