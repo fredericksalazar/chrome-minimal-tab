@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Minimal New Tab",
+  "name": "Tilo — Nueva pestaña limpia",
+  "short_name": "Tilo",
   "version": "2.1.0",
-  "description": "Nueva pestaña con el diseño de Google y hasta 100 accesos directos.",
+  "description": "Nueva pestaña limpia y rápida: hasta 100 accesos directos sincronizados, tareas, clima y fondos. Sin cuentas ni rastreo.",
+  "homepage_url": "https://fredericksalazar.github.io/",
   "minimum_chrome_version": "111",
   "icons": {
     "16": "assets/icons/icon16.png",
@@ -18,7 +20,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Añadir a Nueva pestaña",
+    "default_title": "Añadir a Tilo",
     "default_icon": {
       "16": "assets/icons/icon16.png",
       "32": "assets/icons/icon32.png"
@@ -30,7 +32,7 @@
         "default": "Alt+Shift+D",
         "mac": "Alt+Shift+D"
       },
-      "description": "Añadir la página actual a Nueva pestaña"
+      "description": "Añadir la página actual a Tilo"
     }
   },
   "host_permissions": [

@@ -1,6 +1,6 @@
-# Minimal New Tab
+# Tilo — Nueva pestaña limpia
 
-Extensión de Chrome que sustituye la nueva pestaña por una con el diseño de Google y añade:
+Extensión de Chrome que sustituye la nueva pestaña por una limpia, rápida y privada (sin cuentas ni rastreo) y añade:
 
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
 - Hora, ciudad y clima.
