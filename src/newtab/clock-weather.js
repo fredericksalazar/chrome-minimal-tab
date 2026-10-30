@@ -1,6 +1,9 @@
 // Hora, ciudad y clima en la esquina superior izquierda.
-// Clima: Open-Meteo. Ciudad: geolocalización + BigDataCloud, o por IP si falla.
-import { KEYS } from "../lib/storage.js";
+// Clima: Open-Meteo. Ciudad: geolocalización + BigDataCloud, o por IP si falla,
+// o una ciudad escrita a mano. Nada se pide hasta que el usuario elige en el aviso.
+import { KEYS, onLocalChange } from "../lib/storage.js";
+import { PRIVACY_URL } from "../lib/support.js";
+import { forecastUrl, geocodingUrl, needsChoice, parseGeocoding, sourceLabel } from "../lib/weather.js";
 
 const WEATHER_TTL = 30 * 60 * 1000;
 const LOCATION_TTL = 6 * 60 * 60 * 1000;
@@ -11,6 +14,16 @@ const city = document.getElementById("city");
 const weather = document.getElementById("weather");
 const weatherIcon = document.getElementById("weather-icon");
 const temperature = document.getElementById("temperature");
+const card = document.getElementById("weather-card");
+const cityForm = document.getElementById("weather-city-form");
+const cityInput = document.getElementById("weather-city-input");
+const cityStatus = document.getElementById("weather-city-status");
+const cityResults = document.getElementById("weather-city-results");
+const weatherState = document.getElementById("weather-state");
+const offButton = document.getElementById("weather-off");
+
+// Elección guardada en este equipo: { mode: "location" | "city" | "off", city? }
+let source;
 
 const timeFormat = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit" });
 const dateFormat = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long" });
@@ -82,6 +95,8 @@ async function locateByIp() {
 }
 
 async function getLocation() {
+  if (source.mode === "city") return { ...source.city, city: source.city.name };
+
   const { [KEYS.location]: cached } = await chrome.storage.local.get(KEYS.location);
   if (cached && Date.now() - cached.savedAt < LOCATION_TTL) return cached;
 
@@ -92,15 +107,16 @@ async function getLocation() {
 }
 
 async function updateWeather() {
+  renderSource();
+  if (needsChoice(source) || source.mode === "off") return;
+
   const { [KEYS.weather]: cached } = await chrome.storage.local.get(KEYS.weather);
   if (cached) render(cached);
   if (cached && Date.now() - cached.savedAt < WEATHER_TTL) return;
 
   try {
     const { latitude, longitude, city: cityName } = await getLocation();
-    const { current } = await fetchJson(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day&timezone=auto`
-    );
+    const { current } = await fetchJson(forecastUrl(latitude, longitude));
     const data = {
       city: cityName,
       temperature: current.temperature_2m,
@@ -116,6 +132,77 @@ async function updateWeather() {
   }
 }
 
+// Tarjeta del aviso, clima visible y estado en «Personalizar» según la elección
+function renderSource() {
+  const ask = needsChoice(source);
+  card.hidden = !ask;
+  if (ask || source.mode === "off") weather.hidden = true;
+  weatherState.textContent = sourceLabel(source);
+  offButton.hidden = ask || source.mode === "off";
+}
+
+// Cambiar de origen invalida la ubicación y el tiempo guardados
+async function choose(next) {
+  await chrome.storage.local.remove([KEYS.location, KEYS.weather]);
+  await chrome.storage.local.set({ [KEYS.weatherSource]: next });
+  source = next;
+  cityForm.hidden = true;
+  updateWeather();
+}
+
+async function searchCity(query) {
+  cityResults.replaceChildren();
+  cityStatus.textContent = "Buscando…";
+  try {
+    const places = parseGeocoding(await fetchJson(geocodingUrl(query)));
+    cityStatus.textContent = places.length ? "" : "No encontramos esa ciudad";
+    cityResults.replaceChildren(
+      ...places.map((place) => {
+        const item = document.createElement("li");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "weather-result";
+        button.textContent = place.detail;
+        button.addEventListener("click", () => {
+          const { name, latitude, longitude } = place;
+          choose({ mode: "city", city: { name, latitude, longitude } });
+        });
+        item.append(button);
+        return item;
+      })
+    );
+  } catch (error) {
+    console.warn("No se pudo buscar la ciudad", error);
+    cityStatus.textContent = "No se pudo buscar. Revisa tu conexión";
+  }
+}
+
+document.querySelectorAll(".privacy-link").forEach((link) => (link.href = PRIVACY_URL));
+document.getElementById("weather-use-location").addEventListener("click", () => choose({ mode: "location" }));
+document.getElementById("weather-dismiss").addEventListener("click", () => choose({ mode: "off" }));
+document.getElementById("weather-use-city").addEventListener("click", () => {
+  cityForm.hidden = false;
+  cityInput.focus();
+});
+cityForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const query = cityInput.value.trim();
+  if (query) searchCity(query);
+});
+offButton.addEventListener("click", () => choose({ mode: "off" }));
+// «Cambiar» cierra el panel y vuelve a mostrar el aviso sin olvidar aún la elección
+document.getElementById("weather-change").addEventListener("click", () => {
+  document.getElementById("settings").close();
+  card.hidden = false;
+});
+// Otra pestaña cambió la elección; la propia ya se aplicó en choose()
+onLocalChange(KEYS.weatherSource, (next) => {
+  if (JSON.stringify(next) === JSON.stringify(source)) return;
+  source = next;
+  updateWeather();
+});
+
 tick();
+({ [KEYS.weatherSource]: source } = await chrome.storage.local.get(KEYS.weatherSource));
 updateWeather();
 setInterval(updateWeather, WEATHER_TTL);

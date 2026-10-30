@@ -4,6 +4,7 @@
   position: fixed;
   top: 20px;
   left: 24px;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -43,4 +44,104 @@
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* Aviso antes de usar la ubicación para el clima */
+.weather-card {
+  width: min(300px, calc(100vw - 48px));
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--dialog-bg);
+  color: var(--text);
+  box-shadow: 0 2px 12px rgba(32, 33, 36, 0.18);
+  font-size: 13px;
+}
+
+.weather-card[hidden] {
+  display: none;
+}
+
+.weather-card h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.weather-card p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.weather-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.weather-card .btn {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.weather-city input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.weather-city[hidden] {
+  display: none;
+}
+
+.weather-card .weather-note {
+  margin: 6px 0;
+  font-size: 12px;
+}
+
+.weather-card .weather-note:empty {
+  display: none;
+}
+
+.weather-results {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.weather-result {
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.weather-result:hover,
+.weather-result:focus-visible {
+  background: var(--hover);
+}
+
+.weather-card .btn:focus-visible,
+.weather-result:focus-visible,
+.weather-privacy:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.weather-privacy {
+  color: var(--primary);
+  font-size: 12px;
 }
