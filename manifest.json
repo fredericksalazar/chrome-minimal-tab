@@ -41,6 +41,7 @@
     "bookmarks",
     "contextMenus",
     "geolocation",
+    "search",
     "storage"
   ]
 }

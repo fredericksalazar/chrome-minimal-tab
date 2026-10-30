@@ -113,6 +113,13 @@ dialog.drawer[open] {
   border-radius: 4px;
 }
 
+.engine-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: var(--muted);
+}
+
 .engine-name {
   flex: 1;
 }

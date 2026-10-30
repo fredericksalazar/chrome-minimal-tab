@@ -5,7 +5,8 @@ Extensión de Chrome que sustituye la nueva pestaña por una con el diseño de G
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
 - Hora, ciudad y clima.
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
-- Panel «Personalizar»: motor de búsqueda (con su logo oficial) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
+- Buscador que usa por defecto el motor configurado en Chrome.
+- Panel «Personalizar»: motor de búsqueda (el de Chrome u otro de la lista, con su logo oficial) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
 - Botones discretos abajo en el centro para apoyar el proyecto (Buy Me a Coffee o PayPal) y visitar la web del autor; se abren en otra pestaña.
 

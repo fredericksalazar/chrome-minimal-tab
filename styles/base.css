@@ -122,6 +122,15 @@ main {
   visibility: visible;
 }
 
+/* Motor de Chrome: sin logo, el buscador sube */
+.brand.no-logo {
+  height: 40px;
+}
+
+.logo[hidden] {
+  display: none;
+}
+
 .logo {
   display: block;
   width: auto;
