@@ -18,10 +18,10 @@
 }
 
 html[data-theme="light"] .tilo-bg {
-  --tilo-base: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f7f5fc 55%, #f1eef8 100%);
-  --tilo-cloud-opacity: 0.38;
-  --tilo-wave: rgba(31, 35, 40, 0.04);
-  --tilo-aura-opacity: 0.55;
+  --tilo-base: radial-gradient(120% 90% at 50% 0%, #f7f4fe 0%, #ebe6f8 55%, #e1daf2 100%);
+  --tilo-cloud-opacity: 0.72;
+  --tilo-wave: rgba(31, 35, 40, 0.07);
+  --tilo-aura-opacity: 1;
 }
 
 html:is([data-tone], [data-plain]) .tilo-bg {
