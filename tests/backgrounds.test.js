@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { BLUR, IMAGE_MAX_BYTES, checkImageFile, clampBlur, fitSize, imageCss, normalizeImage, toneFromPixels } from "../src/lib/backgrounds.js";
+import {
+  BLUR,
+  DEFAULT_BACKGROUND,
+  IMAGE_MAX_BYTES,
+  PLAIN_BACKGROUND,
+  checkImageFile,
+  clampBlur,
+  fitSize,
+  imageCss,
+  normalizeImage,
+  normalizeSelection,
+  toneFromPixels,
+} from "../src/lib/backgrounds.js";
 
 const DATA_URL = "data:image/jpeg;base64,/9j/4AAQSkZJRg==";
 const pixels = (...rgba) => Uint8ClampedArray.from(rgba.flat());
@@ -58,4 +70,12 @@ test("normalizeImage completa valores por defecto y descarta datos no válidos",
   assert.equal(normalizeImage(undefined), null);
   assert.equal(normalizeImage({ dataUrl: "https://example.com/a.jpg" }), null);
   assert.equal(normalizeImage({ dataUrl: 'data:image/png;base64,AA")' }), null);
+});
+
+test("normalizeSelection conserva Liso y los fondos del catálogo; lo demás es Tilo", () => {
+  assert.deepEqual(normalizeSelection({ type: "plain" }), PLAIN_BACKGROUND);
+  assert.deepEqual(normalizeSelection({ type: "gradient", id: "aurora" }), { type: "gradient", id: "aurora" });
+  assert.deepEqual(normalizeSelection({ type: "default" }), DEFAULT_BACKGROUND);
+  assert.deepEqual(normalizeSelection({ type: "solid", id: "no-existe" }), DEFAULT_BACKGROUND);
+  assert.deepEqual(normalizeSelection(undefined), DEFAULT_BACKGROUND);
 });

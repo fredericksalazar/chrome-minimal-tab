@@ -40,10 +40,18 @@ export const BACKGROUNDS = {
   },
 };
 
+// "default" es el fondo animado de Tilo; "plain", el color liso del tema
 export const DEFAULT_BACKGROUND = { type: "default" };
+export const PLAIN_BACKGROUND = { type: "plain" };
 
 export function findBackground(selection) {
   return BACKGROUNDS[selection?.type]?.items.find((item) => item.id === selection.id) ?? null;
+}
+
+// Selección guardada utilizable; lo desconocido vuelve al fondo de Tilo
+export function normalizeSelection(selection) {
+  if (selection?.type === "plain") return PLAIN_BACKGROUND;
+  return findBackground(selection) ? selection : DEFAULT_BACKGROUND;
 }
 
 export function isSameBackground(a, b) {

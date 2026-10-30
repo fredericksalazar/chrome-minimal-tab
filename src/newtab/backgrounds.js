@@ -1,10 +1,11 @@
-// Sección "Fondo" del panel: predeterminado, colores sólidos, degradados o una
+// Sección "Fondo" del panel: Tilo (animado), liso, colores sólidos, degradados o una
 // imagen propia. La imagen vive solo en este equipo (storage.local) y, mientras
 // está activa, manda sobre el fondo sincronizado.
 import {
   BACKGROUNDS,
   DEFAULT_BACKGROUND,
   IMAGE_MAX_SIDE,
+  PLAIN_BACKGROUND,
   checkImageFile,
   clampBlur,
   findBackground,
@@ -12,6 +13,7 @@ import {
   imageCss,
   isSameBackground,
   normalizeImage,
+  normalizeSelection,
   toneFromPixels,
 } from "../lib/backgrounds.js";
 import { KEYS, onLocalChange, onSyncChange } from "../lib/storage.js";
@@ -59,8 +61,11 @@ function cache(value) {
   }
 }
 
-// Pinta el fondo efectivo; blur permite previsualizar el control deslizante sin guardar
+// Pinta el fondo efectivo; blur permite previsualizar el control deslizante sin guardar.
+// data-plain oculta el fondo de Tilo, igual que cualquier fondo con tono propio.
 function paint(blur = image?.blur ? image.blurAmount : 0) {
+  const plain = !imageActive() && current.type === "plain";
+  document.documentElement.toggleAttribute("data-plain", plain);
   if (imageActive()) {
     const css = imageCss(image.dataUrl);
     cache({ css, tone: image.tone, blur: blur || undefined });
@@ -68,12 +73,12 @@ function paint(blur = image?.blur ? image.blurAmount : 0) {
     return;
   }
   const item = findBackground(current);
-  cache(item && { css: item.css, tone: item.tone });
+  cache(item ? { css: item.css, tone: item.tone } : plain && { plain: true });
   setBackground(item?.css ?? null, item?.tone);
 }
 
 function render() {
-  if (!findBackground(current)) current = DEFAULT_BACKGROUND;
+  current = normalizeSelection(current);
   paint();
   renderOptions();
   renderImageControls();
@@ -111,12 +116,13 @@ function showError(reason) {
   error.textContent = reason ? ERRORS[reason] : "";
 }
 
-// Tarjetas principales: Predeterminado, Colores sólidos, Degradados, Imagen
+// Tarjetas principales: Tilo (a lo ancho), Liso, Colores sólidos, Degradados, Imagen
 function renderOptions() {
   const selected = (type) => !imageActive() && current.type === type;
   const preview = (type) => (selected(type) ? findBackground(current) : PREVIEW[type]);
   const tiles = [
-    { label: "Predeterminado", css: null, active: selected("default"), onClick: () => choose(DEFAULT_BACKGROUND) },
+    { label: "Tilo", tilo: true, active: selected("default"), onClick: () => choose(DEFAULT_BACKGROUND) },
+    { label: "Liso", css: null, active: selected("plain"), onClick: () => choose(PLAIN_BACKGROUND) },
     { label: BACKGROUNDS.solid.title, css: preview("solid").css, active: selected("solid"), onClick: () => openGrid("solid") },
     { label: BACKGROUNDS.gradient.title, css: preview("gradient").css, active: selected("gradient"), onClick: () => openGrid("gradient") },
     {
@@ -129,15 +135,15 @@ function renderOptions() {
   ];
 
   options.replaceChildren(
-    ...tiles.map(({ label, css, icon, active, onClick }) => {
+    ...tiles.map(({ label, css, tilo, icon, active, onClick }) => {
       const tile = document.createElement("button");
       tile.type = "button";
-      tile.className = "bg-tile";
+      tile.className = tilo ? "bg-tile bg-tile-wide" : "bg-tile";
       tile.classList.toggle("selected", active);
       tile.setAttribute("aria-pressed", String(active));
 
       const swatch = document.createElement("span");
-      swatch.className = css ? "bg-preview" : "bg-preview bg-default";
+      swatch.className = tilo ? "bg-preview bg-tilo" : css ? "bg-preview" : "bg-preview bg-default";
       if (css) swatch.style.background = css;
       if (icon) swatch.classList.add("bg-image-empty");
       swatch.innerHTML = (icon ? ICONS.image : "") + checkIcon("swatch-check");

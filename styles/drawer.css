@@ -161,6 +161,15 @@ dialog.drawer[open] {
   aspect-ratio: 4 / 3;
 }
 
+/* El fondo de Tilo ocupa la fila entera */
+.bg-tile-wide {
+  grid-column: 1 / -1;
+}
+
+.bg-tile-wide .bg-preview {
+  aspect-ratio: 8 / 3;
+}
+
 .bg-default {
   background: var(--input-bg);
 }

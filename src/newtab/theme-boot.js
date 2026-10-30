@@ -3,6 +3,8 @@
 // caché al día con la misma clave ("background").
 try {
   const saved = JSON.parse(localStorage.getItem("background"));
+  // Sin caché se ve el fondo de Tilo; "plain" lo cambia por el color liso del tema
+  if (saved?.plain) document.documentElement.dataset.plain = "";
   if (saved?.css) {
     document.documentElement.style.setProperty("--page-bg", saved.css);
     document.documentElement.dataset.tone = saved.tone;

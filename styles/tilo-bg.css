@@ -1,0 +1,191 @@
+/* Fondo de Tilo («campo cuántico» + «entrelazamiento»): nubes de la paleta que
+   derivan, ondas de interferencia y el aura respirando detrás del logo y el
+   buscador. Solo se animan transform y opacity para que lo mueva la GPU.
+   Se oculta con cualquier fondo con tono propio (data-tone) o con Liso (data-plain). */
+
+.tilo-bg {
+  --tilo-base: radial-gradient(120% 90% at 50% 0%, #1a1640 0%, #0c0b1d 55%, #07060f 100%);
+  --tilo-cloud-opacity: 0.55;
+  --tilo-wave: rgba(255, 255, 255, 0.045);
+  --tilo-aura-opacity: 0.9;
+  --tilo-center: calc(max(78px, 9vh + 46px) + 120px);
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--tilo-base);
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: light) {
+  .tilo-bg {
+    --tilo-base: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f7f5fc 55%, #f1eef8 100%);
+    --tilo-cloud-opacity: 0.38;
+    --tilo-wave: rgba(31, 35, 40, 0.04);
+    --tilo-aura-opacity: 0.55;
+  }
+}
+
+html:is([data-tone], [data-plain]) .tilo-bg {
+  display: none;
+}
+
+/* Nubes: dos capas más grandes que la ventana que se cruzan muy despacio */
+.tilo-cloud {
+  position: absolute;
+  inset: -25%;
+  opacity: var(--tilo-cloud-opacity);
+  will-change: transform;
+}
+
+.tilo-cloud-a {
+  background:
+    radial-gradient(closest-side at 22% 30%, #7c6cf2, transparent),
+    radial-gradient(closest-side at 78% 72%, #4fd1a5, transparent),
+    radial-gradient(closest-side at 40% 85%, #5ab8f0 0%, transparent 80%);
+  animation: tilo-drift-a 38s ease-in-out infinite alternate;
+}
+
+.tilo-cloud-b {
+  background:
+    radial-gradient(closest-side at 75% 22%, #f27ba8, transparent),
+    radial-gradient(closest-side at 18% 70%, #ff9f6e 0%, transparent 75%),
+    radial-gradient(closest-side at 62% 92%, #ffc857 0%, transparent 60%);
+  mix-blend-mode: screen;
+  animation: tilo-drift-b 46s ease-in-out infinite alternate;
+}
+
+@media (prefers-color-scheme: light) {
+  .tilo-cloud-b {
+    mix-blend-mode: multiply;
+  }
+}
+
+/* Ondas finas de interferencia alrededor del aura */
+.tilo-waves {
+  position: absolute;
+  inset: 0;
+  background: repeating-radial-gradient(circle at 50% var(--tilo-center), var(--tilo-wave) 0 1px, transparent 1px 22px);
+  -webkit-mask: radial-gradient(circle at 50% var(--tilo-center), #000 0, transparent 70vmax);
+  mask: radial-gradient(circle at 50% var(--tilo-center), #000 0, transparent 70vmax);
+}
+
+/* Aura: halo difuso y anillo nítido, que respiran juntos y giran */
+.tilo-aura,
+.tilo-orbit {
+  position: absolute;
+  left: 50%;
+  top: var(--tilo-center);
+  width: min(560px, 120vw);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.tilo-aura {
+  opacity: var(--tilo-aura-opacity);
+  animation: tilo-breathe 10s ease-in-out infinite;
+}
+
+.tilo-aura::before,
+.tilo-aura::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(#7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
+  -webkit-mask: radial-gradient(closest-side, transparent 88%, #000 90%, #000 93%, transparent 96%);
+  mask: radial-gradient(closest-side, transparent 88%, #000 90%, #000 93%, transparent 96%);
+  animation: tilo-spin 40s linear infinite;
+  will-change: transform;
+}
+
+/* El halo es el mismo anillo, más ancho y desenfocado */
+.tilo-aura::before {
+  -webkit-mask: radial-gradient(closest-side, transparent 70%, #000 88%, #000 94%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 70%, #000 88%, #000 94%, transparent 100%);
+  filter: blur(28px);
+  opacity: 0.7;
+}
+
+/* Dos partículas entrelazadas, siempre opuestas en la órbita */
+.tilo-orbit {
+  width: min(660px, 140vw);
+  animation: tilo-spin 25s linear infinite reverse;
+  will-change: transform;
+}
+
+.tilo-orbit span {
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+}
+
+.tilo-orbit span:first-child {
+  left: 0;
+  background: #4fd1a5;
+  box-shadow: 0 0 12px 3px rgba(79, 209, 165, 0.7);
+}
+
+.tilo-orbit span:last-child {
+  right: 0;
+  background: #f27ba8;
+  box-shadow: 0 0 12px 3px rgba(242, 123, 168, 0.7);
+}
+
+@keyframes tilo-drift-a {
+  to {
+    transform: translate(6%, 5%) rotate(8deg) scale(1.08);
+  }
+}
+
+@keyframes tilo-drift-b {
+  to {
+    transform: translate(-7%, -4%) rotate(-10deg) scale(0.94);
+  }
+}
+
+@keyframes tilo-breathe {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes tilo-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilo-bg *,
+  .tilo-aura::before,
+  .tilo-aura::after {
+    animation: none;
+  }
+}
+
+/* Miniatura en Personalizar → Fondo */
+.bg-tilo {
+  background:
+    radial-gradient(closest-side at 22% 30%, rgba(124, 108, 242, 0.7), transparent),
+    radial-gradient(closest-side at 80% 70%, rgba(79, 209, 165, 0.6), transparent),
+    radial-gradient(closest-side at 78% 22%, rgba(242, 123, 168, 0.6), transparent),
+    radial-gradient(120% 90% at 50% 0%, #1a1640, #07060f);
+}
+
+.bg-tilo::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 70%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: conic-gradient(#7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
+  -webkit-mask: radial-gradient(closest-side, transparent 80%, #000 84%, #000 92%, transparent 97%);
+  mask: radial-gradient(closest-side, transparent 80%, #000 84%, #000 92%, transparent 97%);
+}
