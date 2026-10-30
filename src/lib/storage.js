@@ -8,6 +8,7 @@ export const KEYS = {
   location: "location",
   weather: "weather",
   weatherSource: "weatherSource",
+  onboarding: "onboarding",
   todos: "todos",
 };
 

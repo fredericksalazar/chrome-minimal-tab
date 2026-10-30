@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { forecastUrl, geocodingUrl, MAX_CITY_RESULTS, needsChoice, parseGeocoding, sourceLabel } from "../src/lib/weather.js";
+import { findCities, forecastUrl, geocodingUrl, MAX_CITY_RESULTS, needsChoice, parseGeocoding, sourceLabel } from "../src/lib/weather.js";
 
 test("needsChoice pide elegir si no hay un modo válido guardado", () => {
   assert.equal(needsChoice(undefined), true);
@@ -45,4 +45,20 @@ test("sourceLabel describe la elección en el panel", () => {
   assert.equal(sourceLabel({ mode: "city", city: { name: "Cali" } }), "Ciudad: Cali");
   assert.equal(sourceLabel({ mode: "off" }), "Desactivado");
   assert.equal(sourceLabel(undefined), "Sin elegir");
+});
+
+test("findCities pide la geocodificación y devuelve las ciudades", async () => {
+  let asked;
+  const fetcher = async (url) => {
+    asked = url;
+    return { ok: true, json: async () => ({ results: [{ name: "Cali", admin1: "Valle del Cauca", country: "Colombia", latitude: 3.4, longitude: -76.5 }] }) };
+  };
+  const cities = await findCities("Cali", fetcher);
+  assert.equal(new URL(asked).searchParams.get("name"), "Cali");
+  assert.equal(cities[0].detail, "Cali, Valle del Cauca, Colombia");
+});
+
+test("findCities sin resultados devuelve una lista vacía y con error de red lanza", async () => {
+  assert.deepEqual(await findCities("zzzz", async () => ({ ok: true, json: async () => ({}) })), []);
+  await assert.rejects(findCities("Cali", async () => ({ ok: false, status: 500 })));
 });

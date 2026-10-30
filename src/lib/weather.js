@@ -29,6 +29,13 @@ export function parseGeocoding(json) {
   }));
 }
 
+// Busca ciudades por nombre; recibe fetch para poder probarla sin red
+export async function findCities(query, fetcher = fetch) {
+  const response = await fetcher(geocodingUrl(query));
+  if (!response.ok) throw new Error(`${response.status} geocoding`);
+  return parseGeocoding(await response.json());
+}
+
 export function sourceLabel(source) {
   if (needsChoice(source)) return "Sin elegir";
   if (source?.mode === "location") return "Con tu ubicación";

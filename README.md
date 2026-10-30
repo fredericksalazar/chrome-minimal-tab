@@ -8,6 +8,7 @@ Extensión de Chrome que sustituye la nueva pestaña por una limpia, rápida y p
 - Buscador que usa por defecto el motor configurado en Chrome, con el logotipo de Tilo y un aura de colores en el borde.
 - Panel «Personalizar»: motor de búsqueda (el de Chrome u otro de la lista) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
+- Guía de bienvenida al instalar: presenta Tilo, configura el clima y explica permisos y donaciones.
 - Botones discretos abajo en el centro para apoyar el proyecto (Buy Me a Coffee o PayPal) y visitar la web del autor; se abren en otra pestaña.
 
 ## Instalación
@@ -44,6 +45,7 @@ src/newtab/            Un módulo por cada parte de la página
   backgrounds.js         Sección «Fondo» del panel
   speed-panel.js         Panel, barra animada y gráfica de la prueba de velocidad
   support.js             Botones de apoyo de la zona inferior central
+  onboarding.js          Guía de bienvenida (una vez por equipo)
   icons.js               Iconos SVG estáticos
 styles/                Un CSS por funcionalidad (base, componentes, widget, tareas, accesos, panel, velocidad, apoyo)
 assets/                Logo de Tilo (brand/) e iconos de la extensión

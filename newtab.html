@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="styles/drawer.css">
   <link rel="stylesheet" href="styles/speed.css">
   <link rel="stylesheet" href="styles/support.css">
+  <link rel="stylesheet" href="styles/onboarding.css">
   <script src="src/newtab/theme-boot.js"></script>
   <script type="module" src="src/newtab/shortcuts.js"></script>
   <script type="module" src="src/newtab/search.js"></script>
@@ -21,6 +22,7 @@
   <script type="module" src="src/newtab/backgrounds.js"></script>
   <script type="module" src="src/newtab/speed-panel.js"></script>
   <script type="module" src="src/newtab/support.js"></script>
+  <script type="module" src="src/newtab/onboarding.js"></script>
 </head>
 <body>
   <div class="page">
@@ -216,6 +218,66 @@
         <div id="bg-grid" class="swatch-grid" role="radiogroup"></div>
       </div>
     </div>
+  </dialog>
+
+  <dialog id="onboarding" class="onboarding" aria-label="Guía de bienvenida de Tilo">
+    <div class="onb-viewport">
+      <div id="onb-track" class="onb-track">
+        <section class="onb-card" aria-labelledby="onb-title-1">
+          <div class="onb-icon"><img src="assets/brand/tilo.svg" alt=""></div>
+          <h2 id="onb-title-1">Te damos la bienvenida a Tilo</h2>
+          <p>Tilo es una nueva pestaña minimalista: organiza tus favoritos con libertad y elige tu motor de búsqueda en un momento.</p>
+          <ul class="onb-list">
+            <li>Hasta 100 accesos directos, guardados en tus marcadores</li>
+            <li>Añade una página con <kbd>⌥⇧D</kbd>, el icono de Tilo o el clic derecho</li>
+            <li>Busca con el motor de Chrome o elige otro en Personalizar</li>
+          </ul>
+        </section>
+
+        <section class="onb-card" aria-labelledby="onb-title-2">
+          <div class="onb-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v1.5M3.8 5.8l1 1M2 10h1.5M10.4 7.7A3.5 3.5 0 0 0 4.6 11"/><path d="M7 20h10a4 4 0 0 0 0-8 5 5 0 0 0-9.6 1.5A3.3 3.3 0 0 0 7 20z"/></svg></div>
+          <h2 id="onb-title-2">El clima, a tu manera</h2>
+          <p>Para mostrar el tiempo, Tilo puede usar tu ubicación con el permiso de Chrome. Se envía a Open-Meteo (tiempo) y BigDataCloud (nombre de la ciudad); si no la compartes, se usa tu IP con ipapi.co. También puedes escribir tu ciudad: solo se envía ese nombre a Open-Meteo.</p>
+          <div class="onb-choices">
+            <button id="onb-location" class="btn" type="button" aria-pressed="false">Usar mi ubicación</button>
+            <button id="onb-city" class="btn" type="button" aria-pressed="false">Escribir mi ciudad</button>
+            <button id="onb-off" class="btn" type="button" aria-pressed="false">Ahora no</button>
+          </div>
+          <form id="onb-city-form" class="onb-city" hidden>
+            <input id="onb-city-input" type="text" placeholder="Escribe tu ciudad" aria-label="Ciudad" autocomplete="off" maxlength="80">
+            <ul id="onb-city-results" class="weather-results"></ul>
+          </form>
+          <p id="onb-weather-status" class="onb-status" role="status"></p>
+        </section>
+
+        <section class="onb-card" aria-labelledby="onb-title-3">
+          <div class="onb-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M13.45 11.55l2.05 -2.05"/><path d="M6.4 20a9 9 0 1 1 11.2 0z"/></svg></div>
+          <h2 id="onb-title-3">Prueba de velocidad</h2>
+          <p>El botón de la esquina inferior izquierda mide la descarga, la subida, la latencia y el jitter de tu conexión con los servidores de Cloudflare.</p>
+          <ul class="onb-list">
+            <li>Solo se ejecuta cuando la inicias</li>
+            <li>Usa el permiso de acceso a speed.cloudflare.com y envía tráfico de prueba; Cloudflare ve tu IP, como en cualquier web</li>
+            <li>Los resultados no se guardan ni se envían a nadie</li>
+          </ul>
+        </section>
+
+        <section class="onb-card" aria-labelledby="onb-title-4">
+          <div class="onb-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z"/></svg></div>
+          <h2 id="onb-title-4">Tilo es gratis</h2>
+          <p>Sin anuncios, sin cuentas y sin rastreo. Si Tilo te sirve y te gusta, puedes apoyar su desarrollo con una donación.</p>
+          <div id="onb-donate" class="onb-choices"></div>
+        </section>
+      </div>
+    </div>
+
+    <footer class="onb-footer">
+      <div id="onb-dots" class="onb-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <p id="onb-step" class="onb-sr" aria-live="polite"></p>
+      <div class="onb-nav">
+        <button id="onb-back" class="btn" type="button">Atrás</button>
+        <button id="onb-next" class="btn btn-primary" type="button">Siguiente</button>
+      </div>
+    </footer>
   </dialog>
 
   <dialog id="shortcut-dialog">

@@ -9,7 +9,9 @@ const BADGES = {
   invalid: ["!", "#d93025"],
 };
 
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+  // Recién instalada: abre una pestaña nueva, que muestra la guía de bienvenida
+  if (reason === "install") chrome.tabs.create({});
   await chrome.contextMenus.removeAll();
   chrome.contextMenus.create({ id: "add-page", title: "Añadir página a Tilo", contexts: ["page"] });
   chrome.contextMenus.create({ id: "add-link", title: "Añadir enlace a Tilo", contexts: ["link"] });

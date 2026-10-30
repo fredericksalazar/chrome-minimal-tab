@@ -1,0 +1,236 @@
+/* Guía de bienvenida: tarjetas que se deslizan, al estilo de una primera configuración */
+
+dialog.onboarding {
+  width: min(480px, calc(100vw - 32px));
+  padding: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+}
+
+dialog.onboarding::backdrop {
+  background: rgba(0, 0, 0, 0.32);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.onb-viewport {
+  overflow: hidden;
+  transition: height 0.25s ease;
+}
+
+.onb-track {
+  display: flex;
+  align-items: flex-start;
+  transition: transform 0.25s ease;
+}
+
+.onb-card {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: 40px 36px 8px;
+  text-align: center;
+}
+
+/* Icono de cada tarjeta con un halo suave de la paleta de Tilo */
+.onb-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 20px;
+}
+
+.onb-icon::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  z-index: -1;
+  border-radius: 50%;
+  background: conic-gradient(#7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
+  filter: blur(18px);
+  opacity: 0.45;
+}
+
+.onb-icon img {
+  width: 72px;
+  height: 72px;
+}
+
+.onb-icon svg {
+  width: 56px;
+  height: 56px;
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+dialog.onboarding h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+.onb-card p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.onb-list {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.onb-list li {
+  position: relative;
+  padding: 8px 0 8px 22px;
+  border-top: 1px solid var(--hover);
+}
+
+.onb-list li::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4fd1a5, #5ab8f0);
+}
+
+.onb-choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* En oscuro .btn no tiene borde: aquí se marca para que se lean como botones */
+dialog.onboarding .btn:not(.btn-primary) {
+  border-color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.onb-choices .btn[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.onb-donate {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  line-height: 34px;
+}
+
+.onb-donate svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.onb-city input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.onb-city[hidden] {
+  display: none;
+}
+
+.onb-city .weather-results {
+  margin-top: 8px;
+  text-align: left;
+}
+
+.onb-card .onb-status {
+  min-height: 20px;
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.onb-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px 24px;
+}
+
+.onb-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.onb-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--hover);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.onb-dots span.active {
+  width: 22px;
+  background: linear-gradient(90deg, #7c6cf2, #f27ba8, #ffc857, #4fd1a5);
+}
+
+.onb-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.onb-nav .btn[hidden] {
+  display: none;
+}
+
+.onb-nav .btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  filter: none;
+}
+
+dialog.onboarding .btn:focus-visible,
+dialog.onboarding .weather-result:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.onb-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-viewport,
+  .onb-track,
+  .onb-dots span {
+    transition: none;
+  }
+}

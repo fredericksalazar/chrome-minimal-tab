@@ -3,7 +3,7 @@
 // o una ciudad escrita a mano. Nada se pide hasta que el usuario elige en el aviso.
 import { KEYS, onLocalChange } from "../lib/storage.js";
 import { PRIVACY_URL } from "../lib/support.js";
-import { forecastUrl, geocodingUrl, needsChoice, parseGeocoding, sourceLabel } from "../lib/weather.js";
+import { findCities, forecastUrl, needsChoice, sourceLabel } from "../lib/weather.js";
 
 const WEATHER_TTL = 30 * 60 * 1000;
 const LOCATION_TTL = 6 * 60 * 60 * 1000;
@@ -24,6 +24,8 @@ const offButton = document.getElementById("weather-off");
 
 // Elección guardada en este equipo: { mode: "location" | "city" | "off", city? }
 let source;
+// Mientras la guía de bienvenida no se termine, el clima se elige allí
+let onboardingDone = false;
 
 const timeFormat = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit" });
 const dateFormat = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long" });
@@ -135,7 +137,7 @@ async function updateWeather() {
 // Tarjeta del aviso, clima visible y estado en «Personalizar» según la elección
 function renderSource() {
   const ask = needsChoice(source);
-  card.hidden = !ask;
+  card.hidden = !ask || !onboardingDone;
   if (ask || source.mode === "off") weather.hidden = true;
   weatherState.textContent = sourceLabel(source);
   offButton.hidden = ask || source.mode === "off";
@@ -154,7 +156,7 @@ async function searchCity(query) {
   cityResults.replaceChildren();
   cityStatus.textContent = "Buscando…";
   try {
-    const places = parseGeocoding(await fetchJson(geocodingUrl(query)));
+    const places = await findCities(query);
     cityStatus.textContent = places.length ? "" : "No encontramos esa ciudad";
     cityResults.replaceChildren(
       ...places.map((place) => {
@@ -202,7 +204,14 @@ onLocalChange(KEYS.weatherSource, (next) => {
   updateWeather();
 });
 
+onLocalChange(KEYS.onboarding, (next) => {
+  onboardingDone = Boolean(next?.done);
+  renderSource();
+});
+
 tick();
-({ [KEYS.weatherSource]: source } = await chrome.storage.local.get(KEYS.weatherSource));
+const saved = await chrome.storage.local.get([KEYS.weatherSource, KEYS.onboarding]);
+source = saved[KEYS.weatherSource];
+onboardingDone = Boolean(saved[KEYS.onboarding]?.done);
 updateWeather();
 setInterval(updateWeather, WEATHER_TTL);
