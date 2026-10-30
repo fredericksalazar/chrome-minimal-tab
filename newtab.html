@@ -33,6 +33,23 @@
         <span id="temperature"></span>
       </span>
     </div>
+
+    <section id="weather-card" class="weather-card" aria-labelledby="weather-card-title" hidden>
+      <h2 id="weather-card-title">¿Mostramos el clima?</h2>
+      <p>Para ver el tiempo, Tilo envía tu ubicación a Open-Meteo y BigDataCloud. Si no la compartes, usa tu IP con ipapi.co. Tilo no tiene servidores propios ni guarda tus datos fuera de este equipo.</p>
+      <div class="weather-card-actions">
+        <button id="weather-use-location" class="btn btn-primary" type="button">Usar mi ubicación</button>
+        <button id="weather-use-city" class="btn" type="button">Escribir mi ciudad</button>
+        <button id="weather-dismiss" class="btn" type="button">Ahora no</button>
+      </div>
+      <form id="weather-city-form" class="weather-city" hidden>
+        <input id="weather-city-input" type="text" placeholder="Escribe tu ciudad" aria-label="Ciudad" autocomplete="off" maxlength="80">
+        <p class="weather-note">Solo se envía a Open-Meteo el nombre que escribas.</p>
+        <p id="weather-city-status" class="weather-note" role="status"></p>
+        <ul id="weather-city-results" class="weather-results"></ul>
+      </form>
+      <a class="privacy-link weather-privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>
+    </section>
   </aside>
 
   <section id="todo" class="todo" aria-label="Tareas">
@@ -170,6 +187,16 @@
         </div>
         <p id="bg-error" class="bg-error" role="alert"></p>
         <input id="bg-file" type="file" accept="image/*" hidden>
+      </section>
+
+      <section class="drawer-section">
+        <h3>Clima</h3>
+        <p id="weather-state" class="drawer-text"></p>
+        <div class="bg-actions">
+          <button id="weather-change" class="btn" type="button">Cambiar</button>
+          <button id="weather-off" class="btn" type="button">Desactivar</button>
+        </div>
+        <p class="drawer-text drawer-link"><a class="privacy-link" target="_blank" rel="noopener noreferrer">Política de privacidad</a></p>
       </section>
 
       <section class="drawer-section">

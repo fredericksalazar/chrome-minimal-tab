@@ -7,6 +7,7 @@ export const KEYS = {
   folder: "folderId",
   location: "location",
   weather: "weather",
+  weatherSource: "weatherSource",
   todos: "todos",
 };
 
