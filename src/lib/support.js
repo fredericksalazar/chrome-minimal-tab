@@ -11,7 +11,7 @@ export const SUPPORT_LINKS = [
   {
     id: "coffee",
     label: "Invítame a un café",
-    title: "Apoya Minimal New Tab en Buy Me a Coffee (voluntario)",
+    title: "Apoya Tilo en Buy Me a Coffee (voluntario)",
     url: "https://buymeacoffee.com/fredericksalazar",
   },
   {

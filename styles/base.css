@@ -108,25 +108,27 @@ main {
   padding: 0 16px 96px;
 }
 
-/* Logo del motor de búsqueda: oculto hasta saber cuál es para evitar un parpadeo */
+/* Logotipo de Tilo: icono Aura y la palabra, con cualquier motor */
 .brand {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 120px;
   margin: max(78px, calc(9vh + 46px)) 0 0;
-  visibility: hidden;
 }
 
-.brand.ready {
-  visibility: visible;
+.wordmark {
+  margin-left: 14px;
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: -2px;
+  line-height: 1;
 }
 
 .logo {
   display: block;
-  width: auto;
-  max-width: min(320px, 100%);
-  object-fit: contain;
+  width: 64px;
+  height: 64px;
 }
 
 /* Buscador */
@@ -149,6 +151,8 @@ main {
   backdrop-filter: blur(12px);
   cursor: text;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  --aura: conic-gradient(from var(--aura-angle), #7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
 }
 
 .search-box:hover,
@@ -157,11 +161,71 @@ main {
   box-shadow: var(--search-shadow);
 }
 
-.search-box svg {
+.search-icon {
   flex: none;
   width: 20px;
   height: 20px;
-  fill: var(--muted);
+  border-radius: 4px;
+}
+
+/* Aura de la marca: anillo multicolor y halo que giran siempre; con el
+   buscador en uso el halo se intensifica. El anillo usa una máscara para no teñir el fondo y el halo
+   va en el formulario porque backdrop-filter encierra a los hijos de la caja. */
+@property --aura-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.search {
+  position: relative;
+}
+
+.search-box::before,
+.search::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 26px;
+  background: var(--aura);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.search-box::before {
+  padding: 1.5px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.search::after {
+  --aura: conic-gradient(from var(--aura-angle), #7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
+  z-index: -1;
+  filter: blur(14px);
+  opacity: 0.3;
+}
+
+.search:focus-within::after {
+  opacity: 0.45;
+}
+
+.search-box::before,
+.search::after {
+  animation: aura-spin 6s linear infinite;
+}
+
+@keyframes aura-spin {
+  to {
+    --aura-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-box::before,
+  .search::after {
+    animation: none;
+  }
 }
 
 .search-box input {

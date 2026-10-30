@@ -1,35 +1,30 @@
-// Buscador: motor elegido (sincronizado con la cuenta), su logo y el envío.
-import { ENGINES, findEngine } from "../lib/engines.js";
+// Buscador: motor elegido (sincronizado con la cuenta), su icono y el envío.
+import { ENGINES, findEngine, usesBrowserSearch } from "../lib/engines.js";
 import { KEYS, onSyncChange } from "../lib/storage.js";
 import { faviconUrl, looksLikeUrl, normalizeUrl } from "../lib/url.js";
 import { checkIcon } from "./icons.js";
-import { isDark, onThemeChange } from "./theme.js";
 
-const brand = document.getElementById("brand");
-const logo = document.getElementById("logo");
+const searchIcon = document.getElementById("search-icon");
 const form = document.getElementById("search-form");
 const input = document.getElementById("search-input");
 const engineList = document.getElementById("engine-list");
 
 let current = findEngine(null);
 
-function renderLogo() {
-  const { engine } = current;
-  logo.src = `assets/logos/${isDark() ? engine.dark : engine.logo}`;
-}
+// Icono de Tilo para el motor de Chrome, porque la API no dice cuál es
+const BRAND_ICON = "assets/brand/tilo-small.svg";
 
 function applyEngine(id) {
   current = findEngine(id);
   const { key, engine } = current;
 
-  form.action = engine.search;
-  input.name = engine.param;
-  input.placeholder = `Buscar con ${engine.name} o escribir una URL`;
+  // Con el motor de Chrome se muestra la marca y el texto no nombra ningún motor
+  const browser = usesBrowserSearch(engine);
+  form.action = engine.search ?? "";
+  input.name = engine.param ?? "q";
+  input.placeholder = browser ? "Buscar en la web o escribir una URL" : `Buscar con ${engine.name} o escribir una URL`;
 
-  logo.alt = engine.name;
-  logo.style.height = `${engine.height}px`;
-  renderLogo();
-  brand.classList.add("ready");
+  searchIcon.src = browser ? BRAND_ICON : faviconUrl(engine.home, 32);
 
   const radio = engineList.querySelector(`input[value="${key}"]`);
   if (radio) radio.checked = true;
@@ -49,7 +44,7 @@ function renderEngineList() {
 
       const icon = document.createElement("img");
       icon.alt = "";
-      icon.src = faviconUrl(engine.home, 32);
+      icon.src = engine.home ? faviconUrl(engine.home, 32) : BRAND_ICON;
 
       const name = document.createElement("span");
       name.className = "engine-name";
@@ -73,11 +68,14 @@ form.addEventListener("submit", (event) => {
   if (url) {
     event.preventDefault();
     location.href = url;
+  } else if (usesBrowserSearch(current.engine)) {
+    // Nunca se redirige a un motor por cuenta propia si chrome.search falla
+    event.preventDefault();
+    chrome.search.query({ text: query, disposition: "CURRENT_TAB" }).catch((error) => console.warn("No se pudo buscar", error));
   }
 });
 
 onSyncChange(KEYS.engine, applyEngine);
-onThemeChange(renderLogo);
 
 renderEngineList();
 const { [KEYS.engine]: saved } = await chrome.storage.sync.get(KEYS.engine);

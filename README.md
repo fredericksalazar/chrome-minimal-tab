@@ -1,11 +1,12 @@
-# Minimal New Tab
+# Tilo — Nueva pestaña limpia
 
-Extensión de Chrome que sustituye la nueva pestaña por una con el diseño de Google y añade:
+Extensión de Chrome que sustituye la nueva pestaña por una limpia, rápida y privada (sin cuentas ni rastreo) y añade:
 
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
 - Hora, ciudad y clima.
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
-- Panel «Personalizar»: motor de búsqueda (con su logo oficial) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
+- Buscador que usa por defecto el motor configurado en Chrome, con el logotipo de Tilo y un aura de colores en el borde.
+- Panel «Personalizar»: motor de búsqueda (el de Chrome u otro de la lista) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
 - Botones discretos abajo en el centro para apoyar el proyecto (Buy Me a Coffee o PayPal) y visitar la web del autor; se abren en otra pestaña.
 
@@ -35,7 +36,7 @@ src/newtab/            Un módulo por cada parte de la página
   theme-boot.js          Aplica el fondo guardado antes de pintar (script clásico)
   theme.js               Tema efectivo (fondo o sistema) y suscripción a cambios
   shortcuts.js           Cuadrícula, diálogo, deshacer y reordenar
-  search.js              Motor elegido, logo y envío del buscador
+  search.js              Motor elegido, icono y envío del buscador
   clock-weather.js       Hora y clima
   todos.js               Lista de tareas de la esquina superior derecha
   drawer.js              Abrir y cerrar el panel «Personalizar»
@@ -44,7 +45,7 @@ src/newtab/            Un módulo por cada parte de la página
   support.js             Botones de apoyo de la zona inferior central
   icons.js               Iconos SVG estáticos
 styles/                Un CSS por funcionalidad (base, componentes, widget, tareas, accesos, panel, velocidad, apoyo)
-assets/                Logos de los motores e iconos de la extensión
+assets/                Logo de Tilo (brand/) e iconos de la extensión
 tests/                 Tests unitarios de src/lib (node:test)
 ```
 

@@ -11,8 +11,8 @@ const BADGES = {
 
 chrome.runtime.onInstalled.addListener(async () => {
   await chrome.contextMenus.removeAll();
-  chrome.contextMenus.create({ id: "add-page", title: "Añadir página a Nueva pestaña", contexts: ["page"] });
-  chrome.contextMenus.create({ id: "add-link", title: "Añadir enlace a Nueva pestaña", contexts: ["link"] });
+  chrome.contextMenus.create({ id: "add-page", title: "Añadir página a Tilo", contexts: ["page"] });
+  chrome.contextMenus.create({ id: "add-link", title: "Añadir enlace a Tilo", contexts: ["link"] });
   await getFolderId();
 });
 
