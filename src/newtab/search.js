@@ -1,13 +1,9 @@
-// Buscador: motor elegido (sincronizado con la cuenta), su logo y el envío.
+// Buscador: motor elegido (sincronizado con la cuenta), su icono y el envío.
 import { ENGINES, findEngine, usesBrowserSearch } from "../lib/engines.js";
 import { KEYS, onSyncChange } from "../lib/storage.js";
 import { faviconUrl, looksLikeUrl, normalizeUrl } from "../lib/url.js";
 import { checkIcon } from "./icons.js";
-import { isDark, onThemeChange } from "./theme.js";
 
-const brand = document.getElementById("brand");
-const logo = document.getElementById("logo");
-const wordmark = document.getElementById("wordmark");
 const searchIcon = document.getElementById("search-icon");
 const form = document.getElementById("search-form");
 const input = document.getElementById("search-input");
@@ -15,13 +11,8 @@ const engineList = document.getElementById("engine-list");
 
 let current = findEngine(null);
 
-// Logotipo de Tilo cuando se busca con el motor de Chrome (no sabemos cuál es)
-const BRAND = { logo: "assets/brand/tilo.svg", icon: "assets/brand/tilo-small.svg", height: 64 };
-
-function renderLogo() {
-  const { engine } = current;
-  logo.src = engine.logo ? `assets/logos/${isDark() ? engine.dark : engine.logo}` : BRAND.logo;
-}
+// Icono de Tilo para el motor de Chrome, porque la API no dice cuál es
+const BRAND_ICON = "assets/brand/tilo-small.svg";
 
 function applyEngine(id) {
   current = findEngine(id);
@@ -33,12 +24,7 @@ function applyEngine(id) {
   input.name = engine.param ?? "q";
   input.placeholder = browser ? "Buscar en la web o escribir una URL" : `Buscar con ${engine.name} o escribir una URL`;
 
-  wordmark.hidden = !browser;
-  logo.alt = browser ? "Tilo" : engine.name;
-  logo.style.height = `${browser ? BRAND.height : engine.height}px`;
-  searchIcon.src = browser ? BRAND.icon : faviconUrl(engine.home, 32);
-  renderLogo();
-  brand.classList.add("ready");
+  searchIcon.src = browser ? BRAND_ICON : faviconUrl(engine.home, 32);
 
   const radio = engineList.querySelector(`input[value="${key}"]`);
   if (radio) radio.checked = true;
@@ -58,7 +44,7 @@ function renderEngineList() {
 
       const icon = document.createElement("img");
       icon.alt = "";
-      icon.src = engine.home ? faviconUrl(engine.home, 32) : BRAND.icon;
+      icon.src = engine.home ? faviconUrl(engine.home, 32) : BRAND_ICON;
 
       const name = document.createElement("span");
       name.className = "engine-name";
@@ -90,7 +76,6 @@ form.addEventListener("submit", (event) => {
 });
 
 onSyncChange(KEYS.engine, applyEngine);
-onThemeChange(renderLogo);
 
 renderEngineList();
 const { [KEYS.engine]: saved } = await chrome.storage.sync.get(KEYS.engine);
