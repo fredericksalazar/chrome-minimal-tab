@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Tilo — Nueva pestaña limpia",
+  "name": "__MSG_appName__",
   "short_name": "Tilo",
   "version": "2.1.0",
-  "description": "Nueva pestaña limpia y rápida: hasta 100 accesos directos sincronizados, tareas, clima y fondos. Sin cuentas ni rastreo.",
+  "description": "__MSG_appDescription__",
+  "default_locale": "en",
   "homepage_url": "https://fredericksalazar.github.io/",
   "minimum_chrome_version": "111",
   "icons": {
@@ -20,7 +21,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Añadir a Tilo",
+    "default_title": "__MSG_actionTitle__",
     "default_icon": {
       "16": "assets/icons/icon16.png",
       "32": "assets/icons/icon32.png"
@@ -32,7 +33,7 @@
         "default": "Alt+Shift+D",
         "mac": "Alt+Shift+D"
       },
-      "description": "Añadir la página actual a Tilo"
+      "description": "__MSG_commandAddShortcut__"
     }
   },
   "host_permissions": [

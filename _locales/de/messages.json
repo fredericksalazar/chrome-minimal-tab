@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — Aufgeräumter neuer Tab",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "Aufgeräumter neuer Tab: bis zu 100 synchronisierte Verknüpfungen, Aufgaben, Wetter und Hintergründe. Ohne Konto, ohne Tracking.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Zu Tilo hinzufügen",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "Aktuelle Seite zu Tilo hinzufügen",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "Seite zu Tilo hinzufügen",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "Link zu Tilo hinzufügen",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "Verknüpfungen",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

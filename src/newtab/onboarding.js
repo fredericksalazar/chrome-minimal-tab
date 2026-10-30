@@ -3,6 +3,7 @@
 import { KEYS, onLocalChange } from "../lib/storage.js";
 import { SUPPORT_LINKS } from "../lib/support.js";
 import { findCities, needsChoice, sourceLabel } from "../lib/weather.js";
+import { language, t } from "./i18n.js";
 import { ICONS } from "./icons.js";
 
 const dialog = document.getElementById("onboarding");
@@ -39,17 +40,20 @@ function render() {
   fitHeight();
   cards.forEach((card, index) => (card.inert = index !== step));
   dots.forEach((dot, index) => dot.classList.toggle("active", index === step));
-  stepLabel.textContent = `Paso ${step + 1} de ${cards.length}`;
+  stepLabel.textContent = t("onb.step", { n: step + 1, total: cards.length });
   back.hidden = step === 0;
   // En la última tarjeta la flecha pasa a ser una marca de «Empezar»
   const last = step === cards.length - 1;
   next.classList.toggle("last", last);
-  next.setAttribute("aria-label", last ? "Empezar" : "Siguiente");
-  next.title = last ? "Empezar" : "Siguiente";
-  back.title = "Atrás";
+  next.setAttribute("aria-label", t(last ? "onb.start" : "onb.next"));
+  next.title = next.getAttribute("aria-label");
+  back.title = t("onb.back");
+  back.setAttribute("aria-label", back.title);
   // El clima hay que elegirlo antes de seguir: no se puede saltar
   next.disabled = step === WEATHER_STEP && !weatherChosen;
 }
+
+const choiceLabel = (source) => (source.mode === "off" ? t("weather.none") : sourceLabel(source, t));
 
 // Igual que el aviso del clima: cambiar de origen invalida lo guardado
 async function chooseWeather(source, pressed) {
@@ -57,16 +61,16 @@ async function chooseWeather(source, pressed) {
   await chrome.storage.local.set({ [KEYS.weatherSource]: source });
   Object.values(choiceButtons).forEach((button) => button.setAttribute("aria-pressed", String(button === pressed)));
   weatherChosen = true;
-  weatherStatus.textContent = `Listo: ${source.mode === "off" ? "Sin clima" : sourceLabel(source)}. Puedes cambiarlo en Personalizar.`;
+  weatherStatus.textContent = t("onb.ready", { choice: choiceLabel(source) });
   render();
 }
 
 async function searchCity(query) {
   cityResults.replaceChildren();
-  weatherStatus.textContent = "Buscando…";
+  weatherStatus.textContent = t("weather.searching");
   try {
-    const places = await findCities(query);
-    weatherStatus.textContent = places.length ? "" : "No encontramos esa ciudad";
+    const places = await findCities(query, fetch, language);
+    weatherStatus.textContent = places.length ? "" : t("weather.notFound");
     cityResults.replaceChildren(
       ...places.map((place) => {
         const item = document.createElement("li");
@@ -85,23 +89,23 @@ async function searchCity(query) {
     );
   } catch (error) {
     console.warn("No se pudo buscar la ciudad", error);
-    weatherStatus.textContent = "No se pudo buscar. Revisa tu conexión";
+    weatherStatus.textContent = t("weather.searchFailed");
   }
 }
 
 function renderDonations() {
   const donate = document.getElementById("onb-donate");
   donate.replaceChildren(
-    ...SUPPORT_LINKS.filter(({ id }) => id !== "web").map(({ id, label, title, url }) => {
+    ...SUPPORT_LINKS.filter(({ id }) => id !== "web").map(({ id, url }) => {
       const link = document.createElement("a");
       link.className = "btn onb-donate";
       link.href = url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.title = title;
+      link.title = t(`support.${id}Title`);
       link.innerHTML = ICONS[id];
       const text = document.createElement("span");
-      text.textContent = label;
+      text.textContent = t(`support.${id}`);
       link.append(text);
       return link;
     })
@@ -158,7 +162,7 @@ if (!saved[KEYS.onboarding]?.done) {
   const current = saved[KEYS.weatherSource];
   if (!needsChoice(current)) {
     weatherChosen = true;
-    weatherStatus.textContent = `Ahora: ${current.mode === "off" ? "Sin clima" : sourceLabel(current)}. Puedes cambiarlo aquí o en Personalizar.`;
+    weatherStatus.textContent = t("onb.current", { choice: choiceLabel(current) });
     choiceButtons[current.mode].setAttribute("aria-pressed", "true");
   }
   renderDonations();

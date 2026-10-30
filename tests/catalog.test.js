@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import es from "../src/i18n/es.js";
 import { BACKGROUNDS, findBackground } from "../src/lib/backgrounds.js";
 import { DEFAULT_ENGINE, ENGINES, findEngine, usesBrowserSearch } from "../src/lib/engines.js";
 
@@ -30,7 +31,14 @@ test("los fondos tienen ids únicos por categoría y un tono válido", () => {
 });
 
 test("findBackground devuelve null para selecciones desconocidas", () => {
-  assert.equal(findBackground({ type: "gradient", id: "aurora" }).name, "Aurora boreal");
+  assert.equal(findBackground({ type: "gradient", id: "aurora" }).id, "aurora");
   assert.equal(findBackground({ type: "default" }), null);
   assert.equal(findBackground(undefined), null);
+});
+
+test("cada fondo y cada categoría del catálogo tiene nombre en el diccionario", () => {
+  for (const [type, { items }] of Object.entries(BACKGROUNDS)) {
+    assert.ok(es[`bg.${type}`], `falta bg.${type}`);
+    for (const item of items) assert.ok(es[`bgName.${item.id}`], `falta bgName.${item.id}`);
+  }
 });

@@ -47,6 +47,11 @@
   box-sizing: border-box;
 }
 
+/* Mientras se cargan las traducciones (ver theme-boot.js) */
+html[data-i18n-pending] :is(.page, dialog) {
+  visibility: hidden;
+}
+
 body {
   margin: 0;
   min-height: 100vh;

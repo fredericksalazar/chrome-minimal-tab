@@ -2,7 +2,8 @@
 // (chrome.search): es el predeterminado porque la tienda exige respetar ese
 // ajuste. No tiene URL porque la API no dice qué motor es.
 export const ENGINES = {
-  chrome: { name: "Por defecto" },
+  // Su nombre visible es engine.default en src/i18n/
+  chrome: { name: "Chrome" },
   google: { name: "Google", home: "https://www.google.com/", search: "https://www.google.com/search", param: "q" },
   bing: { name: "Bing", home: "https://www.bing.com/", search: "https://www.bing.com/search", param: "q" },
   duckduckgo: { name: "DuckDuckGo", home: "https://duckduckgo.com/", search: "https://duckduckgo.com/", param: "q" },

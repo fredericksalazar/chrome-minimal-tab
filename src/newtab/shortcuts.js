@@ -1,6 +1,7 @@
 // Cuadrícula de accesos directos: render, diálogo añadir/editar, deshacer y reordenar.
 import { MAX_SHORTCUTS, addShortcut, getFolderId, getShortcuts } from "../lib/bookmarks.js";
 import { faviconUrl, hostname, normalizeUrl } from "../lib/url.js";
+import { t } from "./i18n.js";
 import { ICONS } from "./icons.js";
 
 const $ = (id) => document.getElementById(id);
@@ -29,7 +30,7 @@ let toastTimer;
 let reloadTimer;
 
 async function load() {
-  folderId = await getFolderId();
+  folderId = await getFolderId(t("folderTitle"));
   shortcuts = await getShortcuts(folderId);
   render();
 }
@@ -41,7 +42,7 @@ function render() {
   grid.replaceChildren(...tiles);
 
   const hidden = shortcuts.length - visible.length;
-  counter.textContent = `${visible.length} de ${MAX_SHORTCUTS}${hidden > 0 ? ` (+${hidden} ocultos)` : ""}`;
+  counter.textContent = t("shortcuts.counter", { visible: visible.length, max: MAX_SHORTCUTS }) + (hidden > 0 ? ` ${t("shortcuts.hidden", { n: hidden })}` : "");
   emptyHint.hidden = shortcuts.length > 0;
 }
 
@@ -64,8 +65,8 @@ function createTile(node) {
   const menu = document.createElement("button");
   menu.className = "tile-menu";
   menu.type = "button";
-  menu.title = "Editar acceso directo";
-  menu.setAttribute("aria-label", `Editar ${title.textContent}`);
+  menu.title = t("shortcuts.edit");
+  menu.setAttribute("aria-label", t("shortcuts.editNamed", { name: title.textContent }));
   menu.innerHTML = ICONS.more;
   menu.addEventListener("click", () => openDialog(node));
 
@@ -80,7 +81,7 @@ function createAddTile() {
   const button = document.createElement("button");
   button.className = "tile-link";
   button.type = "button";
-  button.innerHTML = `<span class="tile-icon">${ICONS.add}</span><span class="tile-title">Añadir acceso directo</span>`;
+  button.innerHTML = `<span class="tile-icon">${ICONS.add}</span><span class="tile-title">${t("shortcuts.add")}</span>`;
   button.addEventListener("click", () => openDialog());
 
   tile.append(button);
@@ -124,7 +125,7 @@ function colorFor(text) {
 // Diálogo añadir / editar
 function openDialog(node = null) {
   editingId = node?.id ?? null;
-  dialogTitle.textContent = node ? "Editar acceso directo" : "Añadir acceso directo";
+  dialogTitle.textContent = t(node ? "shortcuts.edit" : "shortcuts.add");
   nameInput.value = node?.title ?? "";
   urlInput.value = node?.url ?? "";
   removeButton.hidden = !node;
@@ -139,14 +140,14 @@ async function save(title, url) {
     await chrome.bookmarks.update(editingId, { title, url });
     return "saved";
   }
-  return addShortcut({ title, url });
+  return addShortcut({ title, url }, t("folderTitle"));
 }
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const url = normalizeUrl(urlInput.value);
   if (!url) {
-    dialogError.textContent = "Escribe una URL válida.";
+    dialogError.textContent = t("dialog.invalidUrl");
     urlInput.focus();
     return;
   }
@@ -154,15 +155,15 @@ form.addEventListener("submit", async (event) => {
   try {
     const status = await save(nameInput.value.trim() || hostname(url), url);
     if (status === "exists") {
-      dialogError.textContent = "Ese sitio ya está en tus accesos directos.";
+      dialogError.textContent = t("dialog.exists");
     } else if (status === "full") {
-      dialogError.textContent = `Has llegado al máximo de ${MAX_SHORTCUTS} accesos directos.`;
+      dialogError.textContent = t("dialog.full", { max: MAX_SHORTCUTS });
     } else {
       dialog.close();
     }
   } catch (error) {
     console.warn("No se pudo guardar el acceso directo", error);
-    dialogError.textContent = "No se pudo guardar. Inténtalo de nuevo.";
+    dialogError.textContent = t("dialog.saveFailed");
   }
 });
 
@@ -174,7 +175,7 @@ removeButton.addEventListener("click", async () => {
   if (!node) return;
   try {
     await chrome.bookmarks.remove(node.id);
-    showToast("Acceso directo eliminado", () =>
+    showToast(t("shortcuts.removed"), () =>
       chrome.bookmarks.create({ parentId: node.parentId, index: node.index, title: node.title, url: node.url })
     );
   } catch (error) {

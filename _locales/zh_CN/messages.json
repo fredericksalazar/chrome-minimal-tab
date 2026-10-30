@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — 简洁新标签页",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "简洁快速的新标签页：最多 100 个同步快捷方式、任务、天气和背景。无需账号，无跟踪。",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "添加到 Tilo",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "将当前页面添加到 Tilo",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "将页面添加到 Tilo",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "将链接添加到 Tilo",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "快捷方式",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

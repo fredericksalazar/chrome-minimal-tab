@@ -1,5 +1,6 @@
 // Panel de la prueba de velocidad: estados, barra animada y gráfica en vivo.
 import { DOWNLOAD_MS, UPLOAD_MS, runSpeedTest } from "../lib/speedtest.js";
+import { locale, t } from "./i18n.js";
 import { onThemeChange } from "./theme.js";
 
 const $ = (id) => document.getElementById(id);
@@ -22,21 +23,18 @@ const values = Object.fromEntries(cards.map((card) => [card.dataset.metric, card
 
 const COLORS = { latency: "#ba7517", download: "#378add", upload: "#1d9e75" };
 const DURATIONS = { download: DOWNLOAD_MS, upload: UPLOAD_MS };
-const PHASE_NAMES = { latency: "Latencia", download: "Descarga", upload: "Subida" };
+const PHASE_NAMES = { latency: t("speed.latency"), download: t("speed.download"), upload: t("speed.upload") };
 // Métricas que se resaltan en cada fase o vista
 const METRICS = { latency: ["latency", "jitter"], download: ["download"], upload: ["upload"] };
 const RUNNING = ["latency", "download", "upload"];
 const STATUS = {
-  idle: "Mide tu conexión en unos 15 segundos.",
-  latency: "Enviando pings al servidor…",
-  download: "Descargando datos de prueba…",
-  upload: "Subiendo datos de prueba…",
+  idle: t("speed.statusIdle"),
+  latency: t("speed.statusLatency"),
+  download: t("speed.statusDownload"),
+  upload: t("speed.statusUpload"),
 };
-const ERRORS = {
-  network: "No se pudo conectar con el servidor de prueba. Revisa tu conexión y vuelve a intentarlo.",
-  "rate-limit": "El servidor de prueba está limitando las peticiones. Espera un minuto y vuelve a intentarlo.",
-};
-const ACTIONS = { idle: "Iniciar prueba", result: "Repetir prueba", error: "Reintentar" };
+const ERRORS = { network: t("speed.errorNetwork"), "rate-limit": t("speed.errorRateLimit") };
+const ACTIONS = { idle: t("speed.start"), result: t("speed.repeat"), error: t("speed.retry") };
 
 const CHART_WIDTH = 328;
 const LANE_INSET = 8;
@@ -62,15 +60,15 @@ let frameId = 0;
 let lastFrame = 0;
 
 const isRunning = () => RUNNING.includes(state.phase);
-const format = (n) => n.toLocaleString("es-ES", { maximumFractionDigits: 1, minimumFractionDigits: n >= 100 ? 0 : 1 });
-const formatErrors = (n) => (n === 1 ? "1 error" : `${n} errores`);
-const formatCount = (count, errors) => `${count.toLocaleString("es-ES")} paquetes verificados · ${formatErrors(errors)}`;
+const format = (n) => n.toLocaleString(locale, { maximumFractionDigits: 1, minimumFractionDigits: n >= 100 ? 0 : 1 });
+const formatErrors = (n) => t.plural("speed.errors", n);
+const formatCount = (count, errors) => t("speed.packets", { count: count.toLocaleString(locale), errors: formatErrors(errors) });
 
 function verdict({ download }) {
-  if (download >= 100) return "Muy rápida: ideal para 4K y videollamadas.";
-  if (download >= 25) return "Rápida: HD y videollamadas sin problema.";
-  if (download >= 10) return "Correcta para navegar y ver vídeo en HD.";
-  return "Lenta: puede costar ver vídeo en HD.";
+  if (download >= 100) return t("speed.veryFast");
+  if (download >= 25) return t("speed.fast");
+  if (download >= 10) return t("speed.ok");
+  return t("speed.slow");
 }
 
 function paintResults() {
@@ -113,12 +111,12 @@ function setPhase(phase) {
   status.textContent = STATUS[phase] ?? "";
   phaseLabel.textContent = PHASE_NAMES[phase] ?? "";
   unit.textContent = phase === "latency" ? "ms" : "Mbps";
-  act.textContent = isRunning() ? "Detener" : ACTIONS[phase];
+  act.textContent = isRunning() ? t("speed.stop") : ACTIONS[phase];
   highlight(phase);
 
   if (phase === "idle") {
     big.textContent = "0";
-    verified.textContent = "Sin datos aún";
+    verified.textContent = t("speed.noData");
     drawChart(null);
   } else if (isRunning()) {
     drawChart(phase);
@@ -164,7 +162,7 @@ function finish(result) {
   setPhase("result");
   showView("download");
   status.textContent = verdict(result);
-  verified.textContent = `Integridad verificada · ${formatErrors(result.errors)}`;
+  verified.textContent = t("speed.integrity", { errors: formatErrors(result.errors) });
 }
 
 function fail(error) {

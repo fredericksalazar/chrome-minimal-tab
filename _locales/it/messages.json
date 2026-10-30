@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — Nuova scheda pulita",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "Una nuova scheda pulita e veloce: fino a 100 scorciatoie sincronizzate, attività, meteo e sfondi. Senza account né tracciamento.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Aggiungi a Tilo",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "Aggiungi la pagina corrente a Tilo",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "Aggiungi pagina a Tilo",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "Aggiungi link a Tilo",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "Scorciatoie",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

@@ -9,8 +9,9 @@ export function needsChoice(source) {
   return !SOURCE_MODES.includes(source?.mode);
 }
 
-export function geocodingUrl(query) {
-  const params = new URLSearchParams({ name: query.trim(), count: String(MAX_CITY_RESULTS), language: "es", format: "json" });
+// language: idioma de los nombres de ciudad (código ISO 639-1)
+export function geocodingUrl(query, language = "es") {
+  const params = new URLSearchParams({ name: query.trim(), count: String(MAX_CITY_RESULTS), language, format: "json" });
   return `https://geocoding-api.open-meteo.com/v1/search?${params}`;
 }
 
@@ -30,15 +31,16 @@ export function parseGeocoding(json) {
 }
 
 // Busca ciudades por nombre; recibe fetch para poder probarla sin red
-export async function findCities(query, fetcher = fetch) {
-  const response = await fetcher(geocodingUrl(query));
+export async function findCities(query, fetcher = fetch, language = "es") {
+  const response = await fetcher(geocodingUrl(query, language));
   if (!response.ok) throw new Error(`${response.status} geocoding`);
   return parseGeocoding(await response.json());
 }
 
-export function sourceLabel(source) {
-  if (needsChoice(source)) return "Sin elegir";
-  if (source?.mode === "location") return "Con tu ubicación";
-  if (source?.mode === "city") return `Ciudad: ${source.city?.name ?? ""}`;
-  return "Desactivado";
+// t: traductor de src/lib/i18n.js
+export function sourceLabel(source, t) {
+  if (needsChoice(source)) return t("weather.source.unset");
+  if (source?.mode === "location") return t("weather.source.location");
+  if (source?.mode === "city") return t("weather.source.city", { city: source.city?.name ?? "" });
+  return t("weather.source.off");
 }

@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — Nueva pestaña limpia",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "Nueva pestaña limpia y rápida: hasta 100 accesos directos sincronizados, tareas, clima y fondos. Sin cuentas ni rastreo.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Añadir a Tilo",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "Añadir la página actual a Tilo",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "Añadir página a Tilo",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "Añadir enlace a Tilo",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "Accesos directos",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

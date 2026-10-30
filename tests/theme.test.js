@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import es from "../src/i18n/es.js";
 import { DEFAULT_THEME, THEMES, normalizeTheme, resolveTheme } from "../src/lib/theme.js";
 
 test("THEMES ofrece Claro, Oscuro y Dispositivo, y por defecto sigue al sistema", () => {
-  assert.deepEqual(THEMES.map((theme) => theme.name), ["Claro", "Oscuro", "Dispositivo"]);
+  assert.deepEqual(THEMES.map((theme) => es[`theme.${theme.id}`]), ["Claro", "Oscuro", "Dispositivo"]);
   assert.equal(DEFAULT_THEME, "system");
 });
 

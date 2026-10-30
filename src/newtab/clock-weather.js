@@ -2,8 +2,9 @@
 // Clima: Open-Meteo. Ciudad: geolocalización + BigDataCloud, o por IP si falla,
 // o una ciudad escrita a mano. Nada se pide hasta que el usuario elige en el aviso.
 import { KEYS, onLocalChange } from "../lib/storage.js";
-import { PRIVACY_URL } from "../lib/support.js";
+import { privacyUrl } from "../lib/support.js";
 import { findCities, forecastUrl, needsChoice, sourceLabel } from "../lib/weather.js";
+import { language, locale, t } from "./i18n.js";
 
 const WEATHER_TTL = 30 * 60 * 1000;
 const LOCATION_TTL = 6 * 60 * 60 * 1000;
@@ -27,8 +28,8 @@ let source;
 // Mientras la guía de bienvenida no se termine, el clima se elige allí
 let onboardingDone = false;
 
-const timeFormat = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit" });
-const dateFormat = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long" });
+const timeFormat = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" });
+const dateFormat = new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "long" });
 
 // Iconos de trazo fino, en la línea minimalista de la página
 const ICONS = {
@@ -42,18 +43,18 @@ const ICONS = {
   storm: '<path d="M6.5 15h11a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.5 2A3.5 3.5 0 0 0 6.5 15z"/><path d="M13 15l-2 3.5h3L12 22"/>',
 };
 
-// Códigos WMO de Open-Meteo → icono y descripción
+// Códigos WMO de Open-Meteo → icono y clave de la descripción
 function describe(code, isDay) {
-  if (code === 0) return [isDay ? "sun" : "moon", "Despejado"];
-  if (code <= 2) return [isDay ? "partly" : "cloud", "Poco nuboso"];
-  if (code === 3) return ["cloud", "Nublado"];
-  if (code <= 48) return ["fog", "Niebla"];
-  if (code <= 57) return ["rain", "Llovizna"];
-  if (code <= 67) return ["rain", "Lluvia"];
-  if (code <= 77) return ["snow", "Nieve"];
-  if (code <= 82) return ["rain", "Chubascos"];
-  if (code <= 86) return ["snow", "Chubascos de nieve"];
-  return ["storm", "Tormenta"];
+  if (code === 0) return [isDay ? "sun" : "moon", "weather.clear"];
+  if (code <= 2) return [isDay ? "partly" : "cloud", "weather.partly"];
+  if (code === 3) return ["cloud", "weather.cloudy"];
+  if (code <= 48) return ["fog", "weather.fog"];
+  if (code <= 57) return ["rain", "weather.drizzle"];
+  if (code <= 67) return ["rain", "weather.rain"];
+  if (code <= 77) return ["snow", "weather.snow"];
+  if (code <= 82) return ["rain", "weather.showers"];
+  if (code <= 86) return ["snow", "weather.snowShowers"];
+  return ["storm", "weather.storm"];
 }
 
 // Se actualiza al cambiar de minuto en lugar de cada segundo
@@ -70,7 +71,7 @@ function render(data) {
   city.textContent = data.city ?? "";
   weatherIcon.innerHTML = ICONS[icon];
   temperature.textContent = `${Math.round(data.temperature)}°`;
-  weather.title = `${label} en ${data.city ?? "tu zona"}`;
+  weather.title = t("weather.titleIn", { label: t(label), place: data.city ?? t("weather.yourArea") });
   weather.hidden = false;
 }
 
@@ -86,7 +87,7 @@ async function locateByGps() {
   );
   const { latitude, longitude } = position.coords;
   const place = await fetchJson(
-    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=es`
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=${language}`
   );
   return { latitude, longitude, city: place.city || place.locality };
 }
@@ -139,7 +140,7 @@ function renderSource() {
   const ask = needsChoice(source);
   card.hidden = !ask || !onboardingDone;
   if (ask || source.mode === "off") weather.hidden = true;
-  weatherState.textContent = sourceLabel(source);
+  weatherState.textContent = sourceLabel(source, t);
   offButton.hidden = ask || source.mode === "off";
 }
 
@@ -154,10 +155,10 @@ async function choose(next) {
 
 async function searchCity(query) {
   cityResults.replaceChildren();
-  cityStatus.textContent = "Buscando…";
+  cityStatus.textContent = t("weather.searching");
   try {
-    const places = await findCities(query);
-    cityStatus.textContent = places.length ? "" : "No encontramos esa ciudad";
+    const places = await findCities(query, fetch, language);
+    cityStatus.textContent = places.length ? "" : t("weather.notFound");
     cityResults.replaceChildren(
       ...places.map((place) => {
         const item = document.createElement("li");
@@ -175,11 +176,11 @@ async function searchCity(query) {
     );
   } catch (error) {
     console.warn("No se pudo buscar la ciudad", error);
-    cityStatus.textContent = "No se pudo buscar. Revisa tu conexión";
+    cityStatus.textContent = t("weather.searchFailed");
   }
 }
 
-document.querySelectorAll(".privacy-link").forEach((link) => (link.href = PRIVACY_URL));
+document.querySelectorAll(".privacy-link").forEach((link) => (link.href = privacyUrl(language)));
 document.getElementById("weather-use-location").addEventListener("click", () => choose({ mode: "location" }));
 document.getElementById("weather-dismiss").addEventListener("click", () => choose({ mode: "off" }));
 document.getElementById("weather-use-city").addEventListener("click", () => {

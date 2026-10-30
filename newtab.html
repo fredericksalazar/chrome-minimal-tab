@@ -15,12 +15,14 @@
   <link rel="stylesheet" href="styles/onboarding.css">
   <link rel="stylesheet" href="styles/tilo-bg.css">
   <script src="src/newtab/theme-boot.js"></script>
+  <script type="module" src="src/newtab/i18n.js"></script>
   <script type="module" src="src/newtab/shortcuts.js"></script>
   <script type="module" src="src/newtab/search.js"></script>
   <script type="module" src="src/newtab/clock-weather.js"></script>
   <script type="module" src="src/newtab/todos.js"></script>
   <script type="module" src="src/newtab/drawer.js"></script>
   <script type="module" src="src/newtab/appearance.js"></script>
+  <script type="module" src="src/newtab/language.js"></script>
   <script type="module" src="src/newtab/backgrounds.js"></script>
   <script type="module" src="src/newtab/speed-panel.js"></script>
   <script type="module" src="src/newtab/support.js"></script>
@@ -35,7 +37,7 @@
     <div class="tilo-orbit"><span></span><span></span></div>
   </div>
   <div class="page">
-  <aside class="widget" aria-label="Hora y tiempo">
+  <aside class="widget" aria-label="Hora y tiempo" data-i18n-attrs="aria-label: widget.label">
     <time id="clock" class="clock"></time>
     <div id="weather" class="weather" hidden>
       <span id="city"></span>
@@ -46,27 +48,27 @@
     </div>
 
     <section id="weather-card" class="weather-card" aria-labelledby="weather-card-title" hidden>
-      <h2 id="weather-card-title">¿Mostramos el clima?</h2>
-      <p>Para ver el tiempo, Tilo envía tu ubicación a Open-Meteo y BigDataCloud. Si no la compartes, usa tu IP con ipapi.co. Tilo no tiene servidores propios ni guarda tus datos fuera de este equipo.</p>
+      <h2 id="weather-card-title" data-i18n="weather.cardTitle">¿Mostramos el clima?</h2>
+      <p data-i18n="weather.cardText">Para ver el tiempo, Tilo envía tu ubicación a Open-Meteo y BigDataCloud. Si no la compartes, usa tu IP con ipapi.co. Tilo no tiene servidores propios ni guarda tus datos fuera de este equipo.</p>
       <div class="weather-card-actions">
-        <button id="weather-use-location" class="btn btn-primary" type="button">Usar mi ubicación</button>
-        <button id="weather-use-city" class="btn" type="button">Escribir mi ciudad</button>
-        <button id="weather-dismiss" class="btn" type="button">Ahora no</button>
+        <button id="weather-use-location" class="btn btn-primary" type="button" data-i18n="weather.useLocation">Usar mi ubicación</button>
+        <button id="weather-use-city" class="btn" type="button" data-i18n="weather.useCity">Escribir mi ciudad</button>
+        <button id="weather-dismiss" class="btn" type="button" data-i18n="weather.notNow">Ahora no</button>
       </div>
       <form id="weather-city-form" class="weather-city" hidden>
-        <input id="weather-city-input" type="text" placeholder="Escribe tu ciudad" aria-label="Ciudad" autocomplete="off" maxlength="80">
-        <p class="weather-note">Solo se envía a Open-Meteo el nombre que escribas.</p>
+        <input id="weather-city-input" type="text" placeholder="Escribe tu ciudad" aria-label="Ciudad" data-i18n-attrs="placeholder: weather.cityPlaceholder; aria-label: weather.cityLabel" autocomplete="off" maxlength="80">
+        <p class="weather-note" data-i18n="weather.cityNote">Solo se envía a Open-Meteo el nombre que escribas.</p>
         <p id="weather-city-status" class="weather-note" role="status"></p>
         <ul id="weather-city-results" class="weather-results"></ul>
       </form>
-      <a class="privacy-link weather-privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>
+      <a class="privacy-link weather-privacy" target="_blank" rel="noopener noreferrer" data-i18n="privacy.link">Política de privacidad</a>
     </section>
   </aside>
 
-  <section id="todo" class="todo" aria-label="Tareas">
+  <section id="todo" class="todo" aria-label="Tareas" data-i18n-attrs="aria-label: todo.label">
     <form id="todo-form" class="todo-add">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-      <input id="todo-input" type="text" placeholder="Añadir tarea" aria-label="Añadir tarea" autocomplete="off" maxlength="200">
+      <input id="todo-input" type="text" placeholder="Añadir tarea" aria-label="Añadir tarea" data-i18n-attrs="placeholder: todo.add; aria-label: todo.add" autocomplete="off" maxlength="200">
     </form>
     <ul id="todo-list" class="todo-list"></ul>
   </section>
@@ -80,26 +82,26 @@
     <form id="search-form" class="search" method="get" role="search">
       <label class="search-box">
         <img id="search-icon" class="search-icon" src="assets/brand/tilo-small.svg" alt="">
-        <input id="search-input" type="search" name="q" placeholder="Buscar en la web o escribir una URL" aria-label="Buscar" autocomplete="off" autofocus>
+        <input id="search-input" type="search" name="q" placeholder="Buscar en la web o escribir una URL" aria-label="Buscar" data-i18n-attrs="aria-label: search.label" autocomplete="off" autofocus>
       </label>
     </form>
 
-    <section id="grid" class="grid" aria-label="Accesos directos"></section>
+    <section id="grid" class="grid" aria-label="Accesos directos" data-i18n-attrs="aria-label: shortcuts.label"></section>
 
-    <p id="empty-hint" class="hint" hidden>
+    <p id="empty-hint" class="hint" data-i18n-html="shortcuts.emptyHint" hidden>
       Pulsa <kbd>⌥⇧D</kbd> en cualquier web para añadirla aquí,
       o guárdala con <kbd>⌘D</kbd> en la carpeta «Accesos directos».
     </p>
   </main>
 
-  <button id="customize" class="customize" type="button" title="Personalizar" aria-label="Personalizar">
+  <button id="customize" class="customize" type="button" title="Personalizar" aria-label="Personalizar" data-i18n-attrs="title: customize; aria-label: customize">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
       <circle cx="12" cy="12" r="3"/>
     </svg>
   </button>
 
-  <button id="speed-btn" class="speed-btn" type="button" title="Prueba de velocidad" aria-label="Prueba de velocidad" aria-expanded="false" aria-controls="speed-panel">
+  <button id="speed-btn" class="speed-btn" type="button" title="Prueba de velocidad" aria-label="Prueba de velocidad" data-i18n-attrs="title: speed.title; aria-label: speed.title" aria-expanded="false" aria-controls="speed-panel">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
       <path d="M13.45 11.55l2.05 -2.05"/>
@@ -108,13 +110,13 @@
   </button>
   <span id="speed-badge" class="speed-badge" hidden></span>
 
-  <nav id="support" class="support" aria-label="Apoya el proyecto"></nav>
+  <nav id="support" class="support" aria-label="Apoya el proyecto" data-i18n-attrs="aria-label: support.label"></nav>
   </div>
 
-  <section id="speed-panel" class="speed-panel" hidden aria-label="Prueba de velocidad">
+  <section id="speed-panel" class="speed-panel" hidden aria-label="Prueba de velocidad" data-i18n-attrs="aria-label: speed.title">
     <header class="speed-header">
-      <h2>Prueba de velocidad</h2>
-      <button id="speed-close" class="icon-button" type="button" aria-label="Cerrar">
+      <h2 data-i18n="speed.title">Prueba de velocidad</h2>
+      <button id="speed-close" class="icon-button" type="button" aria-label="Cerrar" data-i18n-attrs="aria-label: common.close">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
     </header>
@@ -130,12 +132,12 @@
       </span>
     </div>
     <div class="speed-flow-labels">
-      <span>Tu equipo</span>
-      <span>Servidor</span>
+      <span data-i18n="speed.local">Tu equipo</span>
+      <span data-i18n="speed.server">Servidor</span>
     </div>
     <p class="speed-verified">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-      <span id="speed-verified">Sin datos aún</span>
+      <span id="speed-verified" data-i18n="speed.noData">Sin datos aún</span>
     </p>
 
     <div class="speed-readout">
@@ -151,14 +153,14 @@
     </svg>
 
     <div class="speed-metrics">
-      <button class="speed-m" data-metric="download" data-view="download" type="button"><small>Descarga</small><b id="speed-dl">—</b><i>Mbps</i></button>
-      <button class="speed-m" data-metric="upload" data-view="upload" type="button"><small>Subida</small><b id="speed-ul">—</b><i>Mbps</i></button>
-      <button class="speed-m" data-metric="latency" data-view="latency" type="button"><small>Latencia</small><b id="speed-lat">—</b><i>ms</i></button>
-      <button class="speed-m" data-metric="jitter" data-view="latency" type="button"><small>Jitter</small><b id="speed-jit">—</b><i>ms</i></button>
+      <button class="speed-m" data-metric="download" data-view="download" type="button"><small data-i18n="speed.download">Descarga</small><b id="speed-dl">—</b><i>Mbps</i></button>
+      <button class="speed-m" data-metric="upload" data-view="upload" type="button"><small data-i18n="speed.upload">Subida</small><b id="speed-ul">—</b><i>Mbps</i></button>
+      <button class="speed-m" data-metric="latency" data-view="latency" type="button"><small data-i18n="speed.latency">Latencia</small><b id="speed-lat">—</b><i>ms</i></button>
+      <button class="speed-m" data-metric="jitter" data-view="latency" type="button"><small data-i18n="speed.jitter">Jitter</small><b id="speed-jit">—</b><i>ms</i></button>
     </div>
 
     <footer class="speed-footer">
-      <span>Servidor de prueba · Cloudflare</span>
+      <span data-i18n="speed.provider">Servidor de prueba · Cloudflare</span>
       <button id="speed-act" class="btn" type="button"></button>
     </footer>
   </section>
@@ -166,39 +168,44 @@
   <dialog id="settings" class="drawer" aria-labelledby="settings-title">
     <div class="drawer-body">
       <header class="drawer-header">
-        <h2 id="settings-title">Personalizar</h2>
-        <button id="settings-close" class="icon-button" type="button" aria-label="Cerrar">
+        <h2 id="settings-title" data-i18n="customize">Personalizar</h2>
+        <button id="settings-close" class="icon-button" type="button" aria-label="Cerrar" data-i18n-attrs="aria-label: common.close">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </header>
 
       <div id="view-main">
       <section class="drawer-section">
-        <h3 id="theme-title">Tema</h3>
+        <h3 id="theme-title" data-i18n="settings.theme">Tema</h3>
         <div id="theme-options" class="theme-options" role="radiogroup" aria-labelledby="theme-title"></div>
       </section>
 
       <section class="drawer-section">
-        <h3>Motor de búsqueda</h3>
-        <div id="engine-list" class="engine-list" role="radiogroup" aria-label="Motor de búsqueda"></div>
+        <h3><label for="language-select" data-i18n="settings.language">Idioma</label></h3>
+        <select id="language-select" class="language-select"></select>
       </section>
 
       <section class="drawer-section">
-        <h3>Fondo</h3>
+        <h3 data-i18n="settings.engine">Motor de búsqueda</h3>
+        <div id="engine-list" class="engine-list" role="radiogroup" aria-label="Motor de búsqueda" data-i18n-attrs="aria-label: settings.engine"></div>
+      </section>
+
+      <section class="drawer-section">
+        <h3 data-i18n="settings.background">Fondo</h3>
         <div id="bg-options" class="bg-options"></div>
         <div id="bg-image-controls" class="bg-image-controls" hidden>
           <div class="bg-row">
-            <span id="blur-label">Desenfocar imagen</span>
+            <span id="blur-label" data-i18n="bg.blur">Desenfocar imagen</span>
             <button id="blur-switch" class="switch" type="button" role="switch" aria-checked="false" aria-labelledby="blur-label"></button>
           </div>
           <label id="blur-amount-row" class="bg-row" hidden>
-            <span>Intensidad</span>
-            <input id="blur-amount" class="blur-amount" type="range" min="2" max="40" step="1" aria-label="Intensidad del desenfoque">
+            <span data-i18n="bg.intensity">Intensidad</span>
+            <input id="blur-amount" class="blur-amount" type="range" min="2" max="40" step="1" aria-label="Intensidad del desenfoque" data-i18n-attrs="aria-label: bg.intensityLabel">
             <output id="blur-value" class="blur-value" for="blur-amount"></output>
           </label>
           <div class="bg-actions">
-            <button id="bg-image-change" class="btn" type="button">Cambiar imagen</button>
-            <button id="bg-image-remove" class="btn" type="button">Quitar imagen</button>
+            <button id="bg-image-change" class="btn" type="button" data-i18n="bg.changeImage">Cambiar imagen</button>
+            <button id="bg-image-remove" class="btn" type="button" data-i18n="bg.removeImage">Quitar imagen</button>
           </div>
         </div>
         <p id="bg-error" class="bg-error" role="alert"></p>
@@ -206,25 +213,25 @@
       </section>
 
       <section class="drawer-section">
-        <h3>Clima</h3>
+        <h3 data-i18n="settings.weather">Clima</h3>
         <p id="weather-state" class="drawer-text"></p>
         <div class="bg-actions">
-          <button id="weather-change" class="btn" type="button">Cambiar</button>
-          <button id="weather-off" class="btn" type="button">Desactivar</button>
+          <button id="weather-change" class="btn" type="button" data-i18n="settings.change">Cambiar</button>
+          <button id="weather-off" class="btn" type="button" data-i18n="settings.disable">Desactivar</button>
         </div>
-        <p class="drawer-text drawer-link"><a class="privacy-link" target="_blank" rel="noopener noreferrer">Política de privacidad</a></p>
+        <p class="drawer-text drawer-link"><a class="privacy-link" target="_blank" rel="noopener noreferrer" data-i18n="privacy.link">Política de privacidad</a></p>
       </section>
 
       <section class="drawer-section">
-        <h3>Accesos directos</h3>
-        <p class="drawer-text">En uso: <span id="counter"></span></p>
-        <button id="manage" class="btn" type="button">Gestionar en marcadores</button>
+        <h3 data-i18n="settings.shortcuts">Accesos directos</h3>
+        <p class="drawer-text"><span data-i18n="shortcuts.inUse">En uso:</span> <span id="counter"></span></p>
+        <button id="manage" class="btn" type="button" data-i18n="shortcuts.manage">Gestionar en marcadores</button>
       </section>
       </div>
 
       <div id="view-bg" hidden>
         <div class="subview-header">
-          <button id="bg-back" class="icon-button" type="button" aria-label="Volver">
+          <button id="bg-back" class="icon-button" type="button" aria-label="Volver" data-i18n-attrs="aria-label: common.back">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
           </button>
           <h3 id="bg-title"></h3>
@@ -234,31 +241,31 @@
     </div>
   </dialog>
 
-  <dialog id="onboarding" class="onboarding" aria-label="Guía de bienvenida de Tilo">
+  <dialog id="onboarding" class="onboarding" aria-label="Guía de bienvenida de Tilo" data-i18n-attrs="aria-label: onb.label">
     <div class="onb-viewport">
       <div id="onb-track" class="onb-track">
         <section class="onb-card" aria-labelledby="onb-title-1">
           <div class="onb-icon"><img src="assets/brand/tilo.svg" alt=""></div>
-          <h2 id="onb-title-1">Te damos la bienvenida a Tilo</h2>
-          <p>Tilo es una nueva pestaña minimalista: organiza tus favoritos con libertad y elige tu motor de búsqueda en un momento.</p>
+          <h2 id="onb-title-1" data-i18n="onb.welcomeTitle">Te damos la bienvenida a Tilo</h2>
+          <p data-i18n="onb.welcomeText">Tilo es una nueva pestaña minimalista: organiza tus favoritos con libertad y elige tu motor de búsqueda en un momento.</p>
           <ul class="onb-list">
-            <li>Hasta 100 accesos directos, guardados en tus marcadores</li>
-            <li>Añade una página con <kbd>⌥⇧D</kbd>, el icono de Tilo o el clic derecho</li>
-            <li>Busca con el motor de Chrome o elige otro en Personalizar</li>
+            <li data-i18n="onb.welcome1">Hasta 100 accesos directos, guardados en tus marcadores</li>
+            <li data-i18n-html="onb.welcome2">Añade una página con <kbd>⌥⇧D</kbd>, el icono de Tilo o el clic derecho</li>
+            <li data-i18n="onb.welcome3">Busca con el motor de Chrome o elige otro en Personalizar</li>
           </ul>
         </section>
 
         <section class="onb-card" aria-labelledby="onb-title-2">
           <div class="onb-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v1.5M3.8 5.8l1 1M2 10h1.5M10.4 7.7A3.5 3.5 0 0 0 4.6 11"/><path d="M7 20h10a4 4 0 0 0 0-8 5 5 0 0 0-9.6 1.5A3.3 3.3 0 0 0 7 20z"/></svg></div>
-          <h2 id="onb-title-2">El clima, a tu manera</h2>
-          <p>Para mostrar el tiempo, Tilo puede usar tu ubicación con el permiso de Chrome. Se envía a Open-Meteo (tiempo) y BigDataCloud (nombre de la ciudad); si no la compartes, se usa tu IP con ipapi.co. También puedes escribir tu ciudad: solo se envía ese nombre a Open-Meteo.</p>
+          <h2 id="onb-title-2" data-i18n="onb.weatherTitle">El clima, a tu manera</h2>
+          <p data-i18n="onb.weatherText">Para mostrar el tiempo, Tilo puede usar tu ubicación con el permiso de Chrome. Se envía a Open-Meteo (tiempo) y BigDataCloud (nombre de la ciudad); si no la compartes, se usa tu IP con ipapi.co. También puedes escribir tu ciudad: solo se envía ese nombre a Open-Meteo.</p>
           <div class="onb-choices onb-weather">
-            <button id="onb-location" class="btn" type="button" aria-pressed="false">Usar mi ubicación</button>
-            <button id="onb-city" class="btn" type="button" aria-pressed="false">Escribir mi ciudad</button>
-            <button id="onb-off" class="btn" type="button" aria-pressed="false">Ahora no</button>
+            <button id="onb-location" class="btn" type="button" aria-pressed="false" data-i18n="weather.useLocation">Usar mi ubicación</button>
+            <button id="onb-city" class="btn" type="button" aria-pressed="false" data-i18n="weather.useCity">Escribir mi ciudad</button>
+            <button id="onb-off" class="btn" type="button" aria-pressed="false" data-i18n="weather.notNow">Ahora no</button>
           </div>
           <form id="onb-city-form" class="onb-city" hidden>
-            <input id="onb-city-input" type="text" placeholder="Escribe tu ciudad" aria-label="Ciudad" autocomplete="off" maxlength="80">
+            <input id="onb-city-input" type="text" placeholder="Escribe tu ciudad" aria-label="Ciudad" data-i18n-attrs="placeholder: weather.cityPlaceholder; aria-label: weather.cityLabel" autocomplete="off" maxlength="80">
             <ul id="onb-city-results" class="weather-results"></ul>
           </form>
           <p id="onb-weather-status" class="onb-status" role="status"></p>
@@ -266,19 +273,19 @@
 
         <section class="onb-card" aria-labelledby="onb-title-3">
           <div class="onb-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M13.45 11.55l2.05 -2.05"/><path d="M6.4 20a9 9 0 1 1 11.2 0z"/></svg></div>
-          <h2 id="onb-title-3">Prueba de velocidad</h2>
-          <p>El botón de la esquina inferior izquierda mide la descarga, la subida, la latencia y el jitter de tu conexión con los servidores de Cloudflare.</p>
+          <h2 id="onb-title-3" data-i18n="speed.title">Prueba de velocidad</h2>
+          <p data-i18n="onb.speedText">El botón de la esquina inferior izquierda mide la descarga, la subida, la latencia y el jitter de tu conexión con los servidores de Cloudflare.</p>
           <ul class="onb-list">
-            <li>Solo se ejecuta cuando la inicias</li>
-            <li>Usa el permiso de acceso a speed.cloudflare.com y envía tráfico de prueba; Cloudflare ve tu IP, como en cualquier web</li>
-            <li>Los resultados no se guardan ni se envían a nadie</li>
+            <li data-i18n="onb.speed1">Solo se ejecuta cuando la inicias</li>
+            <li data-i18n="onb.speed2">Usa el permiso de acceso a speed.cloudflare.com y envía tráfico de prueba; Cloudflare ve tu IP, como en cualquier web</li>
+            <li data-i18n="onb.speed3">Los resultados no se guardan ni se envían a nadie</li>
           </ul>
         </section>
 
         <section class="onb-card" aria-labelledby="onb-title-4">
           <div class="onb-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z"/></svg></div>
-          <h2 id="onb-title-4">Tilo es gratis</h2>
-          <p>Sin anuncios, sin cuentas y sin rastreo. Si Tilo te sirve y te gusta, puedes apoyar su desarrollo con una donación.</p>
+          <h2 id="onb-title-4" data-i18n="onb.freeTitle">Tilo es gratis</h2>
+          <p data-i18n="onb.freeText">Sin anuncios, sin cuentas y sin rastreo. Si Tilo te sirve y te gusta, puedes apoyar su desarrollo con una donación.</p>
           <div id="onb-donate" class="onb-choices"></div>
         </section>
       </div>
@@ -301,25 +308,25 @@
     <form id="shortcut-form" novalidate>
       <h2 id="dialog-title"></h2>
       <label class="field">
-        <span>Nombre</span>
+        <span data-i18n="dialog.name">Nombre</span>
         <input id="name-input" type="text" autocomplete="off">
       </label>
       <label class="field">
-        <span>URL</span>
+        <span data-i18n="dialog.url">URL</span>
         <input id="url-input" type="text" autocomplete="off" spellcheck="false">
       </label>
       <p id="dialog-error" class="dialog-error" role="alert"></p>
       <div class="dialog-actions">
-        <button id="remove-button" class="btn remove" type="button">Quitar</button>
-        <button id="cancel-button" class="btn" type="button">Cancelar</button>
-        <button class="btn btn-primary" type="submit">Hecho</button>
+        <button id="remove-button" class="btn remove" type="button" data-i18n="dialog.remove">Quitar</button>
+        <button id="cancel-button" class="btn" type="button" data-i18n="dialog.cancel">Cancelar</button>
+        <button class="btn btn-primary" type="submit" data-i18n="dialog.done">Hecho</button>
       </div>
     </form>
   </dialog>
 
   <div id="toast" class="toast" role="status" hidden>
     <span id="toast-text"></span>
-    <button id="toast-undo" type="button">Deshacer</button>
+    <button id="toast-undo" type="button" data-i18n="shortcuts.undo">Deshacer</button>
   </div>
 </body>
 </html>

@@ -1,10 +1,7 @@
 // Tema de la página: "system" sigue al sistema; "light" y "dark" lo fijan.
 // theme-boot.js repite resolveTheme porque es un script clásico y no puede importar.
-export const THEMES = [
-  { id: "light", name: "Claro" },
-  { id: "dark", name: "Oscuro" },
-  { id: "system", name: "Dispositivo" },
-];
+// Nombres visibles: theme.<id> en src/i18n/
+export const THEMES = [{ id: "light" }, { id: "dark" }, { id: "system" }];
 export const DEFAULT_THEME = "system";
 
 export function normalizeTheme(value) {

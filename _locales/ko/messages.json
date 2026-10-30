@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — 깔끔한 새 탭",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "깔끔하고 빠른 새 탭: 동기화되는 바로가기 최대 100개, 할 일, 날씨, 배경. 계정도 추적도 없습니다.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Tilo에 추가",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "현재 페이지를 Tilo에 추가",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "페이지를 Tilo에 추가",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "링크를 Tilo에 추가",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "바로가기",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

@@ -1,9 +1,13 @@
 // Enlaces de apoyo al autor: simples URLs externas, sin SDK ni scripts de pago.
-// Cambiar un destino es tocar solo esta lista.
+// Cambiar un destino es tocar solo esta lista; los textos son support.<id> en src/i18n/.
 const PAYPAL_EMAIL = "fredefass01@gmail.com";
 
-// Política de privacidad publicada en la web del autor
-export const PRIVACY_URL = "https://fredericksalazar.github.io/tilo/privacidad.html";
+// Política de privacidad publicada en la web del autor, una página por idioma
+// (la española conserva su dirección original)
+export function privacyUrl(language) {
+  const page = language === "es" ? "privacidad" : `privacy-${language}`;
+  return `https://fredericksalazar.github.io/tilo/${page}.html`;
+}
 
 export function paypalDonateUrl(email) {
   const params = new URLSearchParams({ business: email, no_recurring: "0" });
@@ -11,22 +15,7 @@ export function paypalDonateUrl(email) {
 }
 
 export const SUPPORT_LINKS = [
-  {
-    id: "coffee",
-    label: "Invítame a un café",
-    title: "Apoya Tilo en Buy Me a Coffee (voluntario)",
-    url: "https://buymeacoffee.com/fredericksalazar",
-  },
-  {
-    id: "paypal",
-    label: "Donar con PayPal",
-    title: "Haz una donación voluntaria con PayPal",
-    url: paypalDonateUrl(PAYPAL_EMAIL),
-  },
-  {
-    id: "web",
-    label: "Mi web",
-    title: "Web personal del autor",
-    url: "https://fredericksalazar.github.io/",
-  },
+  { id: "coffee", url: "https://buymeacoffee.com/fredericksalazar" },
+  { id: "paypal", url: paypalDonateUrl(PAYPAL_EMAIL) },
+  { id: "web", url: "https://fredericksalazar.github.io/" },
 ];

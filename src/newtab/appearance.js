@@ -2,6 +2,7 @@
 // con la cuenta (storage.sync); theme.js la aplica y la guarda para el arranque.
 import { KEYS, onSyncChange } from "../lib/storage.js";
 import { THEMES } from "../lib/theme.js";
+import { t } from "./i18n.js";
 import { ICONS } from "./icons.js";
 import { getThemePreference, setThemePreference } from "./theme.js";
 
@@ -10,7 +11,7 @@ const options = document.getElementById("theme-options");
 function render() {
   const current = getThemePreference();
   options.replaceChildren(
-    ...THEMES.map(({ id, name }) => {
+    ...THEMES.map(({ id }) => {
       const option = document.createElement("label");
       option.className = "theme-option";
 
@@ -22,7 +23,7 @@ function render() {
       radio.addEventListener("change", () => choose(id));
 
       const text = document.createElement("span");
-      text.textContent = name;
+      text.textContent = t(`theme.${id}`);
 
       option.append(radio);
       option.insertAdjacentHTML("beforeend", ICONS[id]);

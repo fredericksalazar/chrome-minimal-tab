@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — Nouvel onglet épuré",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "Un nouvel onglet épuré et rapide : jusqu'à 100 raccourcis synchronisés, tâches, météo et fonds. Sans compte ni pistage.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Ajouter à Tilo",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "Ajouter la page actuelle à Tilo",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "Ajouter la page à Tilo",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "Ajouter le lien à Tilo",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "Raccourcis",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

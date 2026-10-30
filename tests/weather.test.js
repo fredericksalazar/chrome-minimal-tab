@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import es from "../src/i18n/es.js";
+import { createTranslator } from "../src/lib/i18n.js";
 import { findCities, forecastUrl, geocodingUrl, MAX_CITY_RESULTS, needsChoice, parseGeocoding, sourceLabel } from "../src/lib/weather.js";
 
 test("needsChoice pide elegir si no hay un modo válido guardado", () => {
@@ -41,10 +43,11 @@ test("parseGeocoding sin resultados devuelve una lista vacía", () => {
 });
 
 test("sourceLabel describe la elección en el panel", () => {
-  assert.equal(sourceLabel({ mode: "location" }), "Con tu ubicación");
-  assert.equal(sourceLabel({ mode: "city", city: { name: "Cali" } }), "Ciudad: Cali");
-  assert.equal(sourceLabel({ mode: "off" }), "Desactivado");
-  assert.equal(sourceLabel(undefined), "Sin elegir");
+  const t = createTranslator(es);
+  assert.equal(sourceLabel({ mode: "location" }, t), "Con tu ubicación");
+  assert.equal(sourceLabel({ mode: "city", city: { name: "Cali" } }, t), "Ciudad: Cali");
+  assert.equal(sourceLabel({ mode: "off" }, t), "Desactivado");
+  assert.equal(sourceLabel(undefined, t), "Sin elegir");
 });
 
 test("findCities pide la geocodificación y devuelve las ciudades", async () => {
@@ -61,4 +64,9 @@ test("findCities pide la geocodificación y devuelve las ciudades", async () => 
 test("findCities sin resultados devuelve una lista vacía y con error de red lanza", async () => {
   assert.deepEqual(await findCities("zzzz", async () => ({ ok: true, json: async () => ({}) })), []);
   await assert.rejects(findCities("Cali", async () => ({ ok: false, status: 500 })));
+});
+
+test("geocodingUrl pide los nombres de ciudad en el idioma de Tilo", () => {
+  assert.equal(new URL(geocodingUrl("Tokio")).searchParams.get("language"), "es");
+  assert.equal(new URL(geocodingUrl("Tokio", "ja")).searchParams.get("language"), "ja");
 });

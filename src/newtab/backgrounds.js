@@ -18,6 +18,7 @@ import {
 } from "../lib/backgrounds.js";
 import { KEYS, onLocalChange, onSyncChange } from "../lib/storage.js";
 import { ICONS, checkIcon } from "./icons.js";
+import { t } from "./i18n.js";
 import { setBackground } from "./theme.js";
 
 // Misma clave que lee theme-boot.js antes del primer pintado
@@ -25,11 +26,7 @@ const CACHE_KEY = "background";
 const PREVIEW = { solid: BACKGROUNDS.solid.items[0], gradient: BACKGROUNDS.gradient.items[5] };
 // Por encima de esto se reintenta más pequeña para no agotar la caché de localStorage
 const MAX_DATA_URL = 3.5 * 1024 * 1024;
-const ERRORS = {
-  type: "Ese archivo no es una imagen válida.",
-  size: "La imagen supera los 20 MB.",
-  save: "No se pudo guardar la imagen.",
-};
+const ERRORS = { type: "bg.errorType", size: "bg.errorSize", save: "bg.errorSave" };
 
 const drawer = document.getElementById("settings");
 const viewMain = document.getElementById("view-main");
@@ -113,7 +110,7 @@ async function choose(selection) {
 }
 
 function showError(reason) {
-  error.textContent = reason ? ERRORS[reason] : "";
+  error.textContent = reason ? t(ERRORS[reason]) : "";
 }
 
 // Tarjetas principales: Tilo (a lo ancho), Liso, Colores sólidos, Degradados, Imagen
@@ -121,12 +118,12 @@ function renderOptions() {
   const selected = (type) => !imageActive() && current.type === type;
   const preview = (type) => (selected(type) ? findBackground(current) : PREVIEW[type]);
   const tiles = [
-    { label: "Tilo", tilo: true, active: selected("default"), onClick: () => choose(DEFAULT_BACKGROUND) },
-    { label: "Liso", css: null, active: selected("plain"), onClick: () => choose(PLAIN_BACKGROUND) },
-    { label: BACKGROUNDS.solid.title, css: preview("solid").css, active: selected("solid"), onClick: () => openGrid("solid") },
-    { label: BACKGROUNDS.gradient.title, css: preview("gradient").css, active: selected("gradient"), onClick: () => openGrid("gradient") },
+    { label: t("bg.tilo"), tilo: true, active: selected("default"), onClick: () => choose(DEFAULT_BACKGROUND) },
+    { label: t("bg.plain"), css: null, active: selected("plain"), onClick: () => choose(PLAIN_BACKGROUND) },
+    { label: t("bg.solid"), css: preview("solid").css, active: selected("solid"), onClick: () => openGrid("solid") },
+    { label: t("bg.gradient"), css: preview("gradient").css, active: selected("gradient"), onClick: () => openGrid("gradient") },
     {
-      label: "Imagen",
+      label: t("bg.image"),
       css: image && imageCss(image.dataUrl),
       icon: !image,
       active: imageActive(),
@@ -170,7 +167,7 @@ function renderImageControls() {
 
 function showBlurValue(amount) {
   blurValue.textContent = `${amount} px`;
-  blurAmount.setAttribute("aria-valuetext", `${amount} píxeles`);
+  blurAmount.setAttribute("aria-valuetext", t("bg.pixels", { n: amount }));
 }
 
 // Cuadrícula de una categoría (colores o degradados)
@@ -181,14 +178,14 @@ function renderGrid() {
       const selection = { type: openType, id: item.id };
       const swatch = document.createElement("label");
       swatch.className = "swatch";
-      swatch.title = item.name;
+      swatch.title = t(`bgName.${item.id}`);
 
       const radio = document.createElement("input");
       radio.type = "radio";
       radio.name = "bg-swatch";
       radio.value = item.id;
       radio.checked = !imageActive() && isSameBackground(current, selection);
-      radio.setAttribute("aria-label", item.name);
+      radio.setAttribute("aria-label", swatch.title);
       radio.addEventListener("change", () => choose(selection));
 
       const fill = document.createElement("span");
@@ -244,7 +241,7 @@ async function loadFile(file) {
 
 function openGrid(type) {
   openType = type;
-  title.textContent = BACKGROUNDS[type].title;
+  title.textContent = t(`bg.${type}`);
   renderGrid();
   viewMain.hidden = true;
   viewGrid.hidden = false;

@@ -13,9 +13,10 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   // Recién instalada: abre una pestaña nueva, que muestra la guía de bienvenida
   if (reason === "install") chrome.tabs.create({});
   await chrome.contextMenus.removeAll();
-  chrome.contextMenus.create({ id: "add-page", title: "Añadir página a Tilo", contexts: ["page"] });
-  chrome.contextMenus.create({ id: "add-link", title: "Añadir enlace a Tilo", contexts: ["link"] });
-  await getFolderId();
+  // Fuera de la página no hay selector de idioma: se usa el de Chrome (_locales)
+  chrome.contextMenus.create({ id: "add-page", title: chrome.i18n.getMessage("menuAddPage"), contexts: ["page"] });
+  chrome.contextMenus.create({ id: "add-link", title: chrome.i18n.getMessage("menuAddLink"), contexts: ["link"] });
+  await getFolderId(chrome.i18n.getMessage("folderTitle"));
 });
 
 chrome.action.onClicked.addListener((tab) => addPage(tab, tab.url, tab.title));
@@ -31,7 +32,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 async function addPage(tab, rawUrl, title) {
   const url = rawUrl && normalizeUrl(rawUrl);
-  const status = url ? await addShortcut({ title: title?.trim(), url }) : "invalid";
+  const status = url ? await addShortcut({ title: title?.trim(), url }, chrome.i18n.getMessage("folderTitle")) : "invalid";
   if (tab?.id !== undefined) flashBadge(tab.id, status);
 }
 

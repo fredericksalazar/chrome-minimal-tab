@@ -4,10 +4,22 @@ import { KEYS } from "./storage.js";
 import { hostname } from "./url.js";
 
 export const MAX_SHORTCUTS = 100;
-export const FOLDER_TITLE = "Accesos directos";
+// Nombre de la carpeta en cada idioma de Tilo: se busca cualquiera de ellos para
+// no duplicarla si el idioma cambia; las nuevas se crean en el idioma actual
+export const FOLDER_TITLES = [
+  "Accesos directos",
+  "Shortcuts",
+  "Raccourcis",
+  "Scorciatoie",
+  "Verknüpfungen",
+  "Atalhos",
+  "ショートカット",
+  "바로가기",
+  "快捷方式",
+];
 
 // Devuelve el id de la carpeta, creándola en "Otros marcadores" si no existe
-export async function getFolderId() {
+export async function getFolderId(title = FOLDER_TITLES[0]) {
   const { [KEYS.folder]: storedId } = await chrome.storage.local.get(KEYS.folder);
   if (storedId) {
     try {
@@ -18,12 +30,16 @@ export async function getFolderId() {
     }
   }
 
-  const matches = await chrome.bookmarks.search({ title: FOLDER_TITLE });
-  let folder = matches.find((node) => !node.url);
+  let folder;
+  for (const name of [title, ...FOLDER_TITLES]) {
+    const matches = await chrome.bookmarks.search({ title: name });
+    folder = matches.find((node) => !node.url);
+    if (folder) break;
+  }
   if (!folder) {
     const [root] = await chrome.bookmarks.getTree();
     const otherBookmarks = root.children[1] ?? root.children[0];
-    folder = await chrome.bookmarks.create({ parentId: otherBookmarks.id, title: FOLDER_TITLE });
+    folder = await chrome.bookmarks.create({ parentId: otherBookmarks.id, title });
   }
 
   await chrome.storage.local.set({ [KEYS.folder]: folder.id });
@@ -36,8 +52,8 @@ export async function getShortcuts(folderId) {
   return children.filter((node) => node.url);
 }
 
-export async function addShortcut({ title, url }) {
-  const folderId = await getFolderId();
+export async function addShortcut({ title, url }, folderTitle) {
+  const folderId = await getFolderId(folderTitle);
   const shortcuts = await getShortcuts(folderId);
   if (shortcuts.some((node) => node.url === url)) return "exists";
   if (shortcuts.length >= MAX_SHORTCUTS) return "full";

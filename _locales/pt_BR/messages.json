@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — Nova guia limpa",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "Uma nova guia limpa e rápida: até 100 atalhos sincronizados, tarefas, clima e planos de fundo. Sem contas e sem rastreamento.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Adicionar ao Tilo",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "Adicionar a página atual ao Tilo",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "Adicionar página ao Tilo",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "Adicionar link ao Tilo",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "Atalhos",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

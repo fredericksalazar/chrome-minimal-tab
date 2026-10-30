@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — Clean New Tab",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "A clean, fast new tab: up to 100 synced shortcuts, tasks, weather and backgrounds. No accounts, no tracking.",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Add to Tilo",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "Add the current page to Tilo",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "Add page to Tilo",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "Add link to Tilo",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "Shortcuts",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

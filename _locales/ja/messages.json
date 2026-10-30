@@ -1,0 +1,30 @@
+{
+  "appName": {
+    "message": "Tilo — すっきりした新しいタブ",
+    "description": "Extension name in Chrome and the Web Store"
+  },
+  "appDescription": {
+    "message": "すっきり軽快な新しいタブ。同期される最大 100 件のショートカット、タスク、天気、背景。アカウント不要、トラッキングなし。",
+    "description": "Store summary, 132 characters max"
+  },
+  "actionTitle": {
+    "message": "Tilo に追加",
+    "description": "Toolbar button tooltip"
+  },
+  "commandAddShortcut": {
+    "message": "現在のページを Tilo に追加",
+    "description": "Keyboard shortcut description"
+  },
+  "menuAddPage": {
+    "message": "ページを Tilo に追加",
+    "description": "Context menu on a page"
+  },
+  "menuAddLink": {
+    "message": "リンクを Tilo に追加",
+    "description": "Context menu on a link"
+  },
+  "folderTitle": {
+    "message": "ショートカット",
+    "description": "Bookmarks folder; must match folderTitle in src/i18n"
+  }
+}

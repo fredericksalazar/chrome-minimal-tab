@@ -2,6 +2,7 @@
 // tachado al terminar y limpieza de las terminadas al cambiar de día.
 import { KEYS } from "../lib/storage.js";
 import { addTask, dayKey, purgeCompleted, removeTask, toTree, toggleTask } from "../lib/todos.js";
+import { t } from "./i18n.js";
 import { ICONS, checkIcon } from "./icons.js";
 
 const section = document.getElementById("todo");
@@ -56,8 +57,8 @@ function createItem(task) {
 
   const actions = document.createElement("span");
   actions.className = "todo-actions";
-  if (!task.parentId) actions.append(actionButton("subtask", "Añadir subtarea", ICONS.add));
-  actions.append(actionButton("delete", "Eliminar tarea", ICONS.close));
+  if (!task.parentId) actions.append(actionButton("subtask", t("todo.addSubtask"), ICONS.add));
+  actions.append(actionButton("delete", t("todo.delete"), ICONS.close));
 
   item.append(toggle, actions);
   return item;
@@ -71,8 +72,8 @@ function createSubtaskField() {
   subForm.className = "todo-add";
   const field = document.createElement("input");
   field.type = "text";
-  field.placeholder = "Añadir subtarea";
-  field.setAttribute("aria-label", "Añadir subtarea");
+  field.placeholder = t("todo.addSubtask");
+  field.setAttribute("aria-label", field.placeholder);
   field.autocomplete = "off";
   field.maxLength = 200;
 

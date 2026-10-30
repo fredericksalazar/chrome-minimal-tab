@@ -3,6 +3,7 @@
 export const KEYS = {
   engine: "searchEngine",
   theme: "theme",
+  language: "language",
   background: "background",
   image: "backgroundImage",
   folder: "folderId",

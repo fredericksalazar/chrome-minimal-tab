@@ -2,6 +2,7 @@
 import { ENGINES, findEngine, usesBrowserSearch } from "../lib/engines.js";
 import { KEYS, onSyncChange } from "../lib/storage.js";
 import { faviconUrl, looksLikeUrl, normalizeUrl } from "../lib/url.js";
+import { t } from "./i18n.js";
 import { checkIcon } from "./icons.js";
 
 const searchIcon = document.getElementById("search-icon");
@@ -22,7 +23,7 @@ function applyEngine(id) {
   const browser = usesBrowserSearch(engine);
   form.action = engine.search ?? "";
   input.name = engine.param ?? "q";
-  input.placeholder = browser ? "Buscar en la web o escribir una URL" : `Buscar con ${engine.name} o escribir una URL`;
+  input.placeholder = browser ? t("search.placeholder") : t("search.placeholderEngine", { engine: engine.name });
 
   searchIcon.src = browser ? BRAND_ICON : faviconUrl(engine.home, 32);
 
@@ -48,7 +49,7 @@ function renderEngineList() {
 
       const name = document.createElement("span");
       name.className = "engine-name";
-      name.textContent = engine.name;
+      name.textContent = id === "chrome" ? t("engine.default") : engine.name;
 
       option.append(radio, icon, name);
       option.insertAdjacentHTML("beforeend", checkIcon("engine-check"));
