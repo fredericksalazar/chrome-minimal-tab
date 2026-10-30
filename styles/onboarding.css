@@ -1,159 +1,286 @@
 /* Guía de bienvenida: tarjetas que se deslizan, al estilo de una primera configuración */
 
 dialog.onboarding {
-  width: min(480px, calc(100vw - 32px));
+  --onb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --onb-line: color-mix(in srgb, var(--text) 9%, transparent);
+  --onb-panel: color-mix(in srgb, var(--text) 3.5%, transparent);
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
   padding: 0;
   overflow: hidden;
-  border-radius: 24px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--onb-line);
+  border-radius: 28px;
+  /* Aura de la marca, muy tenue, en lo alto de la ventana: no se mueve al pasar de tarjeta */
+  background:
+    radial-gradient(60% 220px at 22% 0, color-mix(in srgb, #7c6cf2 13%, transparent), transparent),
+    radial-gradient(55% 200px at 78% 0, color-mix(in srgb, #4fd1a5 11%, transparent), transparent),
+    radial-gradient(40% 160px at 50% 0, color-mix(in srgb, #f27ba8 8%, transparent), transparent),
+    var(--dialog-bg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    0 32px 80px -12px rgba(0, 0, 0, 0.32);
 }
 
 dialog.onboarding::backdrop {
-  background: rgba(0, 0, 0, 0.32);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: rgba(15, 17, 21, 0.36);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
+/* La guía aparece con un leve ascenso */
+dialog.onboarding[open] {
+  animation: onb-in 0.5s var(--onb-ease);
+}
+
+@keyframes onb-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
 }
 
 .onb-viewport {
-  overflow: hidden;
-  transition: height 0.25s ease;
+  /* clip y no hidden: el foco no puede desplazar la ventana en horizontal */
+  overflow: clip;
+  transition: height 0.45s var(--onb-ease);
 }
 
 .onb-track {
   display: flex;
   align-items: flex-start;
-  transition: transform 0.25s ease;
+  transition: transform 0.55s var(--onb-ease);
 }
 
 .onb-card {
   flex: 0 0 100%;
   min-width: 0;
-  padding: 40px 36px 8px;
+  max-height: calc(100dvh - 32px - 88px);
+  padding: 52px 52px 12px;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
   text-align: center;
+  transition: opacity 0.4s ease;
 }
 
-/* Icono de cada tarjeta con un halo suave de la paleta de Tilo */
+/* En pantallas bajas cada tarjeta se desplaza en vertical sin tapar el pie;
+   las ocultas se desvanecen mientras se deslizan */
+.onb-card[inert] {
+  opacity: 0;
+}
+
+/* Icono de cada tarjeta: una pastilla clara sobre el halo de la paleta de Tilo */
 .onb-icon {
   position: relative;
+  isolation: isolate;
   display: grid;
   place-items: center;
-  width: 88px;
-  height: 88px;
-  margin: 0 auto 20px;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 28px;
+  border-radius: 30px;
+  background: color-mix(in srgb, var(--dialog-bg) 82%, transparent);
+  box-shadow:
+    inset 0 0 0 1px var(--onb-line),
+    0 10px 30px -10px rgba(0, 0, 0, 0.2);
 }
 
 .onb-icon::before {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: -6px;
   z-index: -1;
   border-radius: 50%;
-  background: conic-gradient(#7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
-  filter: blur(18px);
-  opacity: 0.45;
+  background: conic-gradient(from 200deg, #7c6cf2, #f27ba8, #ff9f6e, #ffc857, #4fd1a5, #5ab8f0, #7c6cf2);
+  filter: blur(26px);
+  opacity: 0.5;
 }
 
 .onb-icon img {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
 }
 
 .onb-icon svg {
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   fill: none;
   stroke: var(--text);
-  stroke-width: 1.4;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 dialog.onboarding h2 {
-  margin: 0 0 10px;
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -0.3px;
+  margin: 0 0 12px;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.6px;
+  text-wrap: balance;
 }
 
 .onb-card p {
-  margin: 0 0 16px;
+  max-width: 52ch;
+  margin: 0 auto 28px;
   color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Lista como grupo de filas, cada una con un punto de la paleta */
+.onb-list {
+  margin: 0 0 28px;
+  padding: 4px 0;
+  border-radius: 18px;
+  background: var(--onb-panel);
+  box-shadow: inset 0 0 0 1px var(--onb-line);
+  list-style: none;
+  text-align: left;
   font-size: 15px;
   line-height: 1.5;
 }
 
-.onb-list {
-  margin: 0 0 16px;
-  padding: 0;
-  list-style: none;
-  text-align: left;
-  font-size: 14px;
-  line-height: 1.45;
-}
-
 .onb-list li {
   position: relative;
-  padding: 8px 0 8px 22px;
-  border-top: 1px solid var(--hover);
+  padding: 14px 22px 14px 48px;
+}
+
+.onb-list li + li {
+  border-top: 1px solid var(--onb-line);
 }
 
 .onb-list li::before {
   content: "";
   position: absolute;
-  top: 15px;
-  left: 4px;
-  width: 7px;
-  height: 7px;
+  top: 21px;
+  left: 22px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4fd1a5, #5ab8f0);
+  background: var(--onb-dot, #7c6cf2);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--onb-dot, #7c6cf2) 18%, transparent);
 }
 
+.onb-list li:nth-child(2) {
+  --onb-dot: #4fd1a5;
+}
+
+.onb-list li:nth-child(3) {
+  --onb-dot: #5ab8f0;
+}
+
+dialog.onboarding kbd {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--dialog-bg);
+  box-shadow:
+    inset 0 0 0 1px var(--onb-line),
+    0 1px 0 var(--onb-line);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Opciones del clima y donaciones: tarjetas seleccionables a todo el ancho */
 .onb-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+dialog.onboarding .onb-choices .btn {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 12px;
+  height: auto;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid var(--onb-line);
+  border-radius: 16px;
+  background: var(--onb-panel);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.3;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* En oscuro .btn no tiene borde: aquí se marca para que se lean como botones */
-dialog.onboarding .btn:not(.btn-primary) {
-  border-color: color-mix(in srgb, var(--muted) 40%, transparent);
+dialog.onboarding .onb-choices .btn:hover {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
 }
 
-.onb-choices .btn[aria-pressed="true"] {
-  border-color: transparent;
-  background: var(--primary);
-  color: var(--on-primary);
+.onb-card > .onb-choices:last-child {
+  margin-bottom: 28px;
+}
+
+/* Indicador de opción: un círculo que se rellena al elegir */
+.onb-choices .btn[aria-pressed]::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--muted) 70%, transparent);
+  transition: box-shadow 0.2s ease;
+}
+
+dialog.onboarding .onb-choices .btn[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.onb-choices .btn[aria-pressed="true"]::before {
+  box-shadow:
+    inset 0 0 0 5px var(--primary),
+    inset 0 0 0 8px var(--on-primary);
+}
+
+/* Fuera de las opciones, .btn en oscuro no tiene borde: se marca para que se lea */
+dialog.onboarding .onb-nav .btn:not(.btn-primary) {
+  border-color: var(--onb-line);
 }
 
 .onb-donate {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   text-decoration: none;
-  line-height: 34px;
 }
 
 .onb-donate svg {
-  width: 16px;
-  height: 16px;
+  flex: none;
+  width: 20px;
+  height: 20px;
   fill: none;
-  stroke: currentColor;
+  stroke: var(--primary);
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+.onb-city {
+  margin-bottom: 8px;
+}
+
 .onb-city input {
   width: 100%;
-  height: 40px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 10px;
+  height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--onb-line);
+  border-radius: 14px;
   background: var(--input-bg);
   color: inherit;
   font: inherit;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.onb-city input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent);
 }
 
 .onb-city[hidden] {
@@ -161,45 +288,64 @@ dialog.onboarding .btn:not(.btn-primary) {
 }
 
 .onb-city .weather-results {
-  margin-top: 8px;
+  margin: 8px 0 0;
   text-align: left;
 }
 
-.onb-card .onb-status {
-  min-height: 20px;
-  margin: 0;
-  color: var(--text);
-  font-size: 13px;
+.onb-city .weather-result {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 15px;
 }
 
+.onb-card .onb-status {
+  min-height: 22px;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* Pie con línea fina: progreso a la izquierda y navegación a la derecha */
 .onb-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px 24px;
+  gap: 16px;
+  padding: 20px 32px 24px;
+  border-top: 1px solid var(--onb-line);
 }
 
 .onb-dots {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .onb-dots span {
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background: var(--hover);
-  transition: width 0.25s ease, background 0.25s ease;
+  background: color-mix(in srgb, var(--text) 16%, transparent);
+  transition: width 0.45s var(--onb-ease), background 0.3s ease;
 }
 
 .onb-dots span.active {
-  width: 22px;
+  width: 28px;
   background: linear-gradient(90deg, #7c6cf2, #f27ba8, #ffc857, #4fd1a5);
 }
 
 .onb-nav {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+}
+
+.onb-nav .btn {
+  height: 42px;
+  padding: 0 22px;
+  border-radius: 21px;
+}
+
+.onb-nav .btn-primary {
+  min-width: 120px;
 }
 
 .onb-nav .btn[hidden] {
@@ -207,7 +353,7 @@ dialog.onboarding .btn:not(.btn-primary) {
 }
 
 .onb-nav .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: default;
   filter: none;
 }
@@ -215,7 +361,7 @@ dialog.onboarding .btn:not(.btn-primary) {
 dialog.onboarding .btn:focus-visible,
 dialog.onboarding .weather-result:focus-visible {
   outline: 2px solid var(--primary);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 .onb-sr {
@@ -227,10 +373,101 @@ dialog.onboarding .weather-result:focus-visible {
   white-space: nowrap;
 }
 
+/* Ventana estrecha: las opciones del clima pasan a filas para que no se partan */
+@media (max-width: 760px) {
+  .onb-weather {
+    grid-template-columns: 1fr;
+  }
+
+  dialog.onboarding .onb-weather .btn {
+    justify-content: flex-start;
+    min-height: 48px;
+  }
+}
+
+/* Móvil: menos relleno y opciones apiladas */
+@media (max-width: 560px) {
+  dialog.onboarding {
+    border-radius: 24px;
+  }
+
+  .onb-card {
+    max-height: calc(100dvh - 32px - 76px);
+    padding: 36px 20px 8px;
+  }
+
+  .onb-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 22px;
+    border-radius: 26px;
+  }
+
+  .onb-icon img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .onb-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  dialog.onboarding h2 {
+    font-size: 24px;
+    letter-spacing: -0.4px;
+  }
+
+  .onb-card p {
+    margin-bottom: 22px;
+    font-size: 15px;
+  }
+
+  .onb-list {
+    font-size: 14px;
+  }
+
+  .onb-list li {
+    padding: 12px 16px 12px 40px;
+  }
+
+  .onb-list li::before {
+    top: 19px;
+    left: 17px;
+  }
+
+  .onb-choices {
+    grid-template-columns: 1fr;
+  }
+
+  dialog.onboarding .onb-choices .btn {
+    justify-content: flex-start;
+    min-height: 48px;
+  }
+
+  .onb-footer {
+    padding: 16px 20px 20px;
+  }
+
+  .onb-nav .btn {
+    padding: 0 18px;
+  }
+
+  .onb-nav .btn-primary {
+    min-width: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  dialog.onboarding[open] {
+    animation: none;
+  }
+
   .onb-viewport,
   .onb-track,
-  .onb-dots span {
+  .onb-card,
+  .onb-dots span,
+  .onb-choices .btn {
     transition: none;
   }
 }
