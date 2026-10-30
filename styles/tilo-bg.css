@@ -8,7 +8,7 @@
   --tilo-cloud-opacity: 0.55;
   --tilo-wave: rgba(255, 255, 255, 0.045);
   --tilo-aura-opacity: 0.9;
-  --tilo-center: calc(max(78px, 9vh + 46px) + 120px);
+  --tilo-center: 50%;
   position: fixed;
   inset: 0;
   z-index: -1;
