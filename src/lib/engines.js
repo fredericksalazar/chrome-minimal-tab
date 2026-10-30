@@ -2,9 +2,9 @@
 // para fondos oscuros y "height" iguala el peso visual entre logos.
 // "chrome" busca con el motor configurado en Chrome (chrome.search): es el
 // predeterminado porque la tienda exige respetar ese ajuste. No tiene logo ni
-// URL porque la API no dice qué motor es.
+// URL porque la API no dice qué motor es: en su lugar se muestra la marca.
 export const ENGINES = {
-  chrome: { name: "Motor de Chrome" },
+  chrome: { name: "Por defecto" },
   google: { name: "Google", home: "https://www.google.com/", search: "https://www.google.com/search", param: "q", logo: "google.png", dark: "google-dark.png", height: 92 },
   bing: { name: "Bing", home: "https://www.bing.com/", search: "https://www.bing.com/search", param: "q", logo: "bing.svg", dark: "bing-dark.svg", height: 96 },
   duckduckgo: { name: "DuckDuckGo", home: "https://duckduckgo.com/", search: "https://duckduckgo.com/", param: "q", logo: "duckduckgo.svg", dark: "duckduckgo-dark.svg", height: 120 },
