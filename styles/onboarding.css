@@ -241,10 +241,6 @@ dialog.onboarding .onb-choices .btn[aria-pressed="true"] {
 }
 
 /* Fuera de las opciones, .btn en oscuro no tiene borde: se marca para que se lea */
-dialog.onboarding .onb-nav .btn:not(.btn-primary) {
-  border-color: var(--onb-line);
-}
-
 .onb-donate {
   text-decoration: none;
 }
@@ -306,10 +302,11 @@ dialog.onboarding .onb-nav .btn:not(.btn-primary) {
 }
 
 /* Pie con línea fina: progreso a la izquierda y navegación a la derecha */
+/* Pie al estilo de macOS: flecha atrás, puntos al centro y flecha adelante */
 .onb-footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: 20px 32px 24px;
   border-top: 1px solid var(--onb-line);
@@ -317,6 +314,7 @@ dialog.onboarding .onb-nav .btn:not(.btn-primary) {
 
 .onb-dots {
   display: flex;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -333,29 +331,76 @@ dialog.onboarding .onb-nav .btn:not(.btn-primary) {
   background: linear-gradient(90deg, #7c6cf2, #f27ba8, #ffc857, #4fd1a5);
 }
 
-.onb-nav {
-  display: flex;
-  gap: 10px;
+.onb-round {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--onb-line);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
 }
 
-.onb-nav .btn {
-  height: 42px;
-  padding: 0 22px;
-  border-radius: 21px;
+.onb-round:hover {
+  background: color-mix(in srgb, var(--text) 10%, transparent);
 }
 
-.onb-nav .btn-primary {
-  min-width: 120px;
+.onb-round:active {
+  transform: scale(0.94);
 }
 
-.onb-nav .btn[hidden] {
+.onb-round-primary {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.onb-round-primary:hover {
+  background: var(--primary);
+  filter: brightness(1.08);
+}
+
+/* Atrás en la primera tarjeta: oculto sin mover los puntos */
+.onb-round[hidden] {
+  display: grid;
+  visibility: hidden;
+}
+
+.onb-round:disabled {
+  opacity: 0.35;
+  box-shadow: none;
+  cursor: default;
+  filter: none;
+  transform: none;
+}
+
+.onb-round svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.onb-round .onb-check,
+.onb-round.last .onb-arrow {
   display: none;
 }
 
-.onb-nav .btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-  filter: none;
+.onb-round.last .onb-check {
+  display: block;
+}
+
+.onb-round:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
 
 dialog.onboarding .btn:focus-visible,
@@ -449,13 +494,6 @@ dialog.onboarding .weather-result:focus-visible {
     padding: 16px 20px 20px;
   }
 
-  .onb-nav .btn {
-    padding: 0 18px;
-  }
-
-  .onb-nav .btn-primary {
-    min-width: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -467,6 +505,7 @@ dialog.onboarding .weather-result:focus-visible {
   .onb-track,
   .onb-card,
   .onb-dots span,
+  .onb-round,
   .onb-choices .btn {
     transition: none;
   }

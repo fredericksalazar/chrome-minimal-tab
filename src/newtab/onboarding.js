@@ -41,7 +41,12 @@ function render() {
   dots.forEach((dot, index) => dot.classList.toggle("active", index === step));
   stepLabel.textContent = `Paso ${step + 1} de ${cards.length}`;
   back.hidden = step === 0;
-  next.textContent = step === cards.length - 1 ? "Empezar" : "Siguiente";
+  // En la última tarjeta la flecha pasa a ser una marca de «Empezar»
+  const last = step === cards.length - 1;
+  next.classList.toggle("last", last);
+  next.setAttribute("aria-label", last ? "Empezar" : "Siguiente");
+  next.title = last ? "Empezar" : "Siguiente";
+  back.title = "Atrás";
   // El clima hay que elegirlo antes de seguir: no se puede saltar
   next.disabled = step === WEATHER_STEP && !weatherChosen;
 }
