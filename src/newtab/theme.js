@@ -1,6 +1,6 @@
 // Tema efectivo de la página. data-theme ("light" | "dark") lo fija la preferencia
-// del panel (Claro, Oscuro o Dispositivo); un fondo con tono propio manda sobre él
-// para el texto de la página. Los módulos se suscriben aquí en lugar de vigilar el DOM.
+// del panel (Claro, Oscuro o Dispositivo) y manda en los paneles; el texto de la
+// página sigue al tono del cielo de la escena. Los módulos se suscriben aquí en lugar de vigilar el DOM.
 import { DEFAULT_THEME, normalizeTheme, resolveTheme } from "../lib/theme.js";
 
 // Misma clave que lee theme-boot.js antes del primer pintado
@@ -40,23 +40,10 @@ export function isDark() {
   return tone ? tone === "dark" : root.dataset.theme === "dark";
 }
 
-// css: valor de fondo (color, degradado o imagen); null vuelve al predeterminado.
-// blur: píxeles de desenfoque de la imagen, o 0 para verla nítida.
-export function setBackground(css, tone, blur = 0) {
-  if (css) {
-    root.style.setProperty("--page-bg", css);
-    root.dataset.tone = tone;
-  } else {
-    root.style.removeProperty("--page-bg");
-    delete root.dataset.tone;
-  }
-  if (css && blur) {
-    root.style.setProperty("--page-blur", `${blur}px`);
-    root.dataset.blur = "";
-  } else {
-    root.style.removeProperty("--page-blur");
-    delete root.dataset.blur;
-  }
+// Tono de la escena ("light" | "dark") según su cielo: decide el color del texto de
+// la página. Lo fija scene.js cada vez que pone el cielo en hora.
+export function setTone(tone) {
+  root.dataset.tone = tone;
   notify();
 }
 

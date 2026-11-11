@@ -1,4 +1,4 @@
-/* Panel "Personalizar": motor de búsqueda y fondos */
+/* Panel "Personalizar": tema, idioma, motor de búsqueda y escena */
 
 /* Panel lateral de ajustes, como el de "Personalizar Chrome" */
 dialog.drawer {
@@ -11,7 +11,7 @@ dialog.drawer {
   border-radius: 16px 0 0 16px;
 }
 
-/* Sin oscurecer la página para ver el fondo cambiar en directo */
+/* Sin oscurecer la página para ver la escena cambiar en directo */
 dialog.drawer {
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.22);
 }
@@ -201,164 +201,7 @@ dialog.drawer[open] {
   visibility: visible;
 }
 
-/* Selector de fondo */
-.bg-options {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.bg-tile {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  font-size: 12px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.bg-preview,
-.swatch-fill {
-  position: relative;
-  display: block;
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.28);
-}
-
-.bg-preview {
-  aspect-ratio: 4 / 3;
-}
-
-/* El fondo de Tilo ocupa la fila entera */
-.bg-tile-wide {
-  grid-column: 1 / -1;
-}
-
-.bg-tile-wide .bg-preview {
-  aspect-ratio: 8 / 3;
-}
-
-.bg-default {
-  background: var(--input-bg);
-}
-
-.bg-tile.selected .bg-preview,
-.swatch input:checked + .swatch-fill {
-  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--primary);
-}
-
-.bg-tile:focus-visible .bg-preview {
-  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--primary);
-}
-
-.subview-header {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 16px;
-}
-
-.subview-header h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.swatch-grid {
-  display: grid;
-  gap: 14px 12px;
-  padding: 4px;
-}
-
-.swatch-grid.gradient {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.swatch-grid.solid {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.swatch {
-  position: relative;
-  display: block;
-  cursor: pointer;
-}
-
-.swatch input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.swatch-fill {
-  aspect-ratio: 16 / 9;
-}
-
-.solid .swatch-fill {
-  aspect-ratio: 4 / 3;
-}
-
-.swatch input:focus-visible + .swatch-fill {
-  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--primary);
-}
-
-/* Marca de selección: círculo blanco con la ✓ centrada */
-.swatch-check {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 26px;
-  height: 26px;
-  padding: 4px;
-  border-radius: 50%;
-  background: #ffffff;
-  fill: var(--primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  transform: translate(-50%, -50%);
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.swatch input:checked ~ .swatch-check {
-  visibility: visible;
-}
-
-.bg-tile .swatch-check {
-  width: 22px;
-  height: 22px;
-  padding: 3px;
-}
-
-.bg-tile.selected .swatch-check {
-  visibility: visible;
-}
-
-/* Tarjeta "Imagen" sin imagen guardada: icono centrado */
-.bg-image-empty {
-  display: grid;
-  place-items: center;
-}
-
-.bg-image-empty > svg:not(.swatch-check) {
-  width: 28px;
-  height: 28px;
-  fill: var(--muted);
-}
-
-/* Controles de la imagen: desenfoque, intensidad, cambiar y quitar */
-.bg-image-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.bg-image-controls[hidden],
+/* Filas de ajuste: etiqueta a la izquierda y control a la derecha */
 .bg-row[hidden] {
   display: none;
 }
@@ -435,16 +278,18 @@ dialog.drawer[open] {
   text-align: right;
 }
 
-.bg-error {
-  margin: 12px 0 0;
-  color: var(--danger);
-}
-
-.bg-error:empty {
-  display: none;
-}
-
 .drawer-link a {
   color: var(--primary);
   font-size: 13px;
+}
+
+/* Escena: modo (mismo control segmentado que el tema), mascota y tamaño */
+.scene-controls {
+  display: grid;
+  gap: 12px;
+}
+
+.scene-pet-select {
+  width: auto;
+  min-width: 150px;
 }

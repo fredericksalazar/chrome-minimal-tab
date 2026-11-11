@@ -5,6 +5,7 @@ export const KEYS = {
   theme: "theme",
   language: "language",
   background: "background",
+  // Solo para borrar la imagen de fondo que guardaban versiones anteriores
   image: "backgroundImage",
   folder: "folderId",
   location: "location",

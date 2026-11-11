@@ -1,6 +1,6 @@
-// Script clásico y bloqueante: aplica el último fondo guardado antes del primer
-// pintado para que no parpadee el fondo por defecto. backgrounds.js mantiene esta
-// caché al día con la misma clave ("background"); theme.js, la del tema ("theme");
+// Script clásico y bloqueante: aplica la última escena guardada antes del primer
+// pintado para que no dé saltos al abrir. scene.js mantiene esta caché al día con
+// la misma clave ("background"); theme.js, la del tema ("theme");
 // i18n.js, la del idioma ("lang").
 {
   let preference = "system";
@@ -28,18 +28,24 @@
   }
 }
 
-try {
-  const saved = JSON.parse(localStorage.getItem("background"));
-  // Sin caché se ve el fondo de Tilo; "plain" lo cambia por el color liso del tema
-  if (saved?.plain) document.documentElement.dataset.plain = "";
-  if (saved?.css) {
-    document.documentElement.style.setProperty("--page-bg", saved.css);
-    document.documentElement.dataset.tone = saved.tone;
-    if (saved.blur) {
-      document.documentElement.style.setProperty("--page-blur", `${saved.blur}px`);
-      document.documentElement.dataset.blur = "";
-    }
+// Escena: paisaje, mascota y el cielo de la última vez; scene.js lo pone en hora
+// al cargar. Sin caché (primera vez) se parte de un cielo aproximado por la hora.
+{
+  const root = document.documentElement;
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem("background"));
+  } catch {
+    // Sin acceso a localStorage: se aplica al cargar los ajustes
   }
-} catch {
-  // Sin acceso a localStorage: se aplica al cargar los ajustes
+  const hour = new Date().getHours();
+  const day = hour >= 7 && hour < 18;
+  const vars = saved?.vars ?? { "--scene-night": day ? "0" : "1", "--scene-sun-on": day ? "1" : "0", "--scene-moon-on": day ? "0" : "1" };
+  for (const [name, value] of Object.entries(vars)) {
+    if (name.startsWith("--scene-") && Number.isFinite(Number(value))) root.style.setProperty(name, value);
+  }
+  root.dataset.landscape = typeof saved?.landscape === "string" ? saved.landscape : "valley";
+  root.dataset.scenePet = typeof saved?.pet === "string" ? saved.pet : "rabbit";
+  root.dataset.tone = saved?.vars ? (saved.tone === "light" ? "light" : "dark") : day ? "light" : "dark";
+  if (Number.isFinite(saved?.size)) root.style.setProperty("--scene-pet-scale", String(saved.size / 100));
 }

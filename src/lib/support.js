@@ -2,11 +2,11 @@
 // Cambiar un destino es tocar solo esta lista; los textos son support.<id> en src/i18n/.
 const PAYPAL_EMAIL = "fredefass01@gmail.com";
 
-// Política de privacidad publicada en la web del autor, una página por idioma
+// Política de privacidad publicada en la página de Tilo de la web del autor, una por idioma
 // (la española conserva su dirección original)
 export function privacyUrl(language) {
   const page = language === "es" ? "privacidad" : `privacy-${language}`;
-  return `https://fredericksalazar.github.io/tilo/${page}.html`;
+  return `https://fredericksalazar.github.io/proyectos/tilo/${page}.html`;
 }
 
 export function paypalDonateUrl(email) {

@@ -1,0 +1,94 @@
+/* Paisaje «Valle»: cuatro colinas con niebla entre ellas y un tilo. Solo aporta el
+   contorno y sus colores; el cielo, la hora y la mascota son de styles/scene.css.
+   La colina más cercana lleva data-ground en newtab.html: es el suelo que pisa la
+   mascota. Un paisaje nuevo (bosque, desierto, lago) es otro archivo como este. */
+
+html[data-landscape="valley"] .landscape[data-landscape="valley"] {
+  display: block;
+}
+
+.landscape[data-landscape="valley"] {
+  --valley-hill-1: color-mix(in oklab, #2d2c6b var(--n), #cdd2f4);
+  --valley-hill-1b: color-mix(in oklab, #262a63 var(--n), #bfd3ee);
+  --valley-hill-2: color-mix(in oklab, #20265a var(--n), #a9d6de);
+  --valley-hill-2b: color-mix(in oklab, #1a214e var(--n), #98d2cf);
+  --valley-hill-3: color-mix(in oklab, #151c45 var(--n), #7fceb7);
+  --valley-hill-3b: color-mix(in oklab, #111839 var(--n), #6cc4a8);
+  --valley-hill-4: color-mix(in oklab, #0c1130 var(--n), #55ba97);
+  --valley-hill-4b: color-mix(in oklab, #080b22 var(--n), #43a987);
+  --valley-tree: color-mix(in oklab, #0f1538 var(--n), #3f9f80);
+  --valley-mist: color-mix(in oklab, rgba(150, 160, 255, 0.16) var(--n), rgba(255, 255, 255, 0.55));
+}
+
+/* Bancos de niebla entre las colinas: manchas suaves más anchas que la ventana */
+.valley-mist {
+  position: absolute;
+  left: -30%;
+  width: 160%;
+  height: 16vh;
+  will-change: transform;
+  background:
+    radial-gradient(closest-side, var(--valley-mist), transparent) 0% 50% / 46% 100% no-repeat,
+    radial-gradient(closest-side, var(--valley-mist), transparent) 55% 40% / 52% 90% no-repeat,
+    radial-gradient(closest-side, var(--valley-mist), transparent) 100% 60% / 40% 100% no-repeat;
+  animation: scene-drift 70s ease-in-out infinite alternate;
+}
+
+.valley-mist-a {
+  bottom: 17vh;
+}
+
+.valley-mist-b {
+  bottom: 7vh;
+  animation-duration: 90s;
+  animation-direction: alternate-reverse;
+}
+
+.valley-mist-c {
+  bottom: -2vh;
+  animation-duration: 60s;
+}
+
+/* Colinas: cuatro siluetas, de la más lejana y pálida a la más cercana */
+.valley-hill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 42vh;
+}
+
+.valley-hill-1 { --hill-top: var(--valley-hill-1); --hill-bottom: var(--valley-hill-1b); }
+.valley-hill-2 { --hill-top: var(--valley-hill-2); --hill-bottom: var(--valley-hill-2b); }
+.valley-hill-3 { --hill-top: var(--valley-hill-3); --hill-bottom: var(--valley-hill-3b); }
+.valley-hill-4 { --hill-top: var(--valley-hill-4); --hill-bottom: var(--valley-hill-4b); }
+
+.valley-hill stop:first-child {
+  stop-color: var(--hill-top);
+}
+
+.valley-hill stop:last-child {
+  stop-color: var(--hill-bottom);
+}
+
+/* El tilo: apoyado en la tercera colina (a 1120/1440 de ancho la silueta pasa
+   por 200/320 de alto), se mece muy poco */
+.valley-tree {
+  position: absolute;
+  left: 77.8%;
+  bottom: calc(42vh * 0.375 - 0.6vh);
+  height: clamp(54px, 10vh, 104px);
+  translate: -50% 0;
+  fill: var(--valley-tree);
+  transform-origin: 50% 100%;
+  animation: valley-sway 8s ease-in-out infinite alternate;
+}
+
+@keyframes valley-sway {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.2deg);
+  }
+}

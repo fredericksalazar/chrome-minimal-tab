@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import es from "../src/i18n/es.js";
 import { createTranslator } from "../src/lib/i18n.js";
-import { findCities, forecastUrl, geocodingUrl, MAX_CITY_RESULTS, needsChoice, parseGeocoding, sourceLabel } from "../src/lib/weather.js";
+import { conditionKey, findCities, forecastUrl, geocodingUrl, MAX_CITY_RESULTS, needsChoice, parseGeocoding, sourceLabel } from "../src/lib/weather.js";
 
 test("needsChoice pide elegir si no hay un modo válido guardado", () => {
   assert.equal(needsChoice(undefined), true);
@@ -69,4 +69,17 @@ test("findCities sin resultados devuelve una lista vacía y con error de red lan
 test("geocodingUrl pide los nombres de ciudad en el idioma de Tilo", () => {
   assert.equal(new URL(geocodingUrl("Tokio")).searchParams.get("language"), "es");
   assert.equal(new URL(geocodingUrl("Tokio", "ja")).searchParams.get("language"), "ja");
+});
+
+test("conditionKey traduce los códigos de Open-Meteo a una descripción", () => {
+  assert.equal(conditionKey(0), "weather.clear");
+  assert.equal(conditionKey(2), "weather.partly");
+  assert.equal(conditionKey(3), "weather.cloudy");
+  assert.equal(conditionKey(45), "weather.fog");
+  assert.equal(conditionKey(55), "weather.drizzle");
+  assert.equal(conditionKey(63), "weather.rain");
+  assert.equal(conditionKey(73), "weather.snow");
+  assert.equal(conditionKey(81), "weather.showers");
+  assert.equal(conditionKey(86), "weather.snowShowers");
+  assert.equal(conditionKey(95), "weather.storm");
 });

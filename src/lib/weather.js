@@ -44,3 +44,17 @@ export function sourceLabel(source, t) {
   if (source?.mode === "city") return t("weather.source.city", { city: source.city?.name ?? "" });
   return t("weather.source.off");
 }
+
+// Código WMO de Open-Meteo → clave de la descripción (weather.<estado> en src/i18n/)
+export function conditionKey(code) {
+  if (code === 0) return "weather.clear";
+  if (code <= 2) return "weather.partly";
+  if (code === 3) return "weather.cloudy";
+  if (code <= 48) return "weather.fog";
+  if (code <= 57) return "weather.drizzle";
+  if (code <= 67) return "weather.rain";
+  if (code <= 77) return "weather.snow";
+  if (code <= 82) return "weather.showers";
+  if (code <= 86) return "weather.snowShowers";
+  return "weather.storm";
+}

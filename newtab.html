@@ -13,7 +13,8 @@
   <link rel="stylesheet" href="styles/speed.css">
   <link rel="stylesheet" href="styles/support.css">
   <link rel="stylesheet" href="styles/onboarding.css">
-  <link rel="stylesheet" href="styles/tilo-bg.css">
+  <link rel="stylesheet" href="styles/scene.css">
+  <link rel="stylesheet" href="styles/landscape-valley.css">
   <script src="src/newtab/theme-boot.js"></script>
   <script type="module" src="src/newtab/i18n.js"></script>
   <script type="module" src="src/newtab/shortcuts.js"></script>
@@ -23,18 +24,123 @@
   <script type="module" src="src/newtab/drawer.js"></script>
   <script type="module" src="src/newtab/appearance.js"></script>
   <script type="module" src="src/newtab/language.js"></script>
-  <script type="module" src="src/newtab/backgrounds.js"></script>
+  <script type="module" src="src/newtab/scene.js"></script>
+  <script type="module" src="src/newtab/pet.js"></script>
   <script type="module" src="src/newtab/speed-panel.js"></script>
   <script type="module" src="src/newtab/support.js"></script>
   <script type="module" src="src/newtab/onboarding.js"></script>
 </head>
 <body>
-  <div class="tilo-bg" aria-hidden="true">
-    <div class="tilo-cloud tilo-cloud-a"></div>
-    <div class="tilo-cloud tilo-cloud-b"></div>
-    <div class="tilo-waves"></div>
-    <div class="tilo-aura"></div>
-    <div class="tilo-orbit"><span></span><span></span></div>
+  <div class="scene-bg" aria-hidden="true">
+    <div class="scene-stars"><div class="scene-meteor"></div></div>
+    <div class="scene-aurora"><i></i><i></i></div>
+    <div class="scene-dusk"></div>
+    <div class="scene-orb scene-sun"></div>
+    <div class="scene-orb scene-moon"></div>
+    <div class="scene-cloud"></div>
+    <svg class="scene-puff scene-puff-1" viewBox="0 0 200 80"><path d="M32 72a23 23 0 0 1 3-46 35 35 0 0 1 66-11 29 29 0 0 1 52 15 21 21 0 0 1 13 42z"/></svg>
+    <svg class="scene-puff scene-puff-2" viewBox="0 0 200 80"><path d="M32 72a23 23 0 0 1 3-46 35 35 0 0 1 66-11 29 29 0 0 1 52 15 21 21 0 0 1 13 42z"/></svg>
+    <svg class="scene-puff scene-puff-3" viewBox="0 0 200 80"><path d="M32 72a23 23 0 0 1 3-46 35 35 0 0 1 66-11 29 29 0 0 1 52 15 21 21 0 0 1 13 42z"/></svg>
+    <div class="scene-birds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="landscape" data-landscape="valley">
+    <svg class="valley-hill valley-hill-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <defs><linearGradient id="valley-fill-1" x1="0" y1="0" x2="0" y2="1"><stop offset="0"/><stop offset="1"/></linearGradient></defs>
+      <path fill="url(#valley-fill-1)" d="M0 150C180 90 330 80 520 130S860 200 1040 120S1320 60 1440 110V320H0Z"/>
+    </svg>
+    <div class="valley-mist valley-mist-a"></div>
+    <svg class="valley-hill valley-hill-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <defs><linearGradient id="valley-fill-2" x1="0" y1="0" x2="0" y2="1"><stop offset="0"/><stop offset="1"/></linearGradient></defs>
+      <path fill="url(#valley-fill-2)" d="M0 200C200 150 380 230 600 190S960 110 1160 170S1380 220 1440 190V320H0Z"/>
+    </svg>
+    <div class="valley-mist valley-mist-b"></div>
+    <svg class="valley-tree" viewBox="0 0 60 84">
+      <path d="M27 84V58C14 58 4 48 4 35 4 24 11 15 20 12 23 5 29 1 35 3 44 4 52 12 53 22 58 27 59 36 55 44 51 53 43 58 33 58V84Z"/>
+    </svg>
+    <svg class="valley-hill valley-hill-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <defs><linearGradient id="valley-fill-3" x1="0" y1="0" x2="0" y2="1"><stop offset="0"/><stop offset="1"/></linearGradient></defs>
+      <path fill="url(#valley-fill-3)" d="M0 250C160 220 320 180 520 220S880 280 1120 200S1360 190 1440 215V320H0Z"/>
+    </svg>
+    <div class="valley-mist valley-mist-c"></div>
+    </div>
+    <svg id="scene-pet" class="scene-pet" viewBox="0 0 40 36" hidden>
+      <g data-pet="rabbit">
+        <ellipse cx="27" cy="6.5" rx="2.2" ry="7" transform="rotate(-12 27 6.5)"/>
+        <ellipse cx="31.5" cy="7" rx="2" ry="6.5" transform="rotate(10 31.5 7)"/>
+        <circle cx="5.5" cy="24" r="3.4"/>
+        <ellipse cx="17" cy="25" rx="12" ry="9"/>
+        <circle cx="29" cy="17" r="6.5"/>
+        <ellipse cx="24" cy="33" rx="5" ry="2.2"/>
+        <circle class="pet-eye" cx="31" cy="16" r="1"/>
+      </g>
+      <g data-pet="dog">
+        <ellipse class="pet-wag" cx="4.5" cy="18" rx="1.8" ry="6" transform="rotate(-32 4.5 18)"/>
+        <ellipse cx="16" cy="25" rx="12" ry="8"/>
+        <ellipse cx="10" cy="33" rx="4" ry="2.2"/>
+        <ellipse cx="23" cy="33" rx="4" ry="2.2"/>
+        <circle cx="28" cy="16" r="7"/>
+        <ellipse cx="34.5" cy="18.5" rx="4.2" ry="3.2"/>
+        <ellipse class="pet-shade" cx="24.5" cy="16" rx="2.8" ry="6.2" transform="rotate(14 24.5 16)"/>
+        <circle class="pet-eye" cx="30.5" cy="14.5" r="1"/>
+        <circle class="pet-eye" cx="38" cy="17.4" r="1.2"/>
+      </g>
+      <g data-pet="cat">
+        <path class="pet-line pet-sway" d="M7 29C1 27 0 17 5 12"/>
+        <ellipse cx="16" cy="25" rx="11" ry="9"/>
+        <ellipse cx="23" cy="33" rx="5" ry="2.2"/>
+        <path d="M21.5 14 23 4.5 28.5 10.5ZM28.5 10.5 33.5 4.5 35 14Z"/>
+        <circle cx="28.5" cy="17" r="7"/>
+        <circle class="pet-eye" cx="31" cy="16" r="1"/>
+        <path class="pet-shade" d="M34.4 18.4l1.6 0-.8 1.2z"/>
+      </g>
+      <g data-pet="fox">
+        <ellipse cx="6" cy="21" rx="4.2" ry="9" transform="rotate(-28 6 21)"/>
+        <ellipse class="pet-white" cx="2.6" cy="14.6" rx="2.6" ry="3.4" transform="rotate(-28 2.6 14.6)"/>
+        <ellipse cx="17" cy="26" rx="11" ry="8"/>
+        <ellipse cx="24" cy="33" rx="5" ry="2.2"/>
+        <path d="M21 14 21.5 2.5 28 9.5ZM28 9.5 34 2.5 35 14Z"/>
+        <circle cx="28.5" cy="17" r="6.8"/>
+        <path d="M32.5 13.5 40 19.5 32.5 22.5Z"/>
+        <path class="pet-white" d="M28 21.5 36 20.6 32.5 23.6Z"/>
+        <circle class="pet-eye" cx="31" cy="16" r="1"/>
+        <circle class="pet-eye" cx="39.2" cy="19.4" r="1"/>
+      </g>
+      <g data-pet="owl">
+        <path d="M11.5 13 12 4.5 18.5 9.5ZM21.5 9.5 28 4.5 28.5 13Z"/>
+        <ellipse cx="20" cy="21" rx="10.5" ry="12.5"/>
+        <ellipse class="pet-shade pet-wing-l" cx="10.8" cy="24" rx="2.8" ry="7.5"/>
+        <ellipse class="pet-shade pet-wing-r" cx="29.2" cy="24" rx="2.8" ry="7.5"/>
+        <circle class="pet-white" cx="16" cy="16.5" r="3.8"/>
+        <circle class="pet-white" cx="24" cy="16.5" r="3.8"/>
+        <circle class="pet-eye" cx="16.4" cy="16.8" r="1.6"/>
+        <circle class="pet-eye" cx="24.4" cy="16.8" r="1.6"/>
+        <path class="pet-beak" d="M18.6 19.6 21.4 19.6 20 22.6Z"/>
+        <ellipse class="pet-beak" cx="16.5" cy="34" rx="2.8" ry="1.5"/>
+        <ellipse class="pet-beak" cx="23.5" cy="34" rx="2.8" ry="1.5"/>
+      </g>
+      <g data-pet="alien">
+        <path class="pet-line" d="M15 6 12 1.6M25 6 28 1.6"/>
+        <circle cx="11.6" cy="1.6" r="1.6"/>
+        <circle cx="28.4" cy="1.6" r="1.6"/>
+        <ellipse cx="20" cy="27.5" rx="6.5" ry="7.5"/>
+        <ellipse cx="12.4" cy="26" rx="1.7" ry="4.6" transform="rotate(22 12.4 26)"/>
+        <ellipse cx="27.6" cy="26" rx="1.7" ry="4.6" transform="rotate(-22 27.6 26)"/>
+        <ellipse cx="16.5" cy="34.4" rx="3.2" ry="1.6"/>
+        <ellipse cx="23.5" cy="34.4" rx="3.2" ry="1.6"/>
+        <ellipse cx="20" cy="13.5" rx="11.5" ry="9.5"/>
+        <ellipse class="pet-eye" cx="15.2" cy="14" rx="3" ry="4.4" transform="rotate(18 15.2 14)"/>
+        <ellipse class="pet-eye" cx="24.8" cy="14" rx="3" ry="4.4" transform="rotate(-18 24.8 14)"/>
+        <circle class="pet-white" cx="14.4" cy="12.4" r="0.9"/>
+        <circle class="pet-white" cx="24" cy="12.4" r="0.9"/>
+      </g>
+    </svg>
+    <div class="landscape" data-landscape="valley">
+    <svg class="valley-hill valley-hill-4" data-ground viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <defs><linearGradient id="valley-fill-4" x1="0" y1="0" x2="0" y2="1"><stop offset="0"/><stop offset="1"/></linearGradient></defs>
+      <path fill="url(#valley-fill-4)" d="M0 285C240 240 420 300 700 280S1100 230 1440 270V320H0Z"/>
+    </svg>
+    </div>
+    <div class="scene-motes"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div id="scene-bubble" class="scene-bubble" hidden></div>
   </div>
   <div class="page">
   <aside class="widget" aria-label="Hora y tiempo" data-i18n-attrs="aria-label: widget.label">
@@ -191,25 +297,19 @@
       </section>
 
       <section class="drawer-section">
-        <h3 data-i18n="settings.background">Fondo</h3>
-        <div id="bg-options" class="bg-options"></div>
-        <div id="bg-image-controls" class="bg-image-controls" hidden>
-          <div class="bg-row">
-            <span id="blur-label" data-i18n="bg.blur">Desenfocar imagen</span>
-            <button id="blur-switch" class="switch" type="button" role="switch" aria-checked="false" aria-labelledby="blur-label"></button>
-          </div>
-          <label id="blur-amount-row" class="bg-row" hidden>
-            <span data-i18n="bg.intensity">Intensidad</span>
-            <input id="blur-amount" class="blur-amount" type="range" min="2" max="40" step="1" aria-label="Intensidad del desenfoque" data-i18n-attrs="aria-label: bg.intensityLabel">
-            <output id="blur-value" class="blur-value" for="blur-amount"></output>
+        <h3 id="scene-title" data-i18n="settings.scene">Tilo y su paisaje</h3>
+        <div class="scene-controls">
+          <div id="scene-modes" class="theme-options" role="radiogroup" aria-labelledby="scene-title"></div>
+          <label class="bg-row">
+            <span data-i18n="scene.pet">Mascota</span>
+            <select id="scene-pet-select" class="language-select scene-pet-select"></select>
           </label>
-          <div class="bg-actions">
-            <button id="bg-image-change" class="btn" type="button" data-i18n="bg.changeImage">Cambiar imagen</button>
-            <button id="bg-image-remove" class="btn" type="button" data-i18n="bg.removeImage">Quitar imagen</button>
-          </div>
+          <label class="bg-row">
+            <span data-i18n="scene.petSize">Tamaño</span>
+            <input id="scene-pet-size" class="blur-amount" type="range" min="60" max="200" step="10">
+            <output id="scene-pet-size-value" class="blur-value" for="scene-pet-size"></output>
+          </label>
         </div>
-        <p id="bg-error" class="bg-error" role="alert"></p>
-        <input id="bg-file" type="file" accept="image/*" hidden>
       </section>
 
       <section class="drawer-section">
@@ -227,16 +327,6 @@
         <p class="drawer-text"><span data-i18n="shortcuts.inUse">En uso:</span> <span id="counter"></span></p>
         <button id="manage" class="btn" type="button" data-i18n="shortcuts.manage">Gestionar en marcadores</button>
       </section>
-      </div>
-
-      <div id="view-bg" hidden>
-        <div class="subview-header">
-          <button id="bg-back" class="icon-button" type="button" aria-label="Volver" data-i18n-attrs="aria-label: common.back">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-          </button>
-          <h3 id="bg-title"></h3>
-        </div>
-        <div id="bg-grid" class="swatch-grid" role="radiogroup"></div>
       </div>
     </div>
   </dialog>

@@ -3,7 +3,7 @@
 // o una ciudad escrita a mano. Nada se pide hasta que el usuario elige en el aviso.
 import { KEYS, onLocalChange } from "../lib/storage.js";
 import { privacyUrl } from "../lib/support.js";
-import { findCities, forecastUrl, needsChoice, sourceLabel } from "../lib/weather.js";
+import { conditionKey, findCities, forecastUrl, needsChoice, sourceLabel } from "../lib/weather.js";
 import { language, locale, t } from "./i18n.js";
 
 const WEATHER_TTL = 30 * 60 * 1000;
@@ -45,16 +45,16 @@ const ICONS = {
 
 // Códigos WMO de Open-Meteo → icono y clave de la descripción
 function describe(code, isDay) {
-  if (code === 0) return [isDay ? "sun" : "moon", "weather.clear"];
-  if (code <= 2) return [isDay ? "partly" : "cloud", "weather.partly"];
-  if (code === 3) return ["cloud", "weather.cloudy"];
-  if (code <= 48) return ["fog", "weather.fog"];
-  if (code <= 57) return ["rain", "weather.drizzle"];
-  if (code <= 67) return ["rain", "weather.rain"];
-  if (code <= 77) return ["snow", "weather.snow"];
-  if (code <= 82) return ["rain", "weather.showers"];
-  if (code <= 86) return ["snow", "weather.snowShowers"];
-  return ["storm", "weather.storm"];
+  const label = conditionKey(code);
+  if (code === 0) return [isDay ? "sun" : "moon", label];
+  if (code <= 2) return [isDay ? "partly" : "cloud", label];
+  if (code === 3) return ["cloud", label];
+  if (code <= 48) return ["fog", label];
+  if (code <= 67) return ["rain", label];
+  if (code <= 77) return ["snow", label];
+  if (code <= 82) return ["rain", label];
+  if (code <= 86) return ["snow", label];
+  return ["storm", label];
 }
 
 // Se actualiza al cambiar de minuto en lugar de cada segundo

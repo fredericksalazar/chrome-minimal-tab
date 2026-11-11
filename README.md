@@ -6,7 +6,8 @@ Extensión de Chrome que sustituye la nueva pestaña por una limpia, rápida y p
 - Hora, ciudad y clima: antes de usar la ubicación pregunta, y permite escribir la ciudad o no mostrar el clima.
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
 - Buscador que usa por defecto el motor configurado en Chrome, con el logotipo de Tilo y un aura de colores en el borde.
-- Panel «Personalizar»: motor de búsqueda (el de Chrome u otro de la lista) y fondo (colores sólidos, degradados o una imagen propia con desenfoque regulable; la imagen se queda en este equipo).
+- Tilo, la mascota (conejo, perro, gato, zorro, búho o alienígena), vive en un paisaje, «Valle», cuyo cielo sigue la hora (o se fija en día o noche). Te saluda, te cuenta tus tareas y el clima y conversa con frases que encajan con el momento, sin IA ni red.
+- Panel «Personalizar»: tema, idioma, motor de búsqueda (el de Chrome u otro de la lista), modo del cielo, mascota y su tamaño.
 - Prueba de velocidad (latencia, jitter, descarga y subida) contra Cloudflare.
 - Guía de bienvenida al instalar: presenta Tilo, configura el clima y explica permisos y donaciones.
 - Botones discretos abajo en el centro para apoyar el proyecto (Buy Me a Coffee o PayPal) y visitar la web del autor; se abren en otra pestaña.
@@ -29,25 +30,27 @@ src/lib/               Lógica sin interfaz, compartida y testeable
   url.js                 Normalizar URLs, favicons
   storage.js             Claves de chrome.storage
   engines.js             Catálogo de motores de búsqueda
-  backgrounds.js         Catálogo de fondos e imagen propia (tamaño, tono, desenfoque)
+  scene.js               La escena: paisajes, modos del cielo y cielo según la hora
   speedtest.js           Motor de la prueba de velocidad
   weather.js             Origen del clima elegido y URLs de Open-Meteo
   support.js             Enlaces de apoyo al autor
   todos.js               Tareas, subtareas y limpieza diaria
+  pet.js                 La mascota: personajes, forma de moverse y frases
 src/newtab/            Un módulo por cada parte de la página
-  theme-boot.js          Aplica el fondo guardado antes de pintar (script clásico)
-  theme.js               Tema efectivo (fondo o sistema) y suscripción a cambios
+  theme-boot.js          Aplica la última escena y el tema antes de pintar (script clásico)
+  theme.js               Tema de los paneles, tono del texto según el cielo y suscripción a cambios
   shortcuts.js           Cuadrícula, diálogo, deshacer y reordenar
   search.js              Motor elegido, icono y envío del buscador
   clock-weather.js       Hora y clima
   todos.js               Lista de tareas de la esquina superior derecha
   drawer.js              Abrir y cerrar el panel «Personalizar»
-  backgrounds.js         Sección «Fondo» del panel
+  scene.js               Pone el cielo en hora y gestiona modo, mascota y tamaño en el panel
   speed-panel.js         Panel, barra animada y gráfica de la prueba de velocidad
   support.js             Botones de apoyo de la zona inferior central
   onboarding.js          Guía de bienvenida (una vez por equipo)
+  pet.js                 Mueve a la mascota y muestra sus frases
   icons.js               Iconos SVG estáticos
-styles/                Un CSS por funcionalidad (base, componentes, widget, tareas, accesos, panel, velocidad, apoyo)
+styles/                Un CSS por funcionalidad; scene.css es el motor de la escena y landscape-<id>.css, cada paisaje
 assets/                Logo de Tilo (brand/) e iconos de la extensión
 tests/                 Tests unitarios de src/lib (node:test)
 ```
@@ -56,7 +59,8 @@ Reglas de la arquitectura:
 
 - `src/lib` no toca el DOM; así se puede usar desde el service worker y probar con Node.
 - Cada módulo de `src/newtab` es dueño de su parte del HTML y se comunica con los demás solo a través de `chrome.storage` o de `theme.js`.
-- Las preferencias van en `chrome.storage.sync` (viajan con la cuenta) y las cachés y la imagen de fondo en `chrome.storage.local`.
+- Las preferencias van en `chrome.storage.sync` (viajan con la cuenta) y las cachés en `chrome.storage.local`.
+- La escena tiene un motor común (cielo, hora, mascota) y paisajes intercambiables: un paisaje nuevo es un `styles/landscape-<id>.css`, su bloque en `newtab.html` con una silueta marcada `data-ground` y su id en `LANDSCAPES`.
 
 ## Tests
 
@@ -79,4 +83,4 @@ publicación definido en [`agents/`](agents/README.md) (local, no se sube al rep
 | Ciudad | BigDataCloud o, sin permiso de ubicación, ipapi.co; ciudad escrita: geocodificación de Open-Meteo |
 | Prueba de velocidad | `speed.cloudflare.com` |
 
-Solo después de que el usuario lo elija en el aviso del clima. Política de privacidad: https://fredericksalazar.github.io/tilo/privacidad.html
+Solo después de que el usuario lo elija en el aviso del clima. Política de privacidad: https://fredericksalazar.github.io/proyectos/tilo/privacidad.html

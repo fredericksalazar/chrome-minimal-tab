@@ -27,6 +27,6 @@ test("paypalDonateUrl codifica el correo como destinatario de la donación", () 
 });
 
 test("privacyUrl mantiene la página española y da una por idioma", () => {
-  assert.equal(privacyUrl("es"), "https://fredericksalazar.github.io/tilo/privacidad.html");
-  assert.equal(privacyUrl("ja"), "https://fredericksalazar.github.io/tilo/privacy-ja.html");
+  assert.equal(privacyUrl("es"), "https://fredericksalazar.github.io/proyectos/tilo/privacidad.html");
+  assert.equal(privacyUrl("ja"), "https://fredericksalazar.github.io/proyectos/tilo/privacy-ja.html");
 });
