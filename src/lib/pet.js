@@ -65,10 +65,15 @@ export function normalizePet(value) {
   return value === NO_PET || PETS.includes(value) ? value : DEFAULT_PET;
 }
 
-// Milisegundos hasta que asoma: nada más abrir la pestaña y algo más tarde cuando
-// vuelve después de esconderse
+// Milisegundos hasta que asoma: tanto al abrir como al reaparecer tras jugar al escondite
 export function appearanceDelay(random, first = false) {
-  return Math.round(first ? 150 + random * 250 : 6000 + random * 8000);
+  return Math.round(first ? 150 + random * 250 : 180 + random * 220);
+}
+
+// Elige otro punto de la colina en el lado opuesto al cursor para reaparecer jugando
+export function relocateSpot(pointerX, width, random = 0.5) {
+  const range = pointerX < width / 2 ? [0.55, 0.85] : [0.15, 0.45];
+  return Math.round(width * within(range, random));
 }
 
 // Milisegundos entre dos frases
@@ -111,7 +116,8 @@ export function greetingLine(hour) {
 
 // Lo que dice al abrir la pestaña, en orden: saludo, tareas, clima (si Tilo lo tiene
 // guardado) y agua. weather: caché del widget ({ city, temperature, code }) o nada.
-export function petBriefing({ hour = 12, total = 0, pending = 0, weather = null }, conditionKey = () => "weather.clear") {
+// hydration: resumen del water tracker ({ todayMl, goalMet, needsWater, liters }) o null.
+export function petBriefing({ hour = 12, total = 0, pending = 0, weather = null, hydration = null }, conditionKey = () => "weather.clear") {
   const lines = [greetingLine(hour)];
   if (total === 0) lines.push({ key: "pet.noTasks" });
   else if (pending === 0) lines.push({ key: "pet.tasksDone" });
@@ -121,8 +127,21 @@ export function petBriefing({ hour = 12, total = 0, pending = 0, weather = null 
     const translate = { condition: conditionKey(weather.code) };
     lines.push(weather.city ? { key: "pet.weatherIn", params: { ...params, city: weather.city }, translate } : { key: "pet.weather", params, translate });
   }
-  lines.push({ key: "pet.water" });
+  if (!hydration) lines.push({ key: "pet.water" });
+  else if (hydration.goalMet) lines.push({ key: "pet.waterGoalMet" });
+  else if (hydration.todayMl === 0) lines.push({ key: "pet.waterEmpty" });
+  else if (hydration.needsWater) lines.push({ key: "pet.waterHourly" });
+  else lines.push({ key: "pet.waterProgress", params: { liters: hydration.liters } });
   return lines;
+}
+
+export function waterReminderLine(hydration) {
+  if (!hydration?.needsWater) return null;
+  return { key: hydration.todayMl > 0 ? "pet.waterHourly" : "pet.waterEmpty" };
+}
+
+export function waterReactionLine(hydration) {
+  return { key: hydration?.goalMet ? "pet.waterGoalMet" : "pet.waterThanks" };
 }
 
 const GENERIC = ["pet.tip1", "pet.tip2", "pet.tip3", "pet.tip4", "pet.tip5", "pet.here", "pet.hill"];
@@ -130,8 +149,8 @@ const isRain = (code) => (code >= 51 && code <= 67) || (code >= 80 && code <= 82
 
 // Frases que encajan con el momento (contextual) y las que valen siempre (generic).
 // context: hour, weekday (0 = domingo), total, pending, next, weather, night, dusk,
-// minutesOpen y pet.
-export function petLines({ hour = 12, weekday = 3, total = 0, pending = 0, next = "", weather = null, night = false, dusk = false, minutesOpen = 0, pet = DEFAULT_PET }) {
+// minutesOpen, pet y hydration.
+export function petLines({ hour = 12, weekday = 3, total = 0, pending = 0, next = "", weather = null, night = false, dusk = false, minutesOpen = 0, pet = DEFAULT_PET, hydration = null }) {
   const contextual = [];
   const add = (when, key, params) => when && contextual.push(params ? { key, params } : { key });
   const done = total - pending;
@@ -154,6 +173,11 @@ export function petLines({ hour = 12, weekday = 3, total = 0, pending = 0, next 
   add(temp !== null && temp >= 28, "pet.hot", { temp });
   add(temp !== null && temp <= 8, "pet.cold", { temp });
   add(temp !== null && weather.code === 0 && hour >= 7 && hour < 18, "pet.clearSky");
+
+  add(Boolean(hydration?.goalMet), "pet.waterGoalMet");
+  add(Boolean(hydration && !hydration.goalMet && hydration.todayMl === 0), "pet.waterEmpty");
+  add(Boolean(hydration && !hydration.goalMet && hydration.todayMl > 0 && hydration.needsWater), "pet.waterHourly");
+  add(Boolean(hydration && !hydration.goalMet && !hydration.needsWater && hydration.todayMl > 0), "pet.waterProgress", { liters: hydration?.liters });
 
   add(minutesOpen >= 20, "pet.longSession");
   add(dusk, "pet.sunset");

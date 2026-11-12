@@ -49,3 +49,25 @@
   root.dataset.tone = saved?.vars ? (saved.tone === "light" ? "light" : "dark") : day ? "light" : "dark";
   if (Number.isFinite(saved?.size)) root.style.setProperty("--scene-pet-scale", String(saved.size / 100));
 }
+
+// Posiciones de las herramientas en el lienzo: se aplican en vw/vh antes del
+// primer pintado; layout.js las ajusta al tamaño exacto de cada elemento.
+{
+  const root = document.documentElement;
+  try {
+    const style = localStorage.getItem("waterStyle");
+    root.dataset.waterStyle = style === "drop" ? "drop" : "bottle";
+    const saved = JSON.parse(localStorage.getItem("layout"));
+    for (const id of ["widget", "todo", "speed", "water"]) {
+      const x = Number(saved?.[id]?.x);
+      const y = Number(saved?.[id]?.y);
+      if (Number.isFinite(x) && Number.isFinite(y) && x >= 0 && x <= 100 && y >= 0 && y <= 100) {
+        root.style.setProperty(`--tool-${id}-x`, `${x}vw`);
+        root.style.setProperty(`--tool-${id}-y`, `${y}vh`);
+        root.setAttribute(`data-placed-${id}`, "");
+      }
+    }
+  } catch {
+    // Sin acceso a localStorage: se aplica al cargar los ajustes
+  }
+}

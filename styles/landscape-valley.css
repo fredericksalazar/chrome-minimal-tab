@@ -20,18 +20,17 @@ html[data-landscape="valley"] .landscape[data-landscape="valley"] {
   --valley-mist: color-mix(in oklab, rgba(150, 160, 255, 0.16) var(--n), rgba(255, 255, 255, 0.55));
 }
 
-/* Bancos de niebla entre las colinas: manchas suaves más anchas que la ventana */
+/* Bancos de niebla entre las colinas: manchas suaves, quietas salvo con viento (sin
+   capas gigantes de 160vw en GPU) */
 .valley-mist {
   position: absolute;
-  left: -30%;
-  width: 160%;
+  left: 0;
+  width: 100%;
   height: 16vh;
-  will-change: transform;
   background:
     radial-gradient(closest-side, var(--valley-mist), transparent) 0% 50% / 46% 100% no-repeat,
     radial-gradient(closest-side, var(--valley-mist), transparent) 55% 40% / 52% 90% no-repeat,
     radial-gradient(closest-side, var(--valley-mist), transparent) 100% 60% / 40% 100% no-repeat;
-  animation: scene-drift 70s ease-in-out infinite alternate;
 }
 
 .valley-mist-a {
@@ -40,13 +39,10 @@ html[data-landscape="valley"] .landscape[data-landscape="valley"] {
 
 .valley-mist-b {
   bottom: 7vh;
-  animation-duration: 90s;
-  animation-direction: alternate-reverse;
 }
 
 .valley-mist-c {
   bottom: -2vh;
-  animation-duration: 60s;
 }
 
 /* Colinas: cuatro siluetas, de la más lejana y pálida a la más cercana */
@@ -72,7 +68,7 @@ html[data-landscape="valley"] .landscape[data-landscape="valley"] {
 }
 
 /* El tilo: apoyado en la tercera colina (a 1120/1440 de ancho la silueta pasa
-   por 200/320 de alto), se mece muy poco */
+   por 200/320 de alto); se mece con el viento */
 .valley-tree {
   position: absolute;
   left: 77.8%;
@@ -80,15 +76,34 @@ html[data-landscape="valley"] .landscape[data-landscape="valley"] {
   height: clamp(54px, 10vh, 104px);
   translate: -50% 0;
   fill: var(--valley-tree);
+}
+
+/* Con la ráfaga de viento del motor (episodio «wind», clase .is-windy en la escena)
+   el tilo se mece y la niebla se desliza; el resto del tiempo están quietos */
+.scene-bg.is-windy .valley-tree {
   transform-origin: 50% 100%;
-  animation: valley-sway 8s ease-in-out infinite alternate;
+  animation: valley-sway 3.5s ease-in-out 4;
+}
+
+.scene-bg.is-windy .valley-mist {
+  animation: valley-mist 14s ease-in-out 1;
+}
+
+.scene-bg.is-windy .valley-mist-b {
+  animation-direction: reverse;
 }
 
 @keyframes valley-sway {
-  from {
-    transform: rotate(-1.2deg);
+  25% {
+    rotate: -1.6deg;
   }
-  to {
-    transform: rotate(1.2deg);
+  75% {
+    rotate: 1.6deg;
+  }
+}
+
+@keyframes valley-mist {
+  50% {
+    translate: 4% 0;
   }
 }

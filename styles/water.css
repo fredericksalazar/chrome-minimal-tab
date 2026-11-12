@@ -1,0 +1,274 @@
+/* Water Tracker: gota o botella minimalista sin tarjeta de fondo, porcentaje interior y botón + arriba */
+
+.water-tracker {
+  position: fixed;
+  left: 20px;
+  bottom: 64px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.water-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Barra superior encima del recipiente: botón + agua y acciones secundarias */
+.water-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.water-drink-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid rgba(124, 200, 245, 0.55);
+  border-radius: 999px;
+  background: rgba(92, 164, 199, 0.32);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.water-drink-btn:hover {
+  background: rgba(92, 164, 199, 0.45);
+  transform: translateY(-1px);
+}
+
+.water-drink-btn svg {
+  width: 12px;
+  height: 12px;
+  fill: #6bc2f2;
+}
+
+.water-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  opacity: 0.72;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.water-icon-btn:hover,
+.water-icon-btn[aria-expanded="true"] {
+  opacity: 1;
+  background: var(--hover);
+  color: var(--text);
+}
+
+.water-icon-btn[hidden] {
+  display: none;
+}
+
+.water-icon-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.water-drink-btn:focus-visible,
+.water-icon-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Recipiente: botella o gota transparente que se llena de azul */
+.water-vessel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.14));
+}
+
+.water-svg {
+  display: block;
+  overflow: visible;
+}
+
+.water-svg-bottle {
+  width: 58px;
+  height: 130px;
+}
+
+.water-svg-drop {
+  display: none;
+  width: 74px;
+  height: 96px;
+}
+
+html[data-water-style="drop"] .water-svg-bottle {
+  display: none;
+}
+
+html[data-water-style="drop"] .water-svg-drop {
+  display: block;
+}
+
+.water-bottle-cap {
+  fill: #5ca4c7;
+}
+
+.water-vessel-bg {
+  fill: rgba(202, 224, 245, 0.24);
+}
+
+html[data-tone="light"] .water-vessel-bg {
+  fill: rgba(190, 216, 242, 0.34);
+}
+
+.water-level {
+  fill: #7cc8f5;
+  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.water-level-bottle {
+  transform: translateY(calc((1 - var(--water-fill, 0)) * 162px));
+}
+
+.water-level-drop {
+  transform: translateY(calc((1 - var(--water-fill, 0)) * 118px));
+}
+
+.water-vessel-outline {
+  fill: none;
+  stroke: rgba(140, 204, 242, 0.55);
+  stroke-width: 1.6;
+}
+
+html[data-tone="light"] .water-vessel-outline {
+  stroke: rgba(92, 164, 199, 0.65);
+}
+
+.water-shine {
+  fill: rgba(255, 255, 255, 0.82);
+  pointer-events: none;
+}
+
+/* Porcentaje dentro de la gota o de la botella */
+.water-percent {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-top: 10px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+}
+
+html[data-tone="light"] .water-percent {
+  color: #16324a;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.65);
+}
+
+html[data-water-style="drop"] .water-percent {
+  padding-top: 20px;
+}
+
+/* Litros acumulados debajo del recipiente */
+.water-amount {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.water-tracker.goal-met .water-amount {
+  color: #4fd1a5;
+}
+
+html[data-tone="light"] .water-tracker.goal-met .water-amount {
+  color: #1e8e3e;
+}
+
+/* Desplegable de tomas del día e historial diario */
+.water-log {
+  width: 232px;
+  max-height: 220px;
+  padding: 12px;
+  overflow-y: auto;
+  border-radius: 14px;
+  background: var(--dialog-bg);
+  color: var(--text);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+}
+
+.water-log[hidden] {
+  display: none;
+}
+
+.water-last {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.water-log h3 {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.water-log h3 + ul + h3 {
+  margin-top: 10px;
+}
+
+.water-log-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.water-log-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: var(--hover);
+  font-variant-numeric: tabular-nums;
+}
+
+.water-log-empty {
+  color: var(--muted);
+  padding: 2px 0;
+}

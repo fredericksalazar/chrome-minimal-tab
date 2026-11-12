@@ -5,6 +5,8 @@ Extensión de Chrome que sustituye la nueva pestaña por una limpia, rápida y p
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
 - Hora, ciudad y clima: antes de usar la ubicación pregunta, y permite escribir la ciudad o no mostrar el clima.
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
+- Water tracker (hidratación diaria): botella vertical de 2 litros que se llena de azul al registrar vasos de agua (+ 250 ml) con su hora, guarda el historial por día y se conecta con Tilo (su color es rozagante cuando te hidratas y palidece si pasas más de una hora sin beber, pidiéndote agua cada hora).
+- Lienzo libre: las herramientas de hora y clima, tareas, hidratación y prueba de velocidad se pueden arrastrar con el ratón a cualquier punto de la pantalla (y restablecer desde Personalizar).
 - Buscador que usa por defecto el motor configurado en Chrome, con el logotipo de Tilo y un aura de colores en el borde.
 - Tilo, la mascota (conejo, perro, gato, zorro, búho o alienígena), vive en un paisaje, «Valle», cuyo cielo sigue la hora (o se fija en día o noche). Te saluda, te cuenta tus tareas y el clima y conversa con frases que encajan con el momento, sin IA ni red.
 - Panel «Personalizar»: tema, idioma, motor de búsqueda (el de Chrome u otro de la lista), modo del cielo, mascota y su tamaño.
@@ -36,8 +38,11 @@ src/lib/               Lógica sin interfaz, compartida y testeable
   support.js             Enlaces de apoyo al autor
   todos.js               Tareas, subtareas y limpieza diaria
   pet.js                 La mascota: personajes, forma de moverse y frases
+  ambient.js             Ambiente en episodios cortos (viento, pájaros, aurora…) para gastar poca CPU
+  water.js               Hidratación diaria: objetivo de 2 L, vitalidad de Tilo e historial por día
+  layout.js              Lienzo de herramientas: coordenadas, bordes y anclaje de paneles
 src/newtab/            Un módulo por cada parte de la página
-  theme-boot.js          Aplica la última escena y el tema antes de pintar (script clásico)
+  theme-boot.js          Aplica la última escena, el tema y el lienzo antes de pintar (script clásico)
   theme.js               Tema de los paneles, tono del texto según el cielo y suscripción a cambios
   shortcuts.js           Cuadrícula, diálogo, deshacer y reordenar
   search.js              Motor elegido, icono y envío del buscador
@@ -46,9 +51,12 @@ src/newtab/            Un módulo por cada parte de la página
   drawer.js              Abrir y cerrar el panel «Personalizar»
   scene.js               Pone el cielo en hora y gestiona modo, mascota y tamaño en el panel
   speed-panel.js         Panel, barra animada y gráfica de la prueba de velocidad
+  water.js               Botella de 2 L, registro de tomas con hora e historial diario
+  layout.js              Arrastrar herramientas por el lienzo y restablecer posiciones
   support.js             Botones de apoyo de la zona inferior central
   onboarding.js          Guía de bienvenida (una vez por equipo)
   pet.js                 Mueve a la mascota y muestra sus frases
+  ambient.js             Director de episodios del ambiente: pone y quita clases, empuja las nubes
   icons.js               Iconos SVG estáticos
 styles/                Un CSS por funcionalidad; scene.css es el motor de la escena y landscape-<id>.css, cada paisaje
 assets/                Logo de Tilo (brand/) e iconos de la extensión

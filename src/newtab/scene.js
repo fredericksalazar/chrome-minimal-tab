@@ -107,7 +107,16 @@ petSize.addEventListener("input", () => {
 });
 petSize.addEventListener("change", () => change({ size: petSize.value }));
 
-setInterval(paint, REFRESH_MS);
+setInterval(() => {
+  if (!document.hidden) paint();
+}, REFRESH_MS);
+
+document.addEventListener("visibilitychange", () => {
+  root.toggleAttribute("data-paused", document.hidden);
+  if (!document.hidden) paint();
+});
+root.toggleAttribute("data-paused", document.hidden);
+
 onSyncChange(KEYS.background, (value) => {
   scene = normalizeScene(value);
   render();

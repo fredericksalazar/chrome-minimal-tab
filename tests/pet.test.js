@@ -17,7 +17,10 @@ import {
   petBriefing,
   petLines,
   pickLine,
+  relocateSpot,
   speechDelay,
+  waterReactionLine,
+  waterReminderLine,
 } from "../src/lib/pet.js";
 
 const keys = (lines) => lines.map(({ key }) => key);
@@ -30,11 +33,13 @@ test("hay cinco mascotas y un alienígena, y lo desconocido vuelve al conejo", (
   assert.equal(normalizePet(undefined), "rabbit");
 });
 
-test("appearanceDelay: asoma nada más abrir y vuelve pronto tras esconderse", () => {
+test("appearanceDelay y relocateSpot: asoma al instante y al jugar reaparece enseguida en el lado opuesto al cursor", () => {
   assert.equal(appearanceDelay(0, true), 150);
   assert.equal(appearanceDelay(1, true), 400);
-  assert.equal(appearanceDelay(0), 6000);
-  assert.equal(appearanceDelay(1), 14000);
+  assert.equal(appearanceDelay(0), 180);
+  assert.equal(appearanceDelay(1), 400);
+  assert.ok(relocateSpot(200, 1000, 0.5) >= 550);
+  assert.ok(relocateSpot(800, 1000, 0.5) <= 450);
 });
 
 test("speechDelay deja entre 50 y 120 segundos entre frases", () => {
@@ -184,4 +189,21 @@ test("pauseDelay: el búho descansa más entre vuelos que el perro entre carrera
   assert.equal(pauseDelay("dog", 0), 2500);
   assert.equal(pauseDelay("owl", 0), 6000);
   assert.equal(pauseDelay("owl", 1), 14000);
+});
+
+test("Tilo adapta su saludo, conversación y avisos al estado de hidratación", () => {
+  assert.equal(petBriefing({ hydration: { todayMl: 0, goalMet: false, needsWater: true, liters: "0,0" } }).at(-1).key, "pet.waterEmpty");
+  assert.equal(petBriefing({ hydration: { todayMl: 500, goalMet: false, needsWater: true, liters: "0,5" } }).at(-1).key, "pet.waterHourly");
+  assert.deepEqual(petBriefing({ hydration: { todayMl: 750, goalMet: false, needsWater: false, liters: "0,75" } }).at(-1), {
+    key: "pet.waterProgress",
+    params: { liters: "0,75" },
+  });
+  assert.equal(petBriefing({ hydration: { todayMl: 2000, goalMet: true, needsWater: false, liters: "2,0" } }).at(-1).key, "pet.waterGoalMet");
+
+  assert.deepEqual(waterReminderLine({ todayMl: 0, needsWater: true }), { key: "pet.waterEmpty" });
+  assert.deepEqual(waterReminderLine({ todayMl: 500, needsWater: true }), { key: "pet.waterHourly" });
+  assert.equal(waterReminderLine({ todayMl: 500, needsWater: false }), null);
+
+  assert.deepEqual(waterReactionLine({ goalMet: false }), { key: "pet.waterThanks" });
+  assert.deepEqual(waterReactionLine({ goalMet: true }), { key: "pet.waterGoalMet" });
 });

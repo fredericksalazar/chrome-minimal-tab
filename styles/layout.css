@@ -1,0 +1,59 @@
+/* Lienzo de herramientas: permite arrastrar hora/clima, tareas y velocidad a cualquier punto */
+
+[data-tool] {
+  z-index: 2;
+  cursor: grab;
+  touch-action: none;
+}
+
+.speed-header {
+  cursor: grab;
+  touch-action: none;
+}
+
+[data-tool] input {
+  cursor: text;
+}
+
+html[data-placed-widget] .widget {
+  left: var(--tool-widget-x);
+  top: var(--tool-widget-y);
+  right: auto;
+  bottom: auto;
+}
+
+html[data-placed-todo] .todo {
+  left: var(--tool-todo-x);
+  top: var(--tool-todo-y);
+  right: auto;
+  bottom: auto;
+}
+
+html[data-placed-speed] .speed-tool {
+  left: var(--tool-speed-x);
+  top: var(--tool-speed-y);
+  right: auto;
+  bottom: auto;
+}
+
+html[data-placed-water] .water-tracker {
+  left: var(--tool-water-x);
+  top: var(--tool-water-y);
+  right: auto;
+  bottom: auto;
+}
+
+body[data-dragging] {
+  user-select: none;
+  cursor: grabbing;
+}
+
+[data-tool].is-dragging,
+[data-tool].is-dragging *,
+body[data-dragging] .speed-header {
+  cursor: grabbing !important;
+}
+
+[data-tool].is-dragging {
+  z-index: 6;
+}

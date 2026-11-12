@@ -13,6 +13,9 @@ export const KEYS = {
   weatherSource: "weatherSource",
   onboarding: "onboarding",
   todos: "todos",
+  layout: "layout",
+  water: "water",
+  waterStyle: "waterStyle",
 };
 
 function onAreaChange(areaName, key, callback) {

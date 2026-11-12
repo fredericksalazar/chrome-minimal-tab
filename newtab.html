@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="styles/onboarding.css">
   <link rel="stylesheet" href="styles/scene.css">
   <link rel="stylesheet" href="styles/landscape-valley.css">
+  <link rel="stylesheet" href="styles/water.css">
+  <link rel="stylesheet" href="styles/layout.css">
   <script src="src/newtab/theme-boot.js"></script>
   <script type="module" src="src/newtab/i18n.js"></script>
   <script type="module" src="src/newtab/shortcuts.js"></script>
@@ -26,7 +28,10 @@
   <script type="module" src="src/newtab/language.js"></script>
   <script type="module" src="src/newtab/scene.js"></script>
   <script type="module" src="src/newtab/pet.js"></script>
+  <script type="module" src="src/newtab/ambient.js"></script>
   <script type="module" src="src/newtab/speed-panel.js"></script>
+  <script type="module" src="src/newtab/water.js"></script>
+  <script type="module" src="src/newtab/layout.js"></script>
   <script type="module" src="src/newtab/support.js"></script>
   <script type="module" src="src/newtab/onboarding.js"></script>
 </head>
@@ -73,7 +78,7 @@
         <circle class="pet-eye" cx="31" cy="16" r="1"/>
       </g>
       <g data-pet="dog">
-        <ellipse class="pet-wag" cx="4.5" cy="18" rx="1.8" ry="6" transform="rotate(-32 4.5 18)"/>
+        <path class="pet-line pet-wag" d="M9.5 25C5.5 22 3.5 17 4.5 12.5"/>
         <ellipse cx="16" cy="25" rx="12" ry="8"/>
         <ellipse cx="10" cy="33" rx="4" ry="2.2"/>
         <ellipse cx="23" cy="33" rx="4" ry="2.2"/>
@@ -143,7 +148,7 @@
     <div id="scene-bubble" class="scene-bubble" hidden></div>
   </div>
   <div class="page">
-  <aside class="widget" aria-label="Hora y tiempo" data-i18n-attrs="aria-label: widget.label">
+  <aside id="widget" class="widget" data-tool="widget" aria-label="Hora y tiempo" data-i18n-attrs="aria-label: widget.label">
     <time id="clock" class="clock"></time>
     <div id="weather" class="weather" hidden>
       <span id="city"></span>
@@ -171,7 +176,7 @@
     </section>
   </aside>
 
-  <section id="todo" class="todo" aria-label="Tareas" data-i18n-attrs="aria-label: todo.label">
+  <section id="todo" class="todo" data-tool="todo" aria-label="Tareas" data-i18n-attrs="aria-label: todo.label">
     <form id="todo-form" class="todo-add">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
       <input id="todo-input" type="text" placeholder="Añadir tarea" aria-label="Añadir tarea" data-i18n-attrs="placeholder: todo.add; aria-label: todo.add" autocomplete="off" maxlength="200">
@@ -207,14 +212,71 @@
     </svg>
   </button>
 
-  <button id="speed-btn" class="speed-btn" type="button" title="Prueba de velocidad" aria-label="Prueba de velocidad" data-i18n-attrs="title: speed.title; aria-label: speed.title" aria-expanded="false" aria-controls="speed-panel">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-      <path d="M13.45 11.55l2.05 -2.05"/>
-      <path d="M6.4 20a9 9 0 1 1 11.2 0z"/>
-    </svg>
-  </button>
-  <span id="speed-badge" class="speed-badge" hidden></span>
+  <aside id="water-tracker" class="water-tracker" data-tool="water" aria-label="Hidratación" data-i18n-attrs="aria-label: water.label">
+    <div class="water-main">
+      <div class="water-actions">
+        <button id="water-undo" class="water-icon-btn" type="button" title="Deshacer última toma" aria-label="Deshacer última toma" data-i18n-attrs="title: water.undo; aria-label: water.undo" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+        </button>
+        <button id="water-drink" class="water-drink-btn" type="button" title="Registrar vaso de agua (250 ml)" aria-label="Registrar vaso de agua (250 ml)" data-i18n-attrs="title: water.drinkLabel; aria-label: water.drinkLabel">
+          <span aria-hidden="true">+</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        </button>
+        <button id="water-history-btn" class="water-icon-btn" type="button" title="Historial de agua" aria-label="Historial de agua" data-i18n-attrs="title: water.history; aria-label: water.history" aria-expanded="false" aria-controls="water-log">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </button>
+      </div>
+      <div id="water-vessel" class="water-vessel" role="progressbar" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="0">
+        <svg class="water-svg water-svg-bottle" viewBox="0 0 80 180" aria-hidden="true">
+          <defs>
+            <clipPath id="water-bottle-clip">
+              <path d="M 26 16 H 54 C 54 27, 72 36, 72 62 V 162 C 72 171, 66 176, 59 176 C 54 176, 51 173, 49 170 C 47 173, 44 176, 40 176 C 36 176, 33 173, 31 170 C 29 173, 26 176, 21 176 C 14 176, 8 171, 8 162 V 62 C 8 36, 26 27, 26 16 Z"/>
+            </clipPath>
+          </defs>
+          <rect class="water-bottle-cap" x="24" y="2" width="32" height="14" rx="2.5"/>
+          <path class="water-vessel-bg" d="M 26 16 H 54 C 54 27, 72 36, 72 62 V 162 C 72 171, 66 176, 59 176 C 54 176, 51 173, 49 170 C 47 173, 44 176, 40 176 C 36 176, 33 173, 31 170 C 29 173, 26 176, 21 176 C 14 176, 8 171, 8 162 V 62 C 8 36, 26 27, 26 16 Z"/>
+          <g clip-path="url(#water-bottle-clip)">
+            <path class="water-level water-level-bottle" d="M 0 18 Q 20 13, 40 18 T 80 18 V 350 H 0 Z"/>
+          </g>
+          <path class="water-vessel-outline" d="M 26 16 H 54 C 54 27, 72 36, 72 62 V 162 C 72 171, 66 176, 59 176 C 54 176, 51 173, 49 170 C 47 173, 44 176, 40 176 C 36 176, 33 173, 31 170 C 29 173, 26 176, 21 176 C 14 176, 8 171, 8 162 V 62 C 8 36, 26 27, 26 16 Z"/>
+          <path class="water-shine" d="M 24 23 C 17 33, 13 46, 12 58 C 11.6 62, 15.2 63, 16.5 58.5 C 18.5 47, 21 34, 24 23 Z"/>
+        </svg>
+        <svg class="water-svg water-svg-drop" viewBox="0 0 100 130" aria-hidden="true">
+          <defs>
+            <clipPath id="water-drop-clip">
+              <path d="M 50 6 C 50 6, 88 54, 88 84 A 38 38 0 1 1 12 84 C 12 54, 50 6, 50 6 Z"/>
+            </clipPath>
+          </defs>
+          <path class="water-vessel-bg" d="M 50 6 C 50 6, 88 54, 88 84 A 38 38 0 1 1 12 84 C 12 54, 50 6, 50 6 Z"/>
+          <g clip-path="url(#water-drop-clip)">
+            <path class="water-level water-level-drop" d="M 0 8 Q 25 3, 50 8 T 100 8 V 260 H 0 Z"/>
+          </g>
+          <path class="water-vessel-outline" d="M 50 6 C 50 6, 88 54, 88 84 A 38 38 0 1 1 12 84 C 12 54, 50 6, 50 6 Z"/>
+          <path class="water-shine" d="M 31 48 C 23 62, 20 75, 22 89 C 22.6 93, 26.5 92.5, 26.2 88.5 C 25 76, 27 63, 31 48 Z"/>
+        </svg>
+        <span id="water-percent" class="water-percent">0%</span>
+      </div>
+      <div id="water-amount" class="water-amount">0,0 / 2,0 L</div>
+    </div>
+    <section id="water-log" class="water-log" hidden aria-label="Historial de agua" data-i18n-attrs="aria-label: water.history">
+      <p id="water-last" class="water-last" data-i18n="water.emptyToday">Sin registros hoy</p>
+      <h3 data-i18n="water.todayTitle">Tomas de hoy</h3>
+      <ul id="water-today-list" class="water-log-list"></ul>
+      <h3 data-i18n="water.historyTitle">Días anteriores</h3>
+      <ul id="water-history-list" class="water-log-list"></ul>
+    </section>
+  </aside>
+
+  <div id="speed-tool" class="speed-tool" data-tool="speed">
+    <button id="speed-btn" class="speed-btn" type="button" title="Prueba de velocidad" aria-label="Prueba de velocidad" data-i18n-attrs="title: speed.title; aria-label: speed.title" aria-expanded="false" aria-controls="speed-panel">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+        <path d="M13.45 11.55l2.05 -2.05"/>
+        <path d="M6.4 20a9 9 0 1 1 11.2 0z"/>
+      </svg>
+    </button>
+    <span id="speed-badge" class="speed-badge" hidden></span>
+  </div>
 
   <nav id="support" class="support" aria-label="Apoya el proyecto" data-i18n-attrs="aria-label: support.label"></nav>
   </div>
@@ -309,6 +371,14 @@
             <input id="scene-pet-size" class="blur-amount" type="range" min="60" max="200" step="10">
             <output id="scene-pet-size-value" class="blur-value" for="scene-pet-size"></output>
           </label>
+          <label class="bg-row">
+            <span data-i18n="water.style">Recipiente de agua</span>
+            <select id="water-style-select" class="language-select scene-pet-select">
+              <option value="bottle" data-i18n="water.styleBottle">Botella</option>
+              <option value="drop" data-i18n="water.styleDrop">Gota</option>
+            </select>
+          </label>
+          <button id="reset-layout" class="btn" type="button" data-i18n="settings.resetLayout">Restablecer posiciones</button>
         </div>
       </section>
 

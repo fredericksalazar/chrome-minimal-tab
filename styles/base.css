@@ -135,8 +135,6 @@ main {
   background: var(--search-bg);
   border: 1px solid var(--search-border);
   border-radius: 26px;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   cursor: text;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
@@ -198,9 +196,11 @@ main {
   opacity: 0.45;
 }
 
-.search-box::before,
-.search::after {
-  animation: aura-spin 6s linear infinite;
+/* Al enfocar, el aura da una vuelta y se detiene: girar sin parar repinta un
+   degradado desenfocado en cada fotograma mientras el cursor sigue en el buscador */
+.search:focus-within .search-box::before,
+.search:focus-within::after {
+  animation: aura-spin 6s linear 1;
 }
 
 @keyframes aura-spin {

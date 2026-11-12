@@ -1,10 +1,9 @@
-// Tilo, la mascota del fondo «Valle» (mascota, perro, gato, zorro, búho o alienígena):
+// Tilo, la mascota de la escena (conejo, perro, gato, zorro, búho o alienígena):
 // asoma nada más abrir la pestaña, saluda, cuenta las tareas y el clima e invita a
-// beber agua; luego se queda paseando por la colina más cercana y de vez en cuando
-// dice algo que encaja con el momento. Si el cursor se acerca, huye y vuelve al rato.
-// Es decorativa: el fondo no recibe clics, así que la cercanía se mide con la
-// posición del cursor.
-import { KEYS } from "../lib/storage.js";
+// beber agua; luego se queda siempre visible paseando por la colina más cercana y de
+// vez en cuando dice algo que encaja con el momento. Si el cursor intenta atraparlo,
+// desaparece tras la colina y reaparece enseguida en otro punto a modo juguetón.
+import { KEYS, onLocalChange } from "../lib/storage.js";
 import {
   MEMORY,
   NO_PET,
@@ -18,10 +17,14 @@ import {
   petBriefing,
   petLines,
   pickLine,
+  relocateSpot,
   speechDelay,
+  waterReactionLine,
+  waterReminderLine,
 } from "../lib/pet.js";
+import { REMINDER_MS, formatLiters, hydrationStatus } from "../lib/water.js";
 import { conditionKey } from "../lib/weather.js";
-import { t } from "./i18n.js";
+import { locale, t } from "./i18n.js";
 import { onThemeChange } from "./theme.js";
 
 const scene = document.querySelector(".scene-bg");
@@ -30,14 +33,11 @@ const bubble = document.getElementById("scene-bubble");
 // El suelo que pisa: la silueta que el paisaje marca con data-ground
 const hill = scene.querySelector("[data-ground]");
 const ridge = hill.querySelector("path");
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 // Lo que la mascota se hunde tras la colina para quedar oculto, y en la hierba al posarse
 const HIDE_DEPTH = 56;
 const SINK = 4;
 const SPARKS = 6;
 const SPEECH_MS = 6000;
-// De cada cien pausas, en unas seis se esconde un momento y sale por otro sitio
-const WANDER_OFF = 0.06;
 // Cada frase del saludo inicial dura menos para que no se haga largo
 const BRIEFING_MS = 4500;
 
@@ -56,9 +56,17 @@ let nextSpeech = 0;
 let escaped = false;
 let briefed = false;
 let recent = [];
+let lastWaterReminder = Date.now();
+let lastTodayMl = null;
+// Cada frase tiene su turno: una anterior no puede esconder el bocadillo de otra más nueva
+let speech = 0;
+// Mientras saluda, una toma de agua no interrumpe: el agradecimiento sustituye a la
+// frase del agua del saludo (que ya no sería cierta) o llega justo después
+let briefing = false;
+let thanksPending = null;
 
 const root = document.documentElement;
-const active = () => root.dataset.scenePet !== NO_PET && !reducedMotion.matches;
+const active = () => root.dataset.scenePet !== NO_PET;
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const between = (min, max) => min + Math.random() * (max - min);
 const place = ({ x, y }) => `translate(${x}px, ${-y}px)`;
@@ -100,9 +108,9 @@ function hide() {
   fleeing = false;
 }
 
-function schedule(first = false) {
+function schedule(first = false, startX = null) {
   clearTimeout(timer);
-  if (active()) timer = setTimeout(appear, appearanceDelay(Math.random(), first));
+  if (active()) timer = setTimeout(() => appear(startX), appearanceDelay(Math.random(), first));
 }
 
 // Lo que Tilo sabe del momento: hora, día, cielo de la escena, rato con la pestaña
@@ -119,8 +127,17 @@ async function readContext() {
     minutesOpen: performance.now() / 60000,
   };
   try {
-    const { [KEYS.todos]: tasks, [KEYS.weather]: weather } = await chrome.storage.local.get([KEYS.todos, KEYS.weather]);
-    return { ...context, ...countTasks(tasks), weather };
+    const {
+      [KEYS.todos]: tasks,
+      [KEYS.weather]: weather,
+      [KEYS.water]: water,
+    } = await chrome.storage.local.get([KEYS.todos, KEYS.weather, KEYS.water]);
+    const status = hydrationStatus(water);
+    lastTodayMl = status.todayMl;
+    root.style.setProperty("--scene-pet-vitality", String(status.vitality));
+    root.dataset.petHydration = status.state;
+    const hydration = { ...status, liters: formatLiters(status.todayMl, locale) };
+    return { ...context, ...countTasks(tasks), weather, hydration };
   } catch (err) {
     console.warn("La mascota no pudo leer las tareas ni el clima", err);
     return context;
@@ -129,6 +146,7 @@ async function readContext() {
 
 // Bocadillo sobre la mascota durante unos segundos; cerca del borde derecho se abre al otro lado
 async function say({ key, params, translate = {} }, id, duration = SPEECH_MS) {
+  const turn = ++speech;
   const translated = Object.fromEntries(Object.entries(translate).map(([name, textKey]) => [name, t(textKey)]));
   bubble.hidden = true;
   bubble.textContent = t(key, { ...params, ...translated });
@@ -138,39 +156,60 @@ async function say({ key, params, translate = {} }, id, duration = SPEECH_MS) {
   bubble.classList.toggle("flip", flip);
   bubble.style.transform = place({ x: flip ? position.x - gap - bubble.offsetWidth : position.x + gap, y: position.y + 40 * size() });
   await wait(duration);
-  if (id === run) bubble.hidden = true;
+  if (id === run && turn === speech) bubble.hidden = true;
 }
 
-async function appear() {
-  // Con la pestaña oculta se espera a la siguiente ocasión
-  if (!active() || document.hidden) return schedule();
+async function appear(startX = null) {
+  timer = 0;
+  if (!active()) return;
   const id = ++run;
-  const width = scene.clientWidth;
-  const x = between(width * 0.15, width * 0.85);
+  const width = scene.clientWidth || window.innerWidth;
+  const x = Number.isFinite(startX) ? startX : between(width * 0.15, width * 0.85);
   face(Math.random() < 0.5 ? -1 : 1);
   position = { x, y: ground(x) - HIDE_DEPTH * size() };
   pet.style.transform = place(position);
   // Es un SVG: no tiene la propiedad hidden de los elementos HTML
   pet.toggleAttribute("hidden", false);
-  await glide({ x, y: ground(x) }, 450, 0, "cubic-bezier(0.2, 0.9, 0.3, 1.2)");
+  fleeing = false;
+  await glide({ x, y: ground(x) }, 380, 0, "cubic-bezier(0.2, 0.9, 0.3, 1.2)");
 
-  // La primera vez saluda y pone al día; al volver de una huida, a veces lo comenta
+  // La primera vez saluda y pone al día; al reaparecer tras jugar al escondite, lo comenta
   if (!briefed) {
     briefed = true;
+    briefing = true;
     nextSpeech = Date.now() + speechDelay(Math.random());
     for (const line of petBriefing(await readContext(), conditionKey)) {
-      if (id !== run) return;
-      await say(line, id, BRIEFING_MS);
+      if (id !== run) break;
+      const water = line.key.startsWith("pet.water");
+      await say(water && thanksPending ? thanksPending : line, id, BRIEFING_MS);
+      if (water) thanksPending = null;
       await wait(350);
     }
-  } else if (escaped && Math.random() < 0.4) await say({ key: "pet.caught" }, id);
+    if (thanksPending && id === run) await say(thanksPending, id, BRIEFING_MS);
+    briefing = false;
+    thanksPending = null;
+    if (id !== run) return;
+  } else if (escaped && Math.random() < 0.55) {
+    await say({ key: "pet.caught" }, id, 3200);
+  }
   escaped = false;
 
-  // Se queda: pausa, y luego habla, se va a otro sitio o da un salto
+  // Siempre permanece en la escena: pausa, habla, recuerda beber agua o pasea por la colina
   while (id === run) {
     await wait(pauseDelay(root.dataset.scenePet, Math.random()));
     if (id !== run) return;
     if (document.hidden) continue;
+    if (Date.now() - lastWaterReminder >= REMINDER_MS) {
+      const ctx = await readContext();
+      if (id !== run) return;
+      const reminder = waterReminderLine(ctx.hydration);
+      lastWaterReminder = Date.now();
+      if (reminder) {
+        nextSpeech = Date.now() + speechDelay(Math.random());
+        await say(reminder, id);
+        continue;
+      }
+    }
     if (Date.now() >= nextSpeech) {
       nextSpeech = Date.now() + speechDelay(Math.random());
       await wait(600);
@@ -180,22 +219,16 @@ async function appear() {
       await say(line, id);
       continue;
     }
-    if (Math.random() < WANDER_OFF) break;
     // Cada animal a su manera: salta, corre, camina, vuela o flota (clase moving para alas y patas)
     pet.classList.add("moving");
     for (const step of moveSteps(root.dataset.scenePet, Math.random)) {
       if (id !== run) return;
-      const next = hopTarget(position.x, direction, step.distance * size(), width);
+      const next = hopTarget(position.x, direction, step.distance * size(), scene.clientWidth || width);
       face(next.direction);
       await glide({ x: next.x, y: ground(next.x) }, step.ms, step.arc * size(), step.easing);
     }
     pet.classList.remove("moving");
   }
-  if (id !== run) return;
-  await glide({ x: position.x, y: position.y - HIDE_DEPTH * size() }, 520, 0, "ease-in");
-  if (id !== run) return;
-  hide();
-  schedule();
 }
 
 // Chispas que quedan donde estaba la mascota
@@ -222,29 +255,28 @@ async function flee(pointerX) {
   bubble.hidden = true;
   sparkle(position);
   face(fleeDirection(position.x, pointerX));
-  pet.classList.add("moving");
-  const x = position.x + direction * between(110, 170) * size();
-  await glide({ x, y: ground(x) + 6 }, 380, 78 * size(), "cubic-bezier(0.3, 0, 0.5, 1)");
-  pet.classList.remove("moving");
-  await glide({ x, y: position.y - HIDE_DEPTH * size() }, 240, 0, "ease-in");
+  // Se esconde rápido tras la colina y asoma enseguida en otro lado a modo juguetón
+  await glide({ x: position.x, y: position.y - HIDE_DEPTH * size() }, 200, 0, "ease-in");
   if (id !== run) return;
   hide();
-  schedule();
+  const nextX = relocateSpot(pointerX, scene.clientWidth || window.innerWidth, Math.random());
+  schedule(false, nextX);
 }
 
 document.addEventListener(
   "pointermove",
   (event) => {
     if (!position || fleeing) return;
+    if (Math.abs(event.clientX - position.x) > 120 * size()) return;
     if (isPointerNear({ x: event.clientX, y: event.clientY }, pet.getBoundingClientRect())) flee(event.clientX);
   },
   { passive: true }
 );
 
-// Al cambiar de fondo o de preferencia de movimiento la mascota se va o empieza a asomar
+// Al cambiar de mascota en Personalizar, se muestra enseguida o se oculta si se elige «Ninguna»
 function sync() {
   if (active()) {
-    if (!timer) schedule(true);
+    if (!position && !timer) schedule(true);
     return;
   }
   clearTimeout(timer);
@@ -253,6 +285,18 @@ function sync() {
   hide();
 }
 
+onLocalChange(KEYS.water, (next) => {
+  const status = hydrationStatus(next);
+  const increased = lastTodayMl !== null && status.todayMl > lastTodayMl;
+  lastTodayMl = status.todayMl;
+  root.style.setProperty("--scene-pet-vitality", String(status.vitality));
+  root.dataset.petHydration = status.state;
+  if (increased) {
+    lastWaterReminder = Date.now();
+    if (briefing) thanksPending = waterReactionLine(status);
+    else if (position && !fleeing && !document.hidden) say(waterReactionLine(status), run);
+  }
+});
+
 onThemeChange(sync);
-reducedMotion.addEventListener("change", sync);
 sync();

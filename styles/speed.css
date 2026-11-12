@@ -1,17 +1,23 @@
 /* Prueba de velocidad */
 
-.speed-btn {
-  right: auto;
+.speed-tool {
+  position: fixed;
   left: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speed-btn {
+  position: static;
 }
 
 .speed-badge {
-  position: fixed;
-  left: 62px;
-  bottom: 26px;
   color: var(--text);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .speed-badge[hidden] {

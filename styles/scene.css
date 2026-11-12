@@ -34,12 +34,17 @@
   display: none;
 }
 
-
-/* Estrellas: dos capas de puntos que titilan a destiempo */
+/* Estrellas: dos capas de puntos; de día se apagan por completo (display: none) para no ocupar GPU.
+   Están quietas salvo en el episodio «shimmer». */
 .scene-stars {
   position: absolute;
   inset: 0;
   opacity: var(--scene-night, 1);
+}
+
+html[data-tone="light"] .scene-stars,
+html[data-tone="light"] .scene-aurora {
+  display: none;
 }
 
 .scene-stars::before,
@@ -51,7 +56,6 @@
   width: 1.5px;
   height: 1.5px;
   border-radius: 50%;
-  animation: scene-twinkle 5s ease-in-out infinite alternate;
 }
 
 .scene-stars::before {
@@ -120,11 +124,14 @@
     60.9vw 30.6vh 0 0px rgba(255, 255, 255, 1),
     16.3vw 28.3vh 0 0px rgba(255, 255, 255, 0.55),
     79.3vw 36.9vh 0 0px rgba(255, 255, 255, 0.55);
-  animation-duration: 7s;
-  animation-delay: -3s;
 }
 
-/* Estrella fugaz: casi todo el ciclo está apagada */
+/* Episodio «shimmer» (src/newtab/ambient.js): las estrellas titilan unos segundos */
+.scene-stars.is-twinkling::after {
+  animation: scene-twinkle 2s ease-in-out 3;
+}
+
+/* Estrella fugaz: solo existe durante su episodio; ambient.js elige dónde cae */
 .scene-meteor {
   position: absolute;
   top: 12%;
@@ -135,10 +142,14 @@
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9));
   rotate: 24deg;
   opacity: 0;
-  animation: scene-meteor 23s ease-in 6s infinite;
 }
 
-/* Aurora: dos cortinas de luz que aparecen y se van, solo de noche */
+.scene-meteor.is-falling {
+  animation: scene-meteor 1.4s ease-in 1;
+}
+
+/* Aurora: dos cortinas suaves de luz que aparecen y se van, solo de noche y solo
+   durante su episodio (sin filter:blur ni mask para ahorrar memoria GPU) */
 .scene-aurora {
   position: absolute;
   inset: 0 0 45%;
@@ -147,21 +158,27 @@
 
 .scene-aurora i {
   position: absolute;
-  inset: 6% -10% 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(79, 209, 165, 0.5) 34%, rgba(124, 108, 242, 0.34) 66%, transparent 100%);
-  -webkit-mask: repeating-linear-gradient(96deg, transparent 0 4%, #000 9%, transparent 15%, #000 21%, transparent 27%);
-  mask: repeating-linear-gradient(96deg, transparent 0 4%, #000 9%, transparent 15%, #000 21%, transparent 27%);
-  filter: blur(22px);
+  inset: 4% 0 0;
+  background:
+    radial-gradient(ellipse 45% 80% at 28% 50%, rgba(79, 209, 165, 0.34), transparent 70%),
+    radial-gradient(ellipse 45% 80% at 72% 45%, rgba(124, 108, 242, 0.28), transparent 70%);
   opacity: 0;
-  animation: scene-aurora 46s ease-in-out infinite;
-  will-change: transform, opacity;
+}
+
+.scene-aurora.is-glowing i {
+  animation: scene-aurora 24s ease-in-out 1;
 }
 
 .scene-aurora i:last-child {
-  inset: 0 -10% 22%;
-  background: linear-gradient(180deg, transparent 0%, rgba(90, 184, 240, 0.4) 40%, rgba(242, 123, 168, 0.22) 75%, transparent 100%);
-  animation-duration: 61s;
-  animation-delay: -27s;
+  inset: 0 0 18%;
+  background:
+    radial-gradient(ellipse 48% 75% at 38% 45%, rgba(90, 184, 240, 0.28), transparent 70%),
+    radial-gradient(ellipse 42% 75% at 68% 55%, rgba(242, 123, 168, 0.18), transparent 70%);
+}
+
+.scene-aurora.is-glowing i:last-child {
+  animation-duration: 22s;
+  animation-delay: 4s;
   animation-direction: reverse;
 }
 
@@ -188,9 +205,8 @@
 .scene-orb::before {
   content: "";
   position: absolute;
-  inset: -260%;
+  inset: -110%;
   border-radius: 50%;
-  animation: scene-breathe 9s ease-in-out infinite;
 }
 
 /* El sol se enrojece cerca del horizonte */
@@ -204,7 +220,7 @@
 }
 
 .scene-sun::before {
-  background: radial-gradient(closest-side, rgba(255, 200, 100, 0.6), rgba(255, 159, 110, 0.26) 45%, transparent 72%);
+  background: radial-gradient(closest-side, rgba(255, 200, 100, 0.55), rgba(255, 159, 110, 0.22) 48%, transparent 72%);
 }
 
 .scene-moon {
@@ -215,19 +231,15 @@
 }
 
 .scene-moon::before {
-  background: radial-gradient(closest-side, rgba(186, 174, 255, 0.34), rgba(124, 108, 242, 0.12) 45%, transparent 72%);
+  background: radial-gradient(closest-side, rgba(186, 174, 255, 0.32), rgba(124, 108, 242, 0.12) 48%, transparent 72%);
 }
 
-/* Nubes altas y bancos de niebla: manchas suaves más anchas que la ventana */
+/* Nubes altas: manchas suaves estáticas sin capas gigantes en GPU */
 .scene-cloud {
   position: absolute;
-  left: -30%;
-  width: 160%;
-  will-change: transform;
-}
-
-.scene-cloud {
+  left: 0;
   top: 4%;
+  width: 100%;
   height: 34%;
   background:
     radial-gradient(closest-side at 18% 40%, var(--scene-cloud), transparent),
@@ -236,39 +248,43 @@
   background-size: 34% 60%, 42% 70%, 30% 56%;
   background-position: 6% 30%, 52% 70%, 96% 20%;
   background-repeat: no-repeat;
-  animation: scene-drift 110s ease-in-out infinite alternate;
 }
 
-/* Nubes con forma que cruzan el cielo sin parar; de noche casi no se ven */
+/* Nubes con forma: las empuja el viento (episodio «wind», ambient.js fija su
+   transform); de noche casi no se ven */
 .scene-puff {
   position: absolute;
   left: -26vw;
   width: 16vw;
   min-width: 150px;
   fill: color-mix(in oklab, rgba(160, 166, 255, 0.1) var(--n), rgba(255, 255, 255, 0.86));
-  animation: scene-cross 170s linear infinite;
-  will-change: transform;
 }
 
-.scene-puff-1 { top: 9%; animation-delay: -40s; }
-.scene-puff-2 { top: 22%; width: 11vw; min-width: 110px; opacity: 0.8; animation-duration: 230s; animation-delay: -150s; }
-.scene-puff-3 { top: 4%; width: 21vw; min-width: 190px; opacity: 0.7; animation-duration: 290s; animation-delay: -215s; }
+.scene-puff-1 { top: 9%; transform: translateX(22vw); }
+.scene-puff-2 { top: 22%; width: 11vw; min-width: 110px; opacity: 0.8; transform: translateX(70vw); }
+.scene-puff-3 { top: 4%; width: 21vw; min-width: 190px; opacity: 0.7; transform: translateX(118vw); }
 
-/* Bandada en V: cruza cada minuto y medio y solo se ve de día. Cada pájaro son
-   dos alas que baten desde el centro. */
+/* Bandada en V: cruza el cielo en su episodio y solo se ve de día; el resto del
+   tiempo espera fuera de la vista. Cada pájaro son dos alas que baten desde el centro. */
 .scene-birds {
   position: absolute;
   top: 17%;
   left: 0;
   color: rgba(58, 66, 110, 0.6);
   opacity: calc(1 - var(--scene-night, 1));
-  animation: scene-flock 92s linear infinite 4s both;
-  will-change: transform;
+  transform: translate(-12vw, 3vh);
+}
+
+.scene-birds.is-flying {
+  animation: scene-flock 16s linear 1 both;
+}
+
+html[data-tone="dark"] .scene-birds {
+  display: none;
 }
 
 .scene-birds i {
   position: absolute;
-  animation: scene-bob 3.4s ease-in-out infinite alternate;
 }
 
 .scene-birds i::before,
@@ -280,6 +296,10 @@
   height: 2px;
   border-radius: 2px;
   background: currentColor;
+}
+
+.scene-birds.is-flying i::before,
+.scene-birds.is-flying i::after {
   animation: scene-flap 0.62s ease-in-out infinite alternate;
 }
 
@@ -296,12 +316,12 @@
 }
 
 .scene-birds i:nth-child(1) { left: 0; top: 0; }
-.scene-birds i:nth-child(2) { left: -26px; top: -13px; animation-delay: -0.6s; }
-.scene-birds i:nth-child(3) { left: -28px; top: 14px; animation-delay: -1.5s; }
-.scene-birds i:nth-child(4) { left: -53px; top: -27px; animation-delay: -2.2s; }
-.scene-birds i:nth-child(5) { left: -57px; top: 29px; animation-delay: -0.9s; }
-.scene-birds i:nth-child(6) { left: -82px; top: -40px; animation-delay: -2.8s; }
-.scene-birds i:nth-child(7) { left: -88px; top: 45px; animation-delay: -1.9s; }
+.scene-birds i:nth-child(2) { left: -26px; top: -13px; }
+.scene-birds i:nth-child(3) { left: -28px; top: 14px; }
+.scene-birds i:nth-child(4) { left: -53px; top: -27px; }
+.scene-birds i:nth-child(5) { left: -57px; top: 29px; }
+.scene-birds i:nth-child(6) { left: -82px; top: -40px; }
+.scene-birds i:nth-child(7) { left: -88px; top: 45px; }
 .scene-birds i:nth-child(odd)::before,
 .scene-birds i:nth-child(odd)::after { animation-delay: -0.3s; }
 
@@ -315,11 +335,8 @@
   bottom: 0;
   width: calc(38px * var(--s));
   overflow: visible;
-  /* Para que se distinga siempre: contorno oscuro fino de día y halo claro de noche */
-  filter: drop-shadow(0 0 1px rgba(24, 32, 62, calc((1 - var(--scene-night, 1)) * 0.75)))
-    drop-shadow(0 1px 2px rgba(24, 32, 62, calc((1 - var(--scene-night, 1)) * 0.3)))
-    drop-shadow(0 0 calc(var(--scene-night, 1) * 9px) rgba(214, 206, 255, calc(var(--scene-night, 1) * 0.95)));
-  will-change: transform;
+  /* Un solo filtro para que se distinga siempre: borde oscuro de día y halo claro de noche */
+  filter: drop-shadow(0 0 2px color-mix(in oklab, rgba(222, 214, 255, 0.9) var(--n), rgba(24, 32, 62, 0.55)));
 }
 
 .scene-pet[hidden] {
@@ -327,11 +344,15 @@
 }
 
 .scene-pet g {
+  --pet-vital: color-mix(in oklab, var(--pet) 82%, #ff8fab);
+  --pet-dry: color-mix(in oklab, var(--pet) 34%, #968f82);
+  --pet-color: color-mix(in oklab, var(--pet-vital) calc(var(--scene-pet-vitality, 1) * 100%), var(--pet-dry));
   display: none;
-  fill: var(--pet);
+  fill: var(--pet-color);
   transform-box: fill-box;
   transform-origin: center;
   scale: var(--scene-pet-dir, 1) 1;
+  transition: fill 0.6s ease;
 }
 
 .scene-pet g[data-pet="rabbit"] { --pet: color-mix(in oklab, #f1edff var(--n), #fffaf2); }
@@ -358,12 +379,18 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
 
 .pet-wag {
   transform-origin: 100% 100%;
-  animation: scene-wag 0.3s ease-in-out infinite alternate;
+}
+
+.scene-pet.moving .pet-wag {
+  animation: scene-wag 0.28s ease-in-out infinite alternate;
 }
 
 .pet-sway {
   transform-origin: 100% 100%;
-  animation: scene-sway-tail 2.4s ease-in-out infinite alternate;
+}
+
+.scene-pet.moving .pet-sway {
+  animation: scene-sway-tail 1.2s ease-in-out infinite alternate;
 }
 
 .pet-wing-l,
@@ -381,8 +408,8 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
   --wing: -1;
 }
 
-html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
-  animation: scene-hover 2.2s ease-in-out infinite alternate;
+.scene-pet.moving g[data-pet="alien"] {
+  animation: scene-hover 1.2s ease-in-out infinite alternate;
 }
 
 .pet-eye {
@@ -394,7 +421,7 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
 }
 
 .pet-shade {
-  fill: color-mix(in oklab, var(--pet) 74%, #5b4636);
+  fill: color-mix(in oklab, var(--pet-color) 74%, #5b4636);
 }
 
 .pet-beak {
@@ -403,9 +430,13 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
 
 .pet-line {
   fill: none;
-  stroke: var(--pet);
+  stroke: var(--pet-color);
   stroke-width: 3;
   stroke-linecap: round;
+}
+
+.scene-pet g[data-pet="dog"] .pet-line {
+  stroke-width: 3.5;
 }
 
 .scene-pet g[data-pet="alien"] .pet-line {
@@ -449,26 +480,29 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
   box-shadow: 0 0 8px 2px rgba(255, 220, 130, 0.85);
 }
 
-/* Motas de luz de día, luciérnagas de noche */
+/* Motas de luz de día, luciérnagas de noche: suben durante su episodio
+   (sin box-shadow difuminado para ahorrar GPU) */
 .scene-motes span {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--scene-mote);
-  box-shadow: 0 0 9px 3px var(--scene-mote-glow);
   opacity: 0;
-  animation: scene-float 16s ease-in-out infinite;
 }
 
-.scene-motes span:nth-child(1) { left: 9%; bottom: 13%; animation-delay: -2s; }
-.scene-motes span:nth-child(2) { left: 21%; bottom: 22%; animation-duration: 19s; animation-delay: -9s; }
-.scene-motes span:nth-child(3) { left: 34%; bottom: 9%; animation-duration: 14s; animation-delay: -5s; }
-.scene-motes span:nth-child(4) { left: 47%; bottom: 17%; animation-duration: 21s; animation-delay: -13s; }
-.scene-motes span:nth-child(5) { left: 58%; bottom: 7%; animation-duration: 17s; animation-delay: -1s; }
-.scene-motes span:nth-child(6) { left: 69%; bottom: 20%; animation-duration: 15s; animation-delay: -7s; }
-.scene-motes span:nth-child(7) { left: 83%; bottom: 12%; animation-duration: 20s; animation-delay: -11s; }
-.scene-motes span:nth-child(8) { left: 93%; bottom: 24%; animation-duration: 18s; animation-delay: -4s; }
+.scene-motes.is-glowing span {
+  animation: scene-float 8s ease-in-out 1;
+}
+
+.scene-motes span:nth-child(1) { left: 9%; bottom: 13%; animation-delay: 0.4s; }
+.scene-motes span:nth-child(2) { left: 21%; bottom: 22%; animation-duration: 7s; animation-delay: 2s; }
+.scene-motes span:nth-child(3) { left: 34%; bottom: 9%; animation-duration: 7.5s; animation-delay: 1.2s; }
+.scene-motes span:nth-child(4) { left: 47%; bottom: 17%; animation-delay: 2.6s; }
+.scene-motes span:nth-child(5) { left: 58%; bottom: 7%; animation-duration: 7s; animation-delay: 0s; }
+.scene-motes span:nth-child(6) { left: 69%; bottom: 20%; animation-duration: 8.5s; animation-delay: 1.6s; }
+.scene-motes span:nth-child(7) { left: 83%; bottom: 12%; animation-duration: 7.5s; animation-delay: 0.8s; }
+.scene-motes span:nth-child(8) { left: 93%; bottom: 24%; animation-delay: 2.2s; }
 .scene-motes span:nth-child(even) { width: 3px; height: 3px; }
 
 @keyframes scene-aurora {
@@ -532,26 +566,12 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
   }
 }
 
-@keyframes scene-cross {
-  to {
-    transform: translateX(152vw);
-  }
-}
-
-/* Medio ciclo cruzando y medio fuera de la vista */
 @keyframes scene-flock {
-  0% {
-    transform: translate(-6vw, 3vh);
+  from {
+    transform: translate(-12vw, 3vh);
   }
-  48%,
-  100% {
-    transform: translate(112vw, -5vh);
-  }
-}
-
-@keyframes scene-bob {
   to {
-    transform: translateY(5px);
+    transform: translate(112vw, -5vh);
   }
 }
 
@@ -565,24 +585,20 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
 }
 
 @keyframes scene-twinkle {
-  from {
+  50% {
     opacity: 0.35;
-  }
-  to {
-    opacity: 1;
   }
 }
 
 @keyframes scene-meteor {
-  0%,
-  93% {
+  from {
     opacity: 0;
     transform: translateX(0);
   }
-  95% {
+  15% {
     opacity: 1;
   }
-  100% {
+  to {
     opacity: 0;
     transform: translateX(260px);
   }
@@ -591,22 +607,6 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
 @keyframes scene-rise {
   from {
     transform: translateY(46px);
-  }
-}
-
-@keyframes scene-breathe {
-  50% {
-    transform: scale(1.14);
-    opacity: 0.8;
-  }
-}
-
-@keyframes scene-drift {
-  from {
-    transform: translateX(-9%);
-  }
-  to {
-    transform: translateX(9%);
   }
 }
 
@@ -629,6 +629,13 @@ html[data-scene-pet="alien"] .scene-pet g[data-pet="alien"] {
   90% {
     transform: translate(-14px, -86px);
   }
+}
+
+/* Cuando la pestaña está en segundo plano se pausan todas las animaciones (0 % CPU/GPU) */
+html[data-paused] .scene-bg *,
+html[data-paused] .scene-bg *::before,
+html[data-paused] .scene-bg *::after {
+  animation-play-state: paused !important;
 }
 
 /* Quieto, pero con las motas a la vista */
