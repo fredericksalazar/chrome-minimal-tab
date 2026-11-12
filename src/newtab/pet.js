@@ -30,6 +30,13 @@ import { onThemeChange } from "./theme.js";
 const scene = document.querySelector(".scene-bg");
 const pet = document.getElementById("scene-pet");
 const bubble = document.getElementById("scene-bubble");
+// Tarjeta con botones (en la capa de la página: el bocadillo de la escena no recibe clics)
+const card = document.getElementById("tilo-card");
+const cardText = document.getElementById("tilo-card-text");
+const cardYes = document.getElementById("tilo-card-yes");
+const cardNo = document.getElementById("tilo-card-no");
+// Sin respuesta, la tarjeta se retira sola
+const CARD_MS = 45000;
 // El suelo que pisa: la silueta que el paisaje marca con data-ground
 const hill = scene.querySelector("[data-ground]");
 const ridge = hill.querySelector("path");
@@ -64,6 +71,9 @@ let speech = 0;
 // frase del agua del saludo (que ya no sería cierta) o llega justo después
 let briefing = false;
 let thanksPending = null;
+// Mientras espera una respuesta en su tarjeta, Tilo se queda quieto y no huye
+let holding = false;
+let groupsDone = 0;
 
 const root = document.documentElement;
 const active = () => root.dataset.scenePet !== NO_PET;
@@ -189,6 +199,8 @@ async function appear(startX = null) {
     briefing = false;
     thanksPending = null;
     if (id !== run) return;
+    await offerGroups(id);
+    if (id !== run) return;
   } else if (escaped && Math.random() < 0.55) {
     await say({ key: "pet.caught" }, id, 3200);
   }
@@ -198,7 +210,7 @@ async function appear(startX = null) {
   while (id === run) {
     await wait(pauseDelay(root.dataset.scenePet, Math.random()));
     if (id !== run) return;
-    if (document.hidden) continue;
+    if (document.hidden || holding) continue;
     if (Date.now() - lastWaterReminder >= REMINDER_MS) {
       const ctx = await readContext();
       if (id !== run) return;
@@ -229,6 +241,49 @@ async function appear(startX = null) {
     }
     pet.classList.remove("moving");
   }
+}
+
+// Tilo ofrece ordenar los accesos directos por temas, una sola vez (shortcuts.js
+// decide si toca y deja el número en local.groupsOffer.pending; si se acepta, abre
+// la propuesta al ver local.groupsOffer.open)
+async function offerGroups(id) {
+  let offer = {};
+  try {
+    ({ [KEYS.groupsOffer]: offer = {} } = await chrome.storage.local.get(KEYS.groupsOffer));
+  } catch (err) {
+    console.warn("Tilo no pudo leer si ofrecer ordenar los accesos", err);
+    return;
+  }
+  if (offer.asked || !(offer.pending > 0) || id !== run) return;
+  const save = (changes) => chrome.storage.local.set({ [KEYS.groupsOffer]: { ...offer, asked: true, ...changes } }).catch(() => {});
+  save({});
+
+  holding = true;
+  bubble.hidden = true;
+  cardText.textContent = t("group.offer", { n: offer.pending });
+  card.hidden = false;
+  const gap = 16 * size();
+  const flip = position.x + gap + card.offsetWidth > window.innerWidth - 12;
+  card.classList.toggle("flip", flip);
+  card.style.transform = place({ x: flip ? position.x - gap - card.offsetWidth : position.x + gap, y: position.y + 40 * size() });
+  cardYes.focus({ preventScroll: true });
+
+  const answer = await new Promise((resolve) => {
+    const done = (value) => {
+      clearTimeout(timeout);
+      cardYes.removeEventListener("click", yes);
+      cardNo.removeEventListener("click", no);
+      resolve(value);
+    };
+    const yes = () => done("yes");
+    const no = () => done("no");
+    const timeout = setTimeout(() => done(null), CARD_MS);
+    cardYes.addEventListener("click", yes);
+    cardNo.addEventListener("click", no);
+  });
+  card.hidden = true;
+  holding = false;
+  if (answer === "yes") save({ open: Date.now() });
 }
 
 // Chispas que quedan donde estaba la mascota
@@ -266,7 +321,7 @@ async function flee(pointerX) {
 document.addEventListener(
   "pointermove",
   (event) => {
-    if (!position || fleeing) return;
+    if (!position || fleeing || holding) return;
     if (Math.abs(event.clientX - position.x) > 120 * size()) return;
     if (isPointerNear({ x: event.clientX, y: event.clientY }, pet.getBoundingClientRect())) flee(event.clientX);
   },
@@ -297,6 +352,14 @@ onLocalChange(KEYS.water, (next) => {
     else if (position && !fleeing && !document.hidden) say(waterReactionLine(status), run);
   }
 });
+
+// Tras aplicar la propuesta de Tilo, lo celebra
+onLocalChange(KEYS.groupsOffer, (offer) => {
+  const done = offer?.done ?? 0;
+  if (done && done !== groupsDone && position && !fleeing && !document.hidden) say({ key: "pet.groupsDone" }, run);
+  groupsDone = done;
+});
+chrome.storage.local.get(KEYS.groupsOffer).then(({ [KEYS.groupsOffer]: offer }) => (groupsDone ||= offer?.done ?? 0)).catch(() => {});
 
 onThemeChange(sync);
 sync();

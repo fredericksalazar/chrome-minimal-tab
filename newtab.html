@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles/widget.css">
   <link rel="stylesheet" href="styles/todos.css">
   <link rel="stylesheet" href="styles/shortcuts.css">
+  <link rel="stylesheet" href="styles/groups.css">
   <link rel="stylesheet" href="styles/drawer.css">
   <link rel="stylesheet" href="styles/speed.css">
   <link rel="stylesheet" href="styles/support.css">
@@ -198,6 +199,11 @@
     </form>
 
     <section id="grid" class="grid" aria-label="Accesos directos" data-i18n-attrs="aria-label: shortcuts.label"></section>
+
+    <div id="grid-tools" class="grid-tools" role="group" aria-label="Opciones de los accesos directos" data-i18n-attrs="aria-label: group.menu" hidden>
+      <button id="grid-select" class="link-btn" type="button" data-i18n="group.select">Seleccionar</button>
+      <button id="grid-organize" class="link-btn" type="button" data-i18n="group.organize">Organizar con Tilo</button>
+    </div>
 
     <p id="empty-hint" class="hint" data-i18n-html="shortcuts.emptyHint" hidden>
       Pulsa <kbd>⌥⇧D</kbd> en cualquier web para añadirla aquí,
@@ -395,7 +401,10 @@
       <section class="drawer-section">
         <h3 data-i18n="settings.shortcuts">Accesos directos</h3>
         <p class="drawer-text"><span data-i18n="shortcuts.inUse">En uso:</span> <span id="counter"></span></p>
-        <button id="manage" class="btn" type="button" data-i18n="shortcuts.manage">Gestionar en marcadores</button>
+        <div class="bg-actions">
+          <button id="manage" class="btn" type="button" data-i18n="shortcuts.manage">Gestionar en marcadores</button>
+          <button id="drawer-organize" class="btn" type="button" data-i18n="group.organize">Organizar con Tilo</button>
+        </div>
       </section>
       </div>
     </div>
@@ -475,6 +484,10 @@
         <span data-i18n="dialog.url">URL</span>
         <input id="url-input" type="text" autocomplete="off" spellcheck="false">
       </label>
+      <label id="move-field" class="field" hidden>
+        <span data-i18n="group.moveTo">Mover a…</span>
+        <select id="move-select" class="field-select"></select>
+      </label>
       <p id="dialog-error" class="dialog-error" role="alert"></p>
       <div class="dialog-actions">
         <button id="remove-button" class="btn remove" type="button" data-i18n="dialog.remove">Quitar</button>
@@ -483,6 +496,47 @@
       </div>
     </form>
   </dialog>
+
+  <dialog id="group-dialog" class="group-dialog">
+    <form id="group-form" novalidate>
+      <h2 data-i18n="group.newTitle">Nuevo grupo</h2>
+      <div class="group-preview">
+        <span id="group-dialog-emoji" class="group-preview-emoji" aria-hidden="true"></span>
+        <label class="field">
+          <span data-i18n="group.name">Nombre</span>
+          <input id="group-name-input" type="text" autocomplete="off" maxlength="40">
+        </label>
+      </div>
+      <p class="group-field-label" data-i18n="group.emoji">Emoji</p>
+      <div id="group-dialog-emojis" class="emoji-picker" role="radiogroup" aria-label="Emoji" data-i18n-attrs="aria-label: group.emoji"></div>
+      <p class="group-field-label" data-i18n="group.color">Color</p>
+      <div id="group-dialog-colors" class="color-dots" role="radiogroup" aria-label="Color" data-i18n-attrs="aria-label: group.color"></div>
+      <p id="group-dialog-error" class="dialog-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button id="group-dialog-cancel" class="btn" type="button" data-i18n="group.cancel">Cancelar</button>
+        <button class="btn btn-primary" type="submit" data-i18n="group.create">Crear grupo</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="group-box" class="group-box"></dialog>
+
+  <dialog id="organize-dialog" class="organize-dialog"></dialog>
+
+  <div id="select-bar" class="select-bar" role="toolbar" aria-label="Opciones de los accesos directos" data-i18n-attrs="aria-label: group.menu" hidden>
+    <span id="select-count" class="select-count"></span>
+    <button id="select-group" class="btn btn-primary" type="button" data-i18n="group.group">Agrupar</button>
+    <select id="select-move" class="field-select select-move"></select>
+    <button id="select-cancel" class="btn" type="button" data-i18n="group.cancel">Cancelar</button>
+  </div>
+
+  <div id="tilo-card" class="tilo-card" role="dialog" aria-labelledby="tilo-card-text" hidden>
+    <p id="tilo-card-text" class="tilo-card-text"></p>
+    <div class="tilo-card-actions">
+      <button id="tilo-card-no" class="btn" type="button" data-i18n="group.offerNo">Ahora no</button>
+      <button id="tilo-card-yes" class="btn btn-primary" type="button" data-i18n="group.offerYes">Ver propuesta</button>
+    </div>
+  </div>
 
   <div id="toast" class="toast" role="status" hidden>
     <span id="toast-text"></span>

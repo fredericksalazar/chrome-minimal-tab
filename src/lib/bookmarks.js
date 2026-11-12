@@ -46,17 +46,78 @@ export async function getFolderId(title = FOLDER_TITLES[0]) {
   return folder.id;
 }
 
-// Solo los marcadores con URL; las subcarpetas se ignoran
-export async function getShortcuts(folderId) {
-  const children = await chrome.bookmarks.getChildren(folderId);
-  return children.filter((node) => node.url);
+// Contenido de la carpeta: accesos y grupos (subcarpetas) en su orden. Cada grupo
+// trae sus accesos en children; lo que haya dentro de un grupo y no sea un acceso se
+// ignora (un solo nivel).
+export async function getItems(folderId) {
+  const [root] = await chrome.bookmarks.getSubTree(folderId);
+  return (root.children ?? []).map((node) =>
+    node.url ? node : { ...node, children: (node.children ?? []).filter((child) => child.url) }
+  );
+}
+
+// Todos los accesos, sueltos y agrupados
+export function allShortcuts(items) {
+  return items.flatMap((node) => (node.url ? [node] : node.children));
 }
 
 export async function addShortcut({ title, url }, folderTitle) {
   const folderId = await getFolderId(folderTitle);
-  const shortcuts = await getShortcuts(folderId);
+  const shortcuts = allShortcuts(await getItems(folderId));
   if (shortcuts.some((node) => node.url === url)) return "exists";
   if (shortcuts.length >= MAX_SHORTCUTS) return "full";
   await chrome.bookmarks.create({ parentId: folderId, title: title || hostname(url), url });
   return "added";
+}
+
+// Dónde está cada marcador ahora, para poder deshacer un cambio
+export async function snapshot(ids) {
+  const nodes = await chrome.bookmarks.get(ids);
+  return nodes.map(({ id, parentId, index }) => ({ id, parentId, index }));
+}
+
+// Devuelve los marcadores a donde estaban y borra las carpetas creadas que queden
+// vacías. Primero se sacan todos a su carpeta y se borran las cajas creadas; solo
+// entonces cada índice guardado vuelve a significar lo mismo que antes del cambio.
+export async function restore(places, createdFolders = []) {
+  const safely = async (action) => {
+    try {
+      await action();
+    } catch (error) {
+      console.warn("No se pudo deshacer del todo", error);
+    }
+  };
+  for (const { id, parentId } of places) await safely(() => chrome.bookmarks.move(id, { parentId }));
+  for (const id of createdFolders) {
+    await safely(async () => {
+      const children = await chrome.bookmarks.getChildren(id);
+      if (!children.length) await chrome.bookmarks.remove(id);
+    });
+  }
+  for (const { id, parentId, index } of [...places].sort((a, b) => a.index - b.index)) {
+    await safely(() => chrome.bookmarks.move(id, { parentId, index }));
+  }
+}
+
+// Crea un grupo en la posición index con los accesos indicados, en ese orden
+export async function createGroup(folderId, title, ids, index) {
+  const group = await chrome.bookmarks.create({ parentId: folderId, title, index });
+  for (const id of ids) await chrome.bookmarks.move(id, { parentId: group.id });
+  return group;
+}
+
+// Mueve accesos al final de un grupo, o a la carpeta principal tras index
+export async function moveInto(ids, parentId, index) {
+  let position = index;
+  for (const id of ids) {
+    await chrome.bookmarks.move(id, position === undefined ? { parentId } : { parentId, index: position++ });
+  }
+}
+
+// Saca los accesos de un grupo a su lugar en la carpeta y borra el grupo
+export async function ungroup(folderId, group) {
+  const ids = group.children.map((child) => child.id);
+  await moveInto(ids, folderId, group.index);
+  await chrome.bookmarks.remove(group.id);
+  return ids;
 }

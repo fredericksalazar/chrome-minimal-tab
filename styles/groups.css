@@ -1,0 +1,616 @@
+/* Grupos de accesos directos: cajas en la cuadrícula, ventana flotante, selección de
+   varios, diálogo «Nuevo grupo», propuesta de Tilo y su tarjeta. Solo animaciones
+   finitas al abrir o resaltar: nada se mueve en reposo. */
+
+:root {
+  --group-lavanda: #7c6cf2;
+  --group-rosa: #f27ba8;
+  --group-coral: #ff9f6e;
+  --group-miel: #ffc857;
+  --group-tila: #4fd1a5;
+  --group-cielo: #5ab8f0;
+}
+
+[data-color="lavanda"] { --tint: var(--group-lavanda); }
+[data-color="rosa"] { --tint: var(--group-rosa); }
+[data-color="coral"] { --tint: var(--group-coral); }
+[data-color="miel"] { --tint: var(--group-miel); }
+[data-color="tila"] { --tint: var(--group-tila); }
+[data-color="cielo"] { --tint: var(--group-cielo); }
+
+/* Opciones bajo la cuadrícula */
+.grid-tools {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.grid-tools[hidden] {
+  display: none;
+}
+
+.link-btn {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.link-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* La caja: cuadrado teñido con un mosaico de iconos y el emoji en una esquina */
+.group-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--group) 32%, var(--tile-icon-bg));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--group) 55%, transparent);
+}
+
+.group-mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, 16px);
+  grid-auto-rows: 16px;
+  gap: 3px;
+}
+
+.group-mosaic img {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.group-emoji {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--dialog-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.group-emoji-alone {
+  position: static;
+  width: auto;
+  height: auto;
+  background: none;
+  box-shadow: none;
+  font-size: 24px;
+}
+
+.tile-group .tile-link:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Arrastrar un acceso sobre otro (o sobre una caja) para agrupar */
+.tile.merge-target {
+  background: var(--hover);
+  box-shadow: inset 0 0 0 2px var(--primary);
+  animation: group-pulse 0.25s ease-out;
+}
+
+.tile.merge-target .tile-icon,
+.tile.merge-target .group-icon {
+  scale: 1.12;
+  transition: scale 0.2s ease;
+}
+
+@keyframes group-pulse {
+  from {
+    box-shadow: inset 0 0 0 6px var(--primary);
+  }
+}
+
+/* Selección de varios */
+.grid.selecting .tile-link {
+  cursor: pointer;
+}
+
+.tile-check {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--muted);
+  pointer-events: none;
+}
+
+.tile.selected {
+  background: var(--hover);
+}
+
+.tile.selected .tile-check {
+  background: var(--primary);
+  box-shadow: none;
+}
+
+.tile.selected .tile-check::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--on-primary);
+  border-width: 0 2px 2px 0;
+  rotate: 45deg;
+}
+
+.select-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 18px;
+  border-radius: 999px;
+  background: var(--dialog-bg);
+  color: var(--text);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+  translate: -50% 0;
+  animation: group-rise-bar 0.2s ease-out;
+}
+
+.select-bar[hidden] {
+  display: none;
+}
+
+.select-count {
+  margin-right: 6px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.select-bar .btn {
+  border-radius: 999px;
+}
+
+.select-bar .btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Desplegables con el aspecto de los campos */
+.field-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.select-move {
+  width: auto;
+  height: 36px;
+  border-radius: 999px;
+}
+
+.field[hidden] {
+  display: none;
+}
+
+/* Diálogo «Nuevo grupo» */
+.group-dialog {
+  width: min(400px, calc(100vw - 32px));
+}
+
+.group-preview {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.group-preview .field {
+  flex: 1;
+}
+
+.group-preview-emoji {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--group) 32%, var(--input-bg));
+  font-size: 26px;
+}
+
+.group-field-label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.emoji-picker {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.emoji-picker[hidden] {
+  display: none;
+}
+
+.emoji-choice {
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.emoji-choice:hover {
+  background: var(--hover);
+}
+
+.emoji-choice[aria-checked="true"] {
+  background: var(--input-bg);
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.color-dots {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.color-dot {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dot);
+  cursor: pointer;
+}
+
+.color-dot[aria-checked="true"] {
+  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--dot);
+}
+
+.emoji-choice:focus-visible,
+.color-dot:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Ventana flotante de una caja */
+.group-box {
+  width: min(640px, calc(100vw - 32px));
+  padding: 20px 20px 16px;
+  border-radius: 20px;
+  background: linear-gradient(color-mix(in oklab, var(--tint, var(--group-lavanda)) 10%, transparent), transparent 120px), var(--dialog-bg);
+}
+
+.group-box[open],
+.organize-dialog[open],
+.group-dialog[open] {
+  animation: group-open 0.18s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes group-open {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+.box-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.box-emoji {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--tint, var(--group-lavanda)) 30%, var(--input-bg));
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.box-name {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 20px;
+}
+
+.box-name:hover,
+.box-name:focus {
+  background: var(--input-bg);
+  outline: none;
+}
+
+.box-colors {
+  margin: 0 0 6px 54px;
+}
+
+.box-grid {
+  max-height: min(60vh, 480px);
+  margin: 0 -8px;
+  overflow-y: auto;
+}
+
+.box-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.box-footer .remove {
+  margin-right: auto;
+}
+
+.box-confirm {
+  margin-right: auto;
+  font-size: 14px;
+}
+
+/* Propuesta de Tilo */
+.organize-dialog {
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  border-radius: 20px;
+}
+
+.proposal-intro {
+  margin: -8px 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.proposal-list {
+  display: grid;
+  gap: 10px;
+  max-height: calc(100vh - 260px);
+  margin-bottom: 16px;
+  overflow-y: auto;
+}
+
+.proposal-card {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--tint, var(--muted)) 12%, var(--input-bg));
+  transition: opacity 0.15s ease;
+}
+
+.proposal-card.excluded {
+  opacity: 0.5;
+}
+
+.proposal-card.drop-over {
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.proposal-loose {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--search-border, rgba(128, 128, 128, 0.3));
+}
+
+.proposal-loose h3 {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.proposal-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.proposal-emoji {
+  font-size: 18px;
+}
+
+.proposal-name {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+}
+
+.proposal-name:hover,
+.proposal-name:focus {
+  background: var(--dialog-bg);
+  outline: none;
+}
+
+.proposal-colors {
+  gap: 6px;
+  margin: 0;
+}
+
+.proposal-colors .color-dot {
+  width: 16px;
+  height: 16px;
+}
+
+.proposal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.group-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  height: 28px;
+  padding: 0 4px 0 8px;
+  border-radius: 999px;
+  background: var(--dialog-bg);
+  font-size: 12px;
+  cursor: grab;
+}
+
+.group-chip img {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.group-chip > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chip-out {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.chip-out:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.chip-move {
+  max-width: 110px;
+  height: 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--input-bg);
+  color: var(--muted);
+  font: inherit;
+  font-size: 11px;
+}
+
+/* Tarjeta de Tilo junto a la mascota (pet.js la coloca) */
+.tilo-card {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 6;
+  width: 270px;
+  padding: 12px 14px;
+  border-radius: 16px 16px 16px 4px;
+  background: var(--dialog-bg);
+  color: var(--text);
+  box-shadow: 0 6px 24px rgba(20, 30, 60, 0.25);
+  animation: group-rise 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.tilo-card.flip {
+  border-radius: 16px 16px 4px 16px;
+}
+
+.tilo-card[hidden] {
+  display: none;
+}
+
+.tilo-card-text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.tilo-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.tilo-card .btn {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+@keyframes group-rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@keyframes group-rise-bar {
+  from {
+    opacity: 0;
+    translate: -50% 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group-box[open],
+  .organize-dialog[open],
+  .group-dialog[open],
+  .select-bar,
+  .tilo-card,
+  .tile.merge-target {
+    animation: none;
+  }
+}

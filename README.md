@@ -3,6 +3,7 @@
 Extensión de Chrome que sustituye la nueva pestaña por una limpia, rápida y privada (sin cuentas ni rastreo) y añade:
 
 - Hasta 100 accesos directos guardados en la carpeta de marcadores «Accesos directos» (se sincronizan con tu cuenta y se pueden añadir con ⌘D, ⌥⇧D, el icono o el menú contextual).
+- Grupos de accesos («cajas») con emoji y color: selecciona varios, arrastra uno sobre otro o deja que Tilo proponga cómo ordenarlos por temas (clasificación local, sin IA ni red). Se guardan como subcarpetas y se sincronizan.
 - Hora, ciudad y clima: antes de usar la ubicación pregunta, y permite escribir la ciudad o no mostrar el clima.
 - Lista de tareas con subtareas: las terminadas se ven tachadas hoy y desaparecen al día siguiente.
 - Water tracker (hidratación diaria): botella vertical de 2 litros que se llena de azul al registrar vasos de agua (+ 250 ml) con su hora, guarda el historial por día y se conecta con Tilo (su color es rozagante cuando te hidratas y palidece si pasas más de una hora sin beber, pidiéndote agua cada hora).
@@ -28,7 +29,9 @@ manifest.json          Configuración de la extensión
 background.js          Service worker: atajo, icono y menú contextual
 newtab.html            Página de nueva pestaña
 src/lib/               Lógica sin interfaz, compartida y testeable
-  bookmarks.js           Carpeta de accesos directos y límite de 100
+  bookmarks.js           Carpeta de accesos directos, grupos (subcarpetas), límite de 100 y deshacer
+  groups.js              Títulos con emoji, colores, límites y correcciones que Tilo recuerda
+  classify.js            Temas y sitios conocidos para que Tilo proponga grupos
   url.js                 Normalizar URLs, favicons
   storage.js             Claves de chrome.storage
   engines.js             Catálogo de motores de búsqueda
@@ -44,7 +47,10 @@ src/lib/               Lógica sin interfaz, compartida y testeable
 src/newtab/            Un módulo por cada parte de la página
   theme-boot.js          Aplica la última escena, el tema y el lienzo antes de pintar (script clásico)
   theme.js               Tema de los paneles, tono del texto según el cielo y suscripción a cambios
-  shortcuts.js           Cuadrícula, diálogo, deshacer y reordenar
+  shortcuts.js           Cuadrícula, cajas, selección, arrastrar para agrupar, deshacer y reordenar
+  group-box.js           Ventana flotante de una caja
+  organize.js            Propuesta de Tilo para ordenar los accesos por temas
+  group-ui.js            Mosaico, selector de emoji y puntos de color
   search.js              Motor elegido, icono y envío del buscador
   clock-weather.js       Hora y clima
   todos.js               Lista de tareas de la esquina superior derecha

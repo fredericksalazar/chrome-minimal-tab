@@ -16,6 +16,9 @@ export const KEYS = {
   layout: "layout",
   water: "water",
   waterStyle: "waterStyle",
+  groupColors: "groupColors",
+  groupHints: "groupHints",
+  groupsOffer: "groupsOffer",
 };
 
 function onAreaChange(areaName, key, callback) {
